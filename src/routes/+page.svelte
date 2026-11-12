@@ -1,6 +1,7 @@
 <script lang="ts">
 	import lanyardBack from '#lib/assets/lanyard-back.svg';
 	import lanyardFront from '#lib/assets/lanyard-front.svg';
+	import CraftStory from '#lib/components/CraftStory.svelte';
 	import Lanyard from '#lib/components/Lanyard.svelte';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
@@ -143,6 +144,7 @@
 			>
 				<a href="#skills" class="underline-offset-4 hover:underline">Skills</a>
 				<a href="#projects" class="underline-offset-4 hover:underline">Projects</a>
+				<a href="#craft" class="underline-offset-4 hover:underline">Craft</a>
 				<a href="#experience" class="underline-offset-4 hover:underline">Experience</a>
 				<a href="#certifications" class="underline-offset-4 hover:underline">Certifications</a>
 				<a href="#contact" class="underline-offset-4 hover:underline">Contact</a>
@@ -589,6 +591,9 @@
 				</aside>
 			</div>
 		</section>
+
+		<!-- Sticky Scrollytelling Section: How I Build · The Craft -->
+		<CraftStory />
 
 		<!-- Full-Screen Experience (Left Pink + Timeline) & Call To Action (Right Violet Grid) -->
 		<section id="experience" class="w-full border-b-2 border-border bg-background py-16 sm:py-20">
