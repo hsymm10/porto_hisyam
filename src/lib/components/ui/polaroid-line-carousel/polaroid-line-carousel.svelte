@@ -28,6 +28,7 @@
 		background?: string;
 		ink?: string;
 		onChange?: (index: number) => void;
+		onSelect?: (index: number) => void;
 		class?: string;
 		ariaLabel?: string;
 	};
@@ -293,9 +294,10 @@
 		swing = 1,
 		autoplay = 4500,
 		stringColor = 'var(--foreground)',
-		background = 'var(--neo-surface-subtle)',
+		background = 'var(--neo-canvas)',
 		ink = 'var(--foreground)',
 		onChange,
+		onSelect,
 		class: className,
 		ariaLabel = 'Polaroid photo carousel'
 	}: PolaroidLineCarouselProps = $props();
@@ -305,6 +307,7 @@
 	let statusAnnouncement = $state('');
 	let hasInteracted = $state(false);
 	let dragging = $state(false);
+	let suppressClick = false;
 	let isHoveredOrFocused = $state(false);
 	let reducedMotion = $state(false);
 	let painted = $state<string[]>([]);
@@ -598,6 +601,7 @@
 
 	function onPointerDown(e: PointerEvent) {
 		if ((e.target as HTMLElement).closest('.pl-bar')) return;
+		suppressClick = false;
 		lastTouch = performance.now();
 		dragState = {
 			x: e.clientX,
@@ -613,8 +617,9 @@
 		const d = dragState;
 		if (!d) return;
 		const dx = e.clientX - d.x;
-		if (!d.moved && Math.abs(dx) > 5) {
+		if (!d.moved && Math.abs(dx) > 10) {
 			d.moved = true;
+			suppressClick = true;
 			dragging = true;
 			rootEl?.setPointerCapture(e.pointerId);
 		}
@@ -630,7 +635,7 @@
 		sim.off = off;
 	}
 
-	function onPointerUp(e: PointerEvent) {
+	function onPointerUp() {
 		const d = dragState;
 		dragState = null;
 		lastTouch = performance.now();
@@ -639,12 +644,16 @@
 			dragging = false;
 			sim.vel = -d.v * 1000;
 			goTo(nearestAt(sim.off - d.v * 180, spacing, n), true);
-			return;
+			window.requestAnimationFrame(() => {
+				suppressClick = false;
+			});
 		}
-		const card = (e.target as HTMLElement).closest('[data-i]');
-		if (card) {
-			goTo(Number(card.getAttribute('data-i')), true);
-		}
+	}
+
+	function handleCardClick(idx: number) {
+		if (suppressClick) return;
+		goTo(idx, true);
+		onSelect?.(idx);
 	}
 
 	function onKeyDown(e: KeyboardEvent) {
@@ -695,6 +704,7 @@
 
 	{#each slides as sl, i (i)}
 		{@const src = resolvedSrc(sl, i)}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<div
 			bind:this={cardEls[i]}
 			class="pl-card"
@@ -703,6 +713,7 @@
 			role="group"
 			aria-roledescription="slide"
 			aria-label={`${i + 1} of ${n}${sl.title ? `: ${sl.title}` : ''}`}
+			onclick={() => handleCardClick(i)}
 		>
 			<div class="pl-print">
 				<div class="pl-shot">
@@ -736,6 +747,16 @@
 				</div>
 			{/key}
 		</div>
+		{#if onSelect}
+			<button
+				type="button"
+				class="pl-view-btn"
+				onclick={() => onSelect(active)}
+				aria-label={`Lihat penuh ${currentSlide.title || 'foto'}`}
+			>
+				VIEW FULL ↗
+			</button>
+		{/if}
 	</div>
 
 	<p class="pl-sr" role="status" aria-live="polite">
@@ -782,15 +803,19 @@
 		width: var(--pl-cw);
 		transform-origin: 50% 0;
 		will-change: transform;
-		cursor: inherit;
+		cursor: pointer;
+	}
+
+	.pl-root[data-drag='1'] .pl-card {
+		cursor: grabbing;
 	}
 
 	.pl-print {
 		margin-top: 10px;
-		background: #ffffff;
-		border: 2px solid #0d0d0d;
+		background: var(--neo-white);
+		border: 2px solid var(--neo-black);
 		padding: 10px 10px 0;
-		box-shadow: 4px 4px 0px #0d0d0d;
+		box-shadow: 4px 4px 0px var(--neo-shadow-color, #0d0c0b);
 		transition:
 			transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
 			box-shadow 0.35s ease,
@@ -798,19 +823,19 @@
 	}
 
 	.pl-card[data-on='1'] .pl-print {
-		box-shadow: 6px 6px 0px #0d0d0d;
+		box-shadow: 6px 6px 0px var(--neo-shadow-color, #0d0c0b);
 	}
 
 	.pl-card[data-on='0'] .pl-print {
 		transform: scale(0.9);
-		filter: saturate(0.78) brightness(0.96);
+		filter: saturate(0.78) brightness(0.94);
 	}
 
 	.pl-shot {
 		position: relative;
 		aspect-ratio: 1;
 		overflow: hidden;
-		border: 2px solid #0d0d0d;
+		border: 2px solid var(--neo-black);
 		background: var(--neo-surface-muted);
 	}
 
@@ -836,13 +861,13 @@
 		font-weight: 700;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
-		color: #0d0d0d;
+		color: var(--neo-black);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	/* Neobrutalism Clothespin Peg */
+	/* Vintage Clothespin Peg */
 	.pl-peg {
 		position: absolute;
 		left: 50%;
@@ -850,17 +875,17 @@
 		width: 12px;
 		height: 26px;
 		margin-left: -6px;
-		border: 2px solid #0d0d0d;
-		background: var(--neo-lime);
-		box-shadow: 2px 2px 0px #0d0d0d;
+		border: 2px solid var(--neo-black);
+		background: #fe7a25;
+		box-shadow: 2px 2px 0px var(--neo-shadow-color, #0f2116);
 	}
 
 	.pl-peg[data-tone='1'] {
-		background: var(--neo-pink);
+		background: #006732;
 	}
 
 	.pl-peg[data-tone='2'] {
-		background: var(--neo-violet);
+		background: #e9e8ca;
 	}
 
 	.pl-peg::after {
@@ -870,7 +895,7 @@
 		top: 7px;
 		width: 2px;
 		height: 8px;
-		background: #0d0d0d;
+		background: var(--neo-black);
 	}
 
 	.pl-bar {
@@ -893,6 +918,35 @@
 		border: 2px solid var(--border);
 		background: var(--card);
 		box-shadow: var(--neo-shadow-sm);
+	}
+
+	.pl-view-btn {
+		flex-shrink: 0;
+		padding: 10px 14px;
+		border: 2px solid var(--border);
+		background: var(--accent);
+		color: var(--accent-foreground);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		white-space: nowrap;
+		box-shadow: var(--neo-shadow-sm);
+		cursor: pointer;
+		transition:
+			transform 0.15s ease,
+			box-shadow 0.15s ease;
+	}
+
+	.pl-view-btn:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: var(--neo-shadow);
+	}
+
+	.pl-view-btn:active {
+		transform: translate(1px, 1px);
+		box-shadow: none;
 	}
 
 	.pl-cap-inner {

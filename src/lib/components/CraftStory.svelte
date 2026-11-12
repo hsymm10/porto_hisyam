@@ -25,7 +25,7 @@
 			caption: 'Every millisecond is part of the design.',
 			tags: ['Core Web Vitals', 'Code-splitting', 'Lazy assets'],
 			icon: Zap,
-			accent: '#4d7c0f',
+			accent: 'var(--retro-green-text)',
 			visual: 'performance'
 		},
 		{
@@ -35,7 +35,7 @@
 			caption: 'If it isn\u2019t usable by all, it isn\u2019t done.',
 			tags: ['Semantic HTML', 'Keyboard-first', 'Contrast AA'],
 			icon: Eye,
-			accent: '#7542ff',
+			accent: 'var(--retro-tangerine-text)',
 			visual: 'a11y'
 		},
 		{
@@ -45,7 +45,7 @@
 			caption: 'Animation that guides \u2014 never decorates.',
 			tags: ['60fps', 'Spring physics', 'Interruptible'],
 			icon: Activity,
-			accent: '#d9386a',
+			accent: 'var(--retro-tangerine-text)',
 			visual: 'motion'
 		},
 		{
@@ -55,7 +55,7 @@
 			caption: 'Tokens and components that grow with you.',
 			tags: ['Design tokens', 'Reusable UI', 'Documented'],
 			icon: Layers,
-			accent: '#b45309',
+			accent: 'var(--retro-green-text)',
 			visual: 'system'
 		}
 	];
@@ -74,7 +74,7 @@
 	];
 
 	const MOTION_DOTS = [0, 1, 2, 3, 4];
-	const TOKEN_SWATCHES = ['#aee82a', '#7542ff', '#ff6e9f', '#ececec', '#0d0d0d'];
+	const TOKEN_SWATCHES = ['#fe7a25', '#e9e8ca', '#006732', '#f4f3df', '#0f2116'];
 	const TOKEN_SPACES = [40, 70, 110, 150];
 
 	let sectionEl: HTMLElement | undefined = $state();
@@ -305,9 +305,9 @@
 					class="flex items-center gap-3 border-b-2 border-border bg-neo-surface-subtle px-5 py-3.5 sm:px-6"
 				>
 					<span class="flex gap-1.5" aria-hidden="true">
-						<span class="size-3 rounded-full border-2 border-border bg-accent"></span>
-						<span class="size-3 rounded-full border-2 border-border bg-primary"></span>
-						<span class="size-3 rounded-full border-2 border-border bg-secondary"></span>
+						<span class="size-3 rounded-full border-2 border-border bg-[#fe7a25]"></span>
+						<span class="size-3 rounded-full border-2 border-border bg-[#e9e8ca]"></span>
+						<span class="size-3 rounded-full border-2 border-border bg-[#006732]"></span>
 					</span>
 					<span
 						class="hidden truncate font-mono text-xs font-medium text-muted-foreground md:block"
@@ -407,7 +407,7 @@
 														cy="65"
 														r="52"
 														fill="none"
-														stroke="#4d7c0f"
+														stroke="var(--retro-green-text)"
 														stroke-width="11"
 														stroke-linecap="square"
 														transform="rotate(-90 65 65)"

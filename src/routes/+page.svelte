@@ -6,6 +6,20 @@
 	import sertif3 from '#lib/assets/sertifikat/sertif-3.png.png';
 	import sertif4 from '#lib/assets/sertifikat/sertif-4.png';
 	import sertif5 from '#lib/assets/sertifikat/sertif-5.png';
+	import imgBimbelGsc from '#lib/assets/tampilan_web/ Website Company Profile GSC.png';
+	import imgBukuTamu from '#lib/assets/tampilan_web/buku tamu.png';
+	import imgEPresensi from '#lib/assets/tampilan_web/E-Presensi Sekolah.png';
+	import imgH2snPhotobooth from '#lib/assets/tampilan_web/H2SN Photobooth.png';
+	import imgKasirCostom from '#lib/assets/tampilan_web/Kasir_costom.png';
+	import imgKeuangan from '#lib/assets/tampilan_web/keuangan.png';
+	import imgPlatformGame from '#lib/assets/tampilan_web/Platform Game Berbasis Web.png';
+	import imgPutraSundaJaya from '#lib/assets/tampilan_web/Putra Sunda Jaya.png';
+	import imgShortlinkLinkKu from '#lib/assets/tampilan_web/Shortlink LinkKu.png';
+	import imgUndanganOrganisasi from '#lib/assets/tampilan_web/Undangan_organisasi.png';
+	import img93Printing from '#lib/assets/tampilan_web/Website 93 Printing.png';
+	import imgIndahBakery from '#lib/assets/tampilan_web/Website Indah Bakery.png';
+	import imgKedaiMieMamaw from '#lib/assets/tampilan_web/Website Kedai Mie Mamaw.png';
+	import imgUicPress from '#lib/assets/tampilan_web/Website UIC Press Universitas Ibnu Chaldun.png';
 	import CraftStory from '#lib/components/CraftStory.svelte';
 	import Lanyard from '#lib/components/Lanyard.svelte';
 	import { Badge } from '#lib/components/ui/badge/index.js';
@@ -17,15 +31,28 @@
 	} from '#lib/components/ui/polaroid-line-carousel/index.js';
 	import { Separator } from '#lib/components/ui/separator/index.js';
 	import { gsap, REDUCED_MOTION_QUERY, registerGsap, ScrollTrigger } from '#lib/gsap.js';
+	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
 	import {
+		siCss,
+		siFigma,
 		siGit,
-		siMongodb,
+		siGithub,
+		siGo,
+		siHtml5,
+		siJavascript,
+		siLaravel,
+		siMysql,
 		siNodedotjs,
+		siNuxt,
+		siPhp,
+		siPhpmyadmin,
+		siPostgresql,
 		siReact,
 		siSvelte,
 		siTailwindcss,
-		siTypescript
+		siTypescript,
+		siVuedotjs
 	} from 'simple-icons';
 	import {
 		ArrowRight,
@@ -60,13 +87,25 @@
 	}
 
 	const skills = [
-		{ name: 'React', icon: siReact },
+		{ name: 'HTML5', icon: siHtml5 },
+		{ name: 'CSS', icon: siCss },
+		{ name: 'JavaScript', icon: siJavascript },
 		{ name: 'TypeScript', icon: siTypescript },
+		{ name: 'PHP', icon: siPhp },
+		{ name: 'Golang', icon: siGo },
+		{ name: 'Laravel', icon: siLaravel },
+		{ name: 'Vue.js', icon: siVuedotjs },
+		{ name: 'Nuxt', icon: siNuxt },
+		{ name: 'React', icon: siReact },
+		{ name: 'Svelte', icon: siSvelte },
 		{ name: 'Node.js', icon: siNodedotjs },
 		{ name: 'Tailwind CSS', icon: siTailwindcss },
-		{ name: 'MongoDB', icon: siMongodb },
+		{ name: 'PostgreSQL', icon: siPostgresql },
+		{ name: 'MySQL', icon: siMysql },
+		{ name: 'phpMyAdmin', icon: siPhpmyadmin },
+		{ name: 'Figma', icon: siFigma },
 		{ name: 'Git', icon: siGit },
-		{ name: 'Svelte', icon: siSvelte }
+		{ name: 'GitHub', icon: siGithub }
 	];
 
 	type Project = {
@@ -75,24 +114,13 @@
 		title: string;
 		description: string;
 		tags: string[];
-		url: string;
-		linkLabel: string;
+		url?: string;
+		linkLabel?: string;
 		image?: string;
 		previewBg: string;
 	};
 
 	const projects: Project[] = [
-		{
-			id: 'sistem-keuangan-gssi',
-			role: 'Full Stack Web Developer',
-			title: 'Sistem Keuangan GSSI',
-			description:
-				'Membangun sistem informasi keuangan berbasis web untuk pengelolaan kas organisasi. Sistem mendukung hak akses ketua, bendahara, dan anggota dalam mengelola pemasukan, pengeluaran, serta laporan keuangan.',
-			tags: ['Full Stack', 'Web App', 'Role Access', 'Finance'],
-			url: 'https://github.com/H2SN-Aksara-Kode/web-bendahara-gssi',
-			linkLabel: 'View Repository',
-			previewBg: 'bg-accent'
-		},
 		{
 			id: 'h2sn-photobooth',
 			role: 'Full Stack Web Developer',
@@ -102,7 +130,8 @@
 			tags: ['Full Stack', 'Web App', 'Gallery', 'Business Ops'],
 			url: 'https://github.com/H2SN-Aksara-Kode/web_photoboth',
 			linkLabel: 'View Repository',
-			previewBg: 'bg-primary'
+			image: imgH2snPhotobooth,
+			previewBg: 'bg-neo-canvas'
 		},
 		{
 			id: 'uic-press',
@@ -113,6 +142,7 @@
 			tags: ['Project Management', 'Admin Dashboard', 'CMS'],
 			url: 'https://github.com/H2SN-Aksara-Kode/uic_press_ibnu_chaldun',
 			linkLabel: 'View Repository',
+			image: imgUicPress,
 			previewBg: 'bg-secondary'
 		},
 		{
@@ -124,29 +154,8 @@
 			tags: ['Full Stack', 'Real-time', 'Multi-Role', 'Mobile Web'],
 			url: 'https://github.com/hsymm10/sistem_e_presensi',
 			linkLabel: 'View Repository',
+			image: imgEPresensi,
 			previewBg: 'bg-accent'
-		},
-		{
-			id: 'aquabina-swim-club',
-			role: 'Frontend Web Developer',
-			title: 'Aquabina Swim Club',
-			description:
-				'Membangun website company profile berbasis Laravel dengan dashboard admin, manajemen konten, dan formulir pendaftaran online.',
-			tags: ['Frontend', 'Laravel', 'Company Profile', 'Admin'],
-			url: 'https://github.com/H2SN-Aksara-Kode/project-renang',
-			linkLabel: 'View Repository',
-			previewBg: 'bg-primary'
-		},
-		{
-			id: 'sistem-booking-hotel',
-			role: 'Full Stack Web Developer',
-			title: 'Sistem Booking Hotel',
-			description:
-				'Membangun aplikasi reservasi hotel berbasis Laravel dan Nuxt.js. Sistem menyediakan fitur pencarian kamar, reservasi, dashboard admin, dan pengelolaan transaksi.',
-			tags: ['Laravel', 'Nuxt.js', 'Full Stack', 'Booking'],
-			url: 'https://github.com/hsymm10/web_booking_hotel',
-			linkLabel: 'View Repository',
-			previewBg: 'bg-secondary'
 		},
 		{
 			id: 'company-profile-gsc',
@@ -157,6 +166,7 @@
 			tags: ['Frontend', 'Responsive', 'Company Profile'],
 			url: 'https://github.com/hsymm10/Bimbel-GSC',
 			linkLabel: 'View Repository',
+			image: imgBimbelGsc,
 			previewBg: 'bg-accent'
 		},
 		{
@@ -168,7 +178,8 @@
 			tags: ['Frontend', 'Digital Menu', 'WhatsApp Integration'],
 			url: 'https://github.com/hsymm10/Kedai_MAMAW',
 			linkLabel: 'View Repository',
-			previewBg: 'bg-primary'
+			image: imgKedaiMieMamaw,
+			previewBg: 'bg-neo-canvas'
 		},
 		{
 			id: 'indah-bakery',
@@ -179,6 +190,7 @@
 			tags: ['Frontend', 'Product Catalog', 'Cart', 'WhatsApp'],
 			url: 'https://github.com/hsymm10/Indah-Bakery',
 			linkLabel: 'View Repository',
+			image: imgIndahBakery,
 			previewBg: 'bg-secondary'
 		},
 		{
@@ -190,29 +202,8 @@
 			tags: ['Frontend', 'Company Profile', 'Branding'],
 			url: 'https://github.com/hsymm10/web_93printing',
 			linkLabel: 'View Repository',
+			image: img93Printing,
 			previewBg: 'bg-accent'
-		},
-		{
-			id: 'gradis-and-co',
-			role: 'Frontend Web Developer',
-			title: 'Website Gradis & Co',
-			description:
-				'Membangun website company profile yang menampilkan profil usaha, menu, galeri, dan informasi kontak.',
-			tags: ['Frontend', 'Company Profile', 'Menu & Gallery'],
-			url: 'https://github.com/hsymm10/web_gradis_and_co',
-			linkLabel: 'View Repository',
-			previewBg: 'bg-primary'
-		},
-		{
-			id: 'undangan-pernikahan-digital',
-			role: 'Frontend Web Developer',
-			title: 'Website Undangan Pernikahan Digital',
-			description:
-				'Membangun website undangan digital dengan fitur countdown, galeri, buku tamu, lokasi acara, dan informasi pernikahan.',
-			tags: ['Frontend', 'Digital Invitation', 'Countdown', 'Guestbook'],
-			url: 'https://github.com/hsymm10/web_undangan_digital',
-			linkLabel: 'View Repository',
-			previewBg: 'bg-secondary'
 		},
 		{
 			id: 'platform-game-kir',
@@ -223,39 +214,61 @@
 			tags: ['Game Dev', 'HTML', 'CSS', 'JavaScript'],
 			url: 'https://github.com/hsymm10/game_hszam',
 			linkLabel: 'View Repository',
+			image: imgPlatformGame,
 			previewBg: 'bg-accent'
 		},
 		{
-			id: 'uiux-sistem-e-presensi',
-			role: 'UI/UX Designer',
-			title: 'Sistem E-Presensi (UI/UX)',
-			description:
-				'Merancang antarmuka dan prototype sistem E-Presensi menggunakan Figma sebagai acuan implementasi pada Laravel dan Nuxt.js.',
-			tags: ['UI/UX', 'Figma', 'Prototype', 'Design System'],
-			url: 'https://www.figma.com/design/4pSsp0XjwoO1AvIaYZOVBb/Untitled?node-id=0-1&p=f',
-			linkLabel: 'Open Figma',
-			previewBg: 'bg-primary'
+			id: 'shortlink-linkku',
+			role: 'Web Developer',
+			title: 'Shortlink LinkKu',
+			description: 'Deskripsi menyusul.',
+			tags: ['Web App', 'Shortlink'],
+			image: imgShortlinkLinkKu,
+			previewBg: 'bg-neo-canvas'
 		},
 		{
-			id: 'redesign-mytelkomsel',
-			role: 'UI/UX Designer',
-			title: 'Redesign MyTelkomsel',
-			description:
-				'Merancang ulang antarmuka aplikasi MyTelkomsel menggunakan Figma dengan menerapkan prinsip UI/UX modern.',
-			tags: ['UI/UX', 'Figma', 'App Redesign', 'Prototype'],
-			url: 'https://www.figma.com/proto/5W70YBYxcJDsxG8pObmGhY/MY-TELKOMSEL?contentscaling=fixed&kind=proto&node-id=57-41&page-id=0%3A1&scaling=scale-down&starting-point-nodeid=12%3A5&t=gLPdTfj08hAqDv2e-1&viewport=680%2C42%2C0.64',
-			linkLabel: 'Open Figma',
+			id: 'putra-sunda-jaya',
+			role: 'Web Developer',
+			title: 'Putra Sunda Jaya',
+			description: 'Deskripsi menyusul.',
+			tags: ['Web App', 'Company Profile'],
+			image: imgPutraSundaJaya,
 			previewBg: 'bg-secondary'
 		},
 		{
-			id: 'website-budaya-kalbar',
-			role: 'UI/UX Designer',
-			title: 'Website Budaya Kalimantan Barat',
-			description:
-				'Membantu membuat konsep desain dan antarmuka website bertema Budaya Kalimantan menggunakan Figma, mulai dari wireframe hingga desain akhir yang responsif dan mudah digunakan.',
-			tags: ['UI/UX', 'Figma', 'Wireframe', 'Responsive'],
-			url: 'https://www.figma.com/design/FRsb9eq5lZh6ahM9tXyPtM/kalimantan?node-id=0-1&p=f',
-			linkLabel: 'Open Figma',
+			id: 'web-keuangan',
+			role: 'Web Developer',
+			title: 'Sistem Keuangan',
+			description: 'Deskripsi menyusul.',
+			tags: ['Web App', 'Finance'],
+			image: imgKeuangan,
+			previewBg: 'bg-accent'
+		},
+		{
+			id: 'web-kasir-custom',
+			role: 'Web Developer',
+			title: 'Kasir Custom',
+			description: 'Deskripsi menyusul.',
+			tags: ['Web App', 'POS', 'Kasir'],
+			image: imgKasirCostom,
+			previewBg: 'bg-neo-canvas'
+		},
+		{
+			id: 'web-undangan-organisasi',
+			role: 'Web Developer',
+			title: 'Undangan Organisasi',
+			description: 'Deskripsi menyusul.',
+			tags: ['Web App', 'Invitation'],
+			image: imgUndanganOrganisasi,
+			previewBg: 'bg-secondary'
+		},
+		{
+			id: 'web-buku-tamu',
+			role: 'Web Developer',
+			title: 'Buku Tamu Digital',
+			description: 'Deskripsi menyusul.',
+			tags: ['Web App', 'Guestbook'],
+			image: imgBukuTamu,
 			previewBg: 'bg-accent'
 		}
 	];
@@ -359,7 +372,7 @@
 	];
 
 	// Set nomor WhatsApp format internasional tanpa tanda '+' (contoh: '6281234567890')
-	const WHATSAPP_NUMBER = '';
+	const WHATSAPP_NUMBER = '6282111159144';
 	const WHATSAPP_MESSAGE = 'Halo Hisyam, saya tertarik untuk berdiskusi mengenai proyek.';
 	const whatsappHref = WHATSAPP_NUMBER
 		? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
@@ -375,68 +388,84 @@
 
 	const ACTIVITY_CAPTIONS: Record<string, { title: string; caption: string }> = {
 		'Menyampaikan sambutan kepada peserta sebagai Ketua Pelaksana Acara.jpeg': {
-			title: 'Sambutan Ketua Pelaksana',
+			title: 'Menyampaikan Sambutan sebagai Ketua Pelaksana',
 			caption: 'Menyampaikan sambutan kepada peserta sebagai Ketua Pelaksana Acara.'
 		},
 		'Event acara youth science and education fair.jpeg': {
-			title: 'Youth Science & Education Fair',
-			caption: 'Dokumentasi keikutsertaan pada ajang Youth Science and Education Fair.'
+			title: 'Event Acara Youth Science and Education Fair',
+			caption: 'Dokumentasi event acara Youth Science and Education Fair.'
 		},
 		'belajar bersama menggunakan arduino.jpeg': {
-			title: 'Belajar Arduino Bersama',
-			caption: 'Sesi praktik kolaborasi belajar elektronika dan pemrograman Arduino.'
+			title: 'Belajar Bersama Menggunakan Arduino',
+			caption: 'Dokumentasi kegiatan belajar bersama menggunakan Arduino.'
 		},
 		'bermain game bersama.jpeg': {
 			title: 'Bermain Game Bersama',
-			caption: 'Sesi interaktif memainkan game edukasi berbasis web bersama peserta.'
+			caption: 'Dokumentasi kegiatan bermain game bersama.'
 		},
 		'diskusi projek.jpeg': {
 			title: 'Diskusi Projek',
-			caption: 'Kolaborasi tim membahas perancangan fitur dan alur pengembangan aplikasi.'
+			caption: 'Dokumentasi kegiatan diskusi projek.'
+		},
+		'Dokumentasi Google Meet Saat Magang di PT Traspac.png': {
+			title: 'Dokumentasi Google Meet Saat Magang di PT Traspac',
+			caption: 'Dokumentasi Google Meet saat magang di PT Traspac.'
 		},
 		'foto bersama anggota DPRD.jpeg': {
 			title: 'Foto Bersama Anggota DPRD',
-			caption: 'Momen foto bersama anggota DPRD dalam kegiatan kunjungan edukasi.'
+			caption: 'Dokumentasi foto bersama anggota DPRD.'
 		},
 		'foto bersama.jpeg': {
 			title: 'Foto Bersama',
-			caption: 'Kebersamaan bersama peserta dan tim setelah rangkaian kegiatan.'
+			caption: 'Dokumentasi foto bersama.'
 		},
 		'foto di dalam gedung DPRD.jpeg': {
-			title: 'Kunjungan Gedung DPRD',
-			caption: 'Dokumentasi kegiatan di dalam Gedung DPRD.'
+			title: 'Foto di Dalam Gedung DPRD',
+			caption: 'Dokumentasi foto di dalam gedung DPRD.'
 		},
 		'foto panitia.jpeg': {
-			title: 'Tim Panitia',
-			caption: 'Kebersamaan panitia penyelenggara kegiatan kolaborasi.'
+			title: 'Foto Panitia',
+			caption: 'Dokumentasi foto panitia.'
 		},
 		'graduation less python.jpeg': {
-			title: 'Graduation Kelas Python',
-			caption: 'Kelulusan program pelatihan pemrograman Python.'
+			title: 'Graduation Les Python',
+			caption: 'Dokumentasi graduation les Python.'
 		},
 		'kegiatan belajar bersama KIR.jpeg': {
-			title: 'Belajar Bersama KIR',
-			caption: 'Kegiatan pembelajaran teknologi bersama ekstrakurikuler KIR.'
+			title: 'Kegiatan Belajar Bersama KIR',
+			caption: 'Dokumentasi kegiatan belajar bersama KIR.'
 		},
 		'mengenalkan cara jalannya sistem.jpeg': {
-			title: 'Demo Cara Kerja Sistem',
-			caption: 'Memperkenalkan alur dan cara kerja sistem kepada peserta.'
+			title: 'Mengenalkan Cara Jalannya Sistem',
+			caption: 'Dokumentasi kegiatan mengenalkan cara jalannya sistem.'
 		},
 		'pare kampung inggris.png': {
-			title: 'Kampung Inggris Pare',
-			caption: 'Dokumentasi program kursus Bahasa Inggris di Kampung Inggris Pare.'
+			title: 'Pare Kampung Inggris',
+			caption: 'Dokumentasi kegiatan di Pare Kampung Inggris.'
 		},
 		'presentasi projek uic press.jpeg': {
 			title: 'Presentasi Projek UIC Press',
-			caption: 'Pemaparan hasil pengembangan website UIC Press Universitas Ibnu Chaldun.'
+			caption: 'Dokumentasi presentasi projek UIC Press.'
 		},
 		'presentasi tentang robotik.jpeg': {
-			title: 'Presentasi Robotika',
-			caption: 'Pemaparan materi pengenalan robotika di hadapan peserta.'
+			title: 'Presentasi Tentang Robotik',
+			caption: 'Dokumentasi presentasi tentang robotik.'
+		},
+		'Presentasi kepada Dosen UIC Mengenai Pengembangan Sistem Pemesanan Buku.png': {
+			title: 'Presentasi kepada Dosen UIC Mengenai Pengembangan Sistem Pemesanan Buku',
+			caption: 'Presentasi kepada Dosen UIC mengenai pengembangan sistem pemesanan buku.'
+		},
+		'Presentasi kepada Klien Mengenai Website Company Profile.png': {
+			title: 'Presentasi kepada Klien Mengenai Website Company Profile',
+			caption: 'Presentasi kepada klien mengenai website company profile.'
+		},
+		'Presentasi Proyek E-Presensi Kelas Industri.png': {
+			title: 'Presentasi Proyek E-Presensi Kelas Industri',
+			caption: 'Dokumentasi presentasi proyek E-Presensi Kelas Industri.'
 		},
 		'testing game bersama.jpeg': {
 			title: 'Testing Game Bersama',
-			caption: 'Uji coba game edukatif berbasis HTML, CSS, dan JavaScript.'
+			caption: 'Dokumentasi kegiatan testing game bersama.'
 		}
 	};
 
@@ -468,12 +497,21 @@
 	let pageRootEl: HTMLDivElement | undefined = $state();
 	let projectCardWrapperEl: HTMLDivElement | undefined = $state();
 	let certDialogEl: HTMLDialogElement | undefined = $state();
+	let galleryDialogEl: HTMLDialogElement | undefined = $state();
+	let projectDialogEl: HTMLDialogElement | undefined = $state();
 	let activeSection = $state('');
 	let activeProjectIndex = $state(0);
 	let activeCertIndex = $state(0);
+	let activeGalleryIndex = $state(0);
+	let activeProjectModalIndex = $state(0);
 	let showAllProjects = $state(false);
+	const projectsWithImages = projects.filter((project): project is Project & { image: string } =>
+		Boolean(project.image)
+	);
 	const currentProject = $derived(projects[activeProjectIndex]);
 	const currentCert = $derived(certifications[activeCertIndex]);
+	const currentGallerySlide = $derived(polaroidSlides[activeGalleryIndex]);
+	const currentModalProject = $derived(projectsWithImages[activeProjectModalIndex]);
 
 	function openCertDialog(index: number) {
 		activeCertIndex = index;
@@ -498,8 +536,56 @@
 		}
 	}
 
-	$effect(() => {
-		const dialog = certDialogEl;
+	function openGalleryDialog(index: number) {
+		activeGalleryIndex = index;
+		galleryDialogEl?.showModal();
+	}
+
+	function closeGalleryDialog() {
+		galleryDialogEl?.close();
+	}
+
+	function prevGallerySlide() {
+		activeGalleryIndex = (activeGalleryIndex - 1 + polaroidSlides.length) % polaroidSlides.length;
+	}
+
+	function nextGallerySlide() {
+		activeGalleryIndex = (activeGalleryIndex + 1) % polaroidSlides.length;
+	}
+
+	function handleGalleryDialogClose() {
+		if (galleryDialogEl) {
+			galleryDialogEl.returnValue = '';
+		}
+	}
+
+	function openProjectDialog(projectId: string) {
+		const idx = projectsWithImages.findIndex((p) => p.id === projectId);
+		if (idx === -1) return;
+		activeProjectModalIndex = idx;
+		projectDialogEl?.showModal();
+	}
+
+	function closeProjectDialog() {
+		projectDialogEl?.close();
+	}
+
+	function prevProjectModal() {
+		activeProjectModalIndex =
+			(activeProjectModalIndex - 1 + projectsWithImages.length) % projectsWithImages.length;
+	}
+
+	function nextProjectModal() {
+		activeProjectModalIndex = (activeProjectModalIndex + 1) % projectsWithImages.length;
+	}
+
+	function handleProjectDialogClose() {
+		if (projectDialogEl) {
+			projectDialogEl.returnValue = '';
+		}
+	}
+
+	function attachDialogBackdropClose(dialog: HTMLDialogElement | undefined) {
 		if (!dialog || 'closedBy' in HTMLDialogElement.prototype) return;
 
 		const isOutside = (e: PointerEvent) => {
@@ -527,7 +613,11 @@
 			dialog.removeEventListener('pointerdown', onPointerDown);
 			dialog.removeEventListener('pointerup', onPointerUp);
 		};
-	});
+	}
+
+	$effect(() => attachDialogBackdropClose(certDialogEl));
+	$effect(() => attachDialogBackdropClose(galleryDialogEl));
+	$effect(() => attachDialogBackdropClose(projectDialogEl));
 
 	function formatProjectNumber(index: number): string {
 		return String(index + 1).padStart(2, '0');
@@ -918,7 +1008,7 @@
 </script>
 
 <svelte:head>
-	<title>PORTO.DEV — SvelteKit × Neobrutalism UI</title>
+	<title>Building digital solutions with</title>
 </svelte:head>
 
 <div id="top" bind:this={pageRootEl} class="flex min-h-screen w-full flex-col bg-background">
@@ -930,7 +1020,7 @@
 			<a href="#top" class="inline-flex items-center">
 				<Badge variant="lime" class="px-3 py-1.5 text-xs">
 					<Code2 class="size-4" />
-					PORTO.DEV
+					hszam__
 				</Badge>
 			</a>
 
@@ -942,7 +1032,7 @@
 					<a
 						href={`#${item.id}`}
 						class="underline-offset-4 transition-colors hover:underline {activeSection === item.id
-							? 'text-secondary underline decoration-2'
+							? 'text-[var(--retro-green-text)] underline decoration-[var(--retro-tangerine)] decoration-2'
 							: ''}"
 					>
 						{item.label}
@@ -974,7 +1064,7 @@
 			aria-hidden="true"
 			class="h-1 w-full overflow-hidden border-t-2 border-border bg-neo-surface-subtle motion-reduce:hidden"
 		>
-			<div data-scroll-progress class="h-full w-full origin-left scale-x-0 bg-secondary"></div>
+			<div data-scroll-progress class="h-full w-full origin-left scale-x-0 bg-primary"></div>
 		</div>
 	</header>
 
@@ -997,7 +1087,7 @@
 				>
 					<div
 						data-hero-sticker-inner
-						class="flex size-13 items-center justify-center rounded-xl border-2 border-neo-black bg-secondary text-neo-white shadow-neo"
+						class="flex size-13 items-center justify-center rounded-xl border-2 border-border bg-secondary text-secondary-foreground shadow-neo"
 					>
 						<svg viewBox="0 0 24 24" class="size-7 fill-current">
 							<path d={siSvelte.path} />
@@ -1005,7 +1095,7 @@
 					</div>
 				</div>
 
-				<!-- Floating Dev Sticker: Pink Circular Braces Stamp (Bottom-Left Open Space) -->
+				<!-- Floating Dev Sticker: Crimson Circular Braces Stamp (Bottom-Left Open Space) -->
 				<div
 					aria-hidden="true"
 					data-hero-sticker
@@ -1015,7 +1105,7 @@
 				>
 					<div
 						data-hero-sticker-inner
-						class="flex size-13 items-center justify-center rounded-full border-2 border-neo-black bg-accent text-neo-black shadow-neo"
+						class="flex size-13 items-center justify-center rounded-full border-2 border-border bg-accent text-accent-foreground shadow-neo"
 					>
 						<Braces class="size-6 stroke-[2.25]" />
 					</div>
@@ -1039,8 +1129,11 @@
 							data-hero-stagger
 							class="max-w-xl font-mono text-sm leading-relaxed text-muted-foreground sm:text-base"
 						>
-							Saya membangun aplikasi web yang cepat, skalabel, dan berkarakter dengan SvelteKit,
-							Tailwind CSS v4, dan komponen shadcn-svelte bergaya Neobrutalism.
+							Hisyam Sayyid Alzam, siswa SMK jurusan Rekayasa Perangkat Lunak yang berfokus pada
+							pengembangan website dan aplikasi. Berpengalaman sebagai Project Manager dan Developer
+							dalam proyek pengembangan sistem. Memiliki kemampuan teknis, kepemimpinan, koordinasi
+							tim, dan problem solving, serta berkomitmen untuk terus berkembang di bidang
+							teknologi.
 						</p>
 					</div>
 
@@ -1084,20 +1177,20 @@
 						<div data-hero-sticker-inner class="flex items-end gap-1">
 							<svg
 								viewBox="0 0 24 24"
-								class="mb-0.5 size-5 shrink-0 drop-shadow-[2px_2px_0px_#0d0d0d]"
+								class="mb-0.5 size-5 shrink-0 drop-shadow-[2px_2px_0px_var(--neo-shadow-color)]"
 							>
 								<polygon
 									points="3,3 21,10 13,13 10,21"
-									fill="var(--neo-lime)"
-									stroke="#0d0d0d"
+									fill="var(--primary)"
+									stroke="var(--neo-black)"
 									stroke-width="2.2"
 									stroke-linejoin="round"
 								/>
 							</svg>
 							<div
-								class="rounded-full border-2 border-neo-black bg-secondary px-4 py-1 font-display text-sm font-black tracking-tight text-neo-white shadow-neo sm:text-base"
+								class="rounded-full border-2 border-border bg-secondary px-4 py-1 font-display text-sm font-black tracking-tight text-secondary-foreground shadow-neo sm:text-base"
 							>
-								Hisyam
+								hszamm
 							</div>
 						</div>
 					</div>
@@ -1112,11 +1205,11 @@
 					>
 						<div
 							data-hero-sticker-inner
-							class="relative flex size-12 items-center justify-center rounded-xl border-2 border-neo-black bg-primary text-neo-black shadow-neo sm:size-13"
+							class="relative flex size-12 items-center justify-center rounded-xl border-2 border-border bg-primary text-primary-foreground shadow-neo sm:size-13"
 						>
 							<Terminal class="size-6 stroke-[2.25]" />
 							<span
-								class="absolute -bottom-1.5 left-3 size-3 rotate-45 border-r-2 border-b-2 border-neo-black bg-primary"
+								class="absolute -bottom-1.5 left-3 size-3 rotate-45 border-r-2 border-b-2 border-border bg-primary"
 							></span>
 						</div>
 					</div>
@@ -1131,7 +1224,7 @@
 					>
 						<div
 							data-hero-sticker-inner
-							class="flex size-12 items-center justify-center rounded-full border-2 border-neo-black bg-neo-surface text-neo-black shadow-neo sm:size-13"
+							class="flex size-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground shadow-neo sm:size-13"
 						>
 							<GitBranch class="size-6 stroke-[2.25]" />
 						</div>
@@ -1139,16 +1232,16 @@
 
 					<div
 						data-hero-lanyard
-						class="relative h-[400px] w-full min-w-0 overflow-hidden border-2 border-border bg-accent shadow-neo-lg sm:h-[450px] lg:h-[480px]"
+						class="relative h-[400px] w-full min-w-0 overflow-hidden border-2 border-border bg-secondary shadow-neo-lg sm:h-[450px] lg:h-[480px]"
 					>
 						<div class="absolute inset-0 h-full w-full overflow-hidden">
 							<Lanyard
 								frontImage={lanyardFront}
 								backImage={lanyardBack}
-								cardColor="#ffffff"
-								strapColor="#0d0d0d"
+								cardColor="#e9e8ca"
+								strapColor="#0f2116"
 								finish="glossy"
-								metal="silver"
+								metal="gold"
 								cornerRadius={0.08}
 								size={0.56}
 								strapLength={0.38}
@@ -1338,16 +1431,18 @@
 										<Button variant="outline" size="sm" onclick={() => selectProject(i)}>
 											Preview
 										</Button>
-										<Button
-											href={project.url}
-											target="_blank"
-											rel="noopener noreferrer"
-											variant="secondary"
-											size="sm"
-										>
-											{project.linkLabel}
-											<ArrowUpRight class="size-3.5" />
-										</Button>
+										{#if project.url}
+											<Button
+												href={project.url}
+												target="_blank"
+												rel="noopener noreferrer"
+												variant="secondary"
+												size="sm"
+											>
+												{project.linkLabel ?? 'View Project'}
+												<ArrowUpRight class="size-3.5" />
+											</Button>
+										{/if}
 									</div>
 								</div>
 							{/each}
@@ -1360,11 +1455,18 @@
 										class="neo-grid-bg relative flex h-52 items-center justify-center overflow-hidden border-2 border-border sm:h-64"
 									>
 										{#if currentProject.image}
-											<img
-												src={currentProject.image}
-												alt={currentProject.title}
-												class="h-full w-full object-cover"
-											/>
+											<button
+												type="button"
+												onclick={() => openProjectDialog(currentProject.id)}
+												aria-label={`Lihat preview penuh ${currentProject.title}`}
+												class="group relative h-full w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+											>
+												<img
+													src={currentProject.image}
+													alt={currentProject.title}
+													class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+												/>
+											</button>
 										{:else}
 											<div class="flex max-w-md flex-col items-center gap-3 p-6 text-center">
 												<div class="flex flex-wrap items-center justify-center gap-2">
@@ -1409,16 +1511,18 @@
 								</Card.Content>
 
 								<Card.Footer class="flex flex-wrap items-center justify-between gap-3">
-									<Button
-										href={currentProject.url}
-										target="_blank"
-										rel="noopener noreferrer"
-										variant="outline"
-										size="sm"
-									>
-										{currentProject.linkLabel}
-										<ArrowUpRight class="size-3.5" />
-									</Button>
+									{#if currentProject.url}
+										<Button
+											href={currentProject.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											variant="outline"
+											size="sm"
+										>
+											{currentProject.linkLabel ?? 'View Project'}
+											<ArrowUpRight class="size-3.5" />
+										</Button>
+									{/if}
 								</Card.Footer>
 							</Card.Root>
 						</div>
@@ -1441,11 +1545,11 @@
 					{/if}
 				</div>
 
-				<!-- Right: Certifications Lime Panel -->
+				<!-- Right: Certifications Tangerine Grid Panel -->
 				<aside
 					id="certifications"
 					data-certs-aside
-					class="flex flex-col justify-between gap-5 border-2 border-border bg-primary p-6 text-primary-foreground shadow-neo sm:p-8 lg:col-span-4"
+					class="neo-grid-accent-bg flex flex-col justify-between gap-5 border-2 border-border p-6 text-primary-foreground shadow-neo sm:p-8 lg:col-span-4"
 				>
 					<div class="flex items-center justify-between gap-2">
 						<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
@@ -1508,10 +1612,10 @@
 				<div
 					class="flex flex-col overflow-hidden border-2 border-border bg-card shadow-neo sm:flex-row lg:col-span-8"
 				>
-					<!-- Pink EXPERIENCE Sidebar -->
+					<!-- Tangerine EXPERIENCE Sidebar -->
 					<div
 						data-exp-sidebar
-						class="flex shrink-0 flex-col justify-center gap-2 border-b-2 border-border bg-accent px-6 py-5 text-neo-black sm:w-44 sm:border-r-2 sm:border-b-0 sm:px-7 sm:py-8 md:w-48"
+						class="neo-grid-accent-bg flex shrink-0 flex-col justify-center gap-2 border-b-2 border-border px-6 py-5 text-accent-foreground sm:w-44 sm:border-r-2 sm:border-b-0 sm:px-7 sm:py-8 md:w-48"
 					>
 						<h2 class="font-display text-xl font-black tracking-tight uppercase sm:text-2xl">
 							Experience
@@ -1519,7 +1623,7 @@
 						<ArrowRight class="size-5" aria-hidden="true" />
 					</div>
 
-					<!-- White Timeline & View Full Resume CTA -->
+					<!-- Timeline & View Full Resume CTA -->
 					<div class="flex flex-1 flex-col justify-between p-6 sm:p-8 lg:p-10">
 						<div class="relative">
 							<div
@@ -1536,7 +1640,7 @@
 											class="absolute top-1.5 -left-8 size-3 rounded-full bg-foreground"
 										></span>
 										<h3
-											class="font-display text-sm font-black tracking-wide text-secondary uppercase sm:text-base"
+											class="font-display text-sm font-black tracking-wide text-[var(--retro-green-text)] uppercase sm:text-base"
 										>
 											{group.category}
 										</h3>
@@ -1578,7 +1682,7 @@
 								href="#contact"
 								variant="outline"
 								size="lg"
-								class="border-border bg-card text-secondary shadow-neo hover:bg-neo-surface-subtle"
+								class="border-border bg-card text-[var(--retro-green-text)] shadow-neo hover:bg-neo-surface-subtle"
 							>
 								View Full Resume
 								<ArrowRight class="size-4" />
@@ -1587,11 +1691,11 @@
 					</div>
 				</div>
 
-				<!-- Right: Violet Grid Call To Action Card -->
+				<!-- Right: Retro Green Grid Call To Action Card -->
 				<aside
 					id="contact"
 					data-cta-card
-					class="neo-grid-violet-bg relative flex min-h-80 flex-col justify-center overflow-hidden border-2 border-border p-8 text-neo-white shadow-neo sm:p-10 lg:col-span-4"
+					class="neo-grid-violet-bg relative flex min-h-80 flex-col justify-center overflow-hidden border-2 border-border p-8 text-secondary-foreground shadow-neo sm:p-10 lg:col-span-4"
 				>
 					<div class="relative z-10 max-w-xs space-y-6">
 						<h2
@@ -1607,7 +1711,7 @@
 								rel={WHATSAPP_NUMBER ? 'noopener noreferrer' : undefined}
 								variant="outline"
 								size="lg"
-								class="border-neo-black bg-neo-surface text-neo-black shadow-neo hover:bg-neo-surface-subtle"
+								class="border-neo-black bg-neo-white text-neo-black shadow-neo hover:bg-neo-surface-subtle hover:text-foreground"
 							>
 								Get In Touch
 								<ArrowRight class="size-4" />
@@ -1615,7 +1719,7 @@
 						</div>
 					</div>
 
-					<!-- Bottom-Right Pink Starburst Accent -->
+					<!-- Bottom-Right Tangerine Starburst Accent -->
 					<svg
 						viewBox="0 0 120 120"
 						aria-hidden="true"
@@ -1624,8 +1728,8 @@
 					>
 						<polygon
 							points="114,60 94.8,69.3 106.8,87 85.5,85.5 87,106.8 69.3,94.8 60,114 50.7,94.8 33,106.8 34.5,85.5 13.2,87 25.2,69.3 6,60 25.2,50.7 13.2,33 34.5,34.5 33,13.2 50.7,25.2 60,6 69.3,25.2 87,13.2 85.5,34.5 106.8,33 94.8,50.7"
-							fill="#ff6e9f"
-							stroke="#0d0d0d"
+							fill="#fe7a25"
+							stroke="#0f2116"
 							stroke-width="4"
 							stroke-linejoin="miter"
 						/>
@@ -1648,13 +1752,14 @@
 
 				<div
 					data-gallery-stage
-					class="overflow-hidden border-2 border-border bg-neo-surface-subtle shadow-neo"
+					class="overflow-hidden border-2 border-border bg-background shadow-neo"
 				>
 					<PolaroidLineCarousel
 						slides={polaroidSlides}
 						height="520px"
 						cardWidth={250}
 						sag={42}
+						onSelect={openGalleryDialog}
 						ariaLabel="Polaroid photography gallery"
 					/>
 				</div>
@@ -1670,17 +1775,64 @@
 		>
 			<Badge variant="lime">
 				<Code2 class="size-3" />
-				PORTO.DEV
+				hszamm__
 			</Badge>
 			<p class="font-mono text-xs text-muted-foreground">
-				Neobrutalism Portfolio UI — SvelteKit &amp; shadcn-svelte
+				@hszam__ Building digital solutions with purpose.
 			</p>
 			<div class="flex items-center gap-2">
-				<Button variant="outline" size="icon-sm" aria-label="Terminal">
-					<Terminal class="size-3.5" />
+				<Button
+					href="mailto:hisyamsayyidalzam10@gmail.com"
+					variant="outline"
+					size="icon-sm"
+					aria-label="Email hisyamsayyidalzam10@gmail.com"
+					title="hisyamsayyidalzam10@gmail.com"
+				>
+					<Icon icon="mdi:email-outline" class="size-4" aria-hidden="true" />
 				</Button>
-				<Button variant="outline" size="icon-sm" aria-label="Email">
-					<Mail class="size-3.5" />
+				<Button
+					href={whatsappHref}
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="outline"
+					size="icon-sm"
+					aria-label="Chat WhatsApp 0821-11159144"
+					title="WhatsApp 0821-11159144"
+				>
+					<Icon icon="mdi:phone-outline" class="size-4" aria-hidden="true" />
+				</Button>
+				<Button
+					href="https://www.instagram.com/hszamm__/"
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="outline"
+					size="icon-sm"
+					aria-label="Instagram @hszamm__"
+					title="Instagram @hszamm__"
+				>
+					<Icon icon="mdi:instagram" class="size-4" aria-hidden="true" />
+				</Button>
+				<Button
+					href="https://github.com/hsymm10"
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="outline"
+					size="icon-sm"
+					aria-label="GitHub hsymm10"
+					title="GitHub hsymm10"
+				>
+					<Icon icon="mdi:github" class="size-4" aria-hidden="true" />
+				</Button>
+				<Button
+					href="https://gitlab.com/hszamm"
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="outline"
+					size="icon-sm"
+					aria-label="GitLab Hisyam Sayyid Alzam (@hszamm)"
+					title="GitLab @hszamm"
+				>
+					<Icon icon="mdi:gitlab" class="size-4" aria-hidden="true" />
 				</Button>
 			</div>
 		</div>
@@ -1741,7 +1893,7 @@
 			<img
 				src={currentCert.image}
 				alt={currentCert.title}
-				class="max-h-[58svh] w-auto border-2 border-border bg-neo-white object-contain shadow-neo"
+				class="block h-auto max-h-[58svh] w-auto max-w-full border-2 border-border bg-neo-white object-contain shadow-neo"
 			/>
 		</div>
 
@@ -1764,6 +1916,187 @@
 			{/each}
 		</div>
 	</div>
+</dialog>
+
+<!-- Native Modal Dialog for Full Field Notes Photo Preview -->
+<dialog
+	bind:this={galleryDialogEl}
+	closedby="any"
+	aria-labelledby="gallery-dialog-title"
+	onclose={handleGalleryDialogClose}
+	onkeydown={(e) => {
+		if (e.key === 'ArrowLeft') prevGallerySlide();
+		else if (e.key === 'ArrowRight') nextGallerySlide();
+	}}
+	class="m-auto max-h-[92svh] w-[calc(100vw-2rem)] max-w-6xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg"
+>
+	{#if currentGallerySlide}
+		<div class="flex flex-col">
+			<div
+				class="flex items-center justify-between gap-4 border-b-2 border-border bg-primary px-5 py-3.5 text-primary-foreground"
+			>
+				<div class="min-w-0">
+					<h2
+						id="gallery-dialog-title"
+						class="truncate font-display text-base font-black uppercase sm:text-lg"
+					>
+						{currentGallerySlide.title}
+					</h2>
+					<p class="truncate font-mono text-xs font-semibold opacity-85">
+						{currentGallerySlide.caption} &bull; {activeGalleryIndex + 1} / {polaroidSlides.length}
+					</p>
+				</div>
+
+				<div class="flex shrink-0 items-center gap-2">
+					<Button
+						variant="outline"
+						size="icon-sm"
+						onclick={prevGallerySlide}
+						aria-label="Previous photo"
+					>
+						<ChevronLeft class="size-4" />
+					</Button>
+					<Button
+						variant="outline"
+						size="icon-sm"
+						onclick={nextGallerySlide}
+						aria-label="Next photo"
+					>
+						<ChevronRight class="size-4" />
+					</Button>
+					<Button
+						variant="secondary"
+						size="icon-sm"
+						autofocus
+						onclick={closeGalleryDialog}
+						aria-label="Close photo preview"
+					>
+						<X class="size-4" />
+					</Button>
+				</div>
+			</div>
+
+			<div
+				class="neo-grid-bg flex max-h-[70svh] items-center justify-center overflow-hidden p-3 sm:p-5"
+			>
+				<img
+					src={currentGallerySlide.image}
+					alt={currentGallerySlide.alt || currentGallerySlide.title}
+					class="block h-auto max-h-[64svh] w-auto max-w-full border-2 border-border bg-neo-white object-contain shadow-neo"
+				/>
+			</div>
+
+			<div
+				class="flex items-center gap-2.5 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-5 py-3"
+			>
+				{#each polaroidSlides as slide, i (slide.image ?? i)}
+					<button
+						type="button"
+						onclick={() => (activeGalleryIndex = i)}
+						aria-label={`Select ${slide.title}`}
+						aria-current={activeGalleryIndex === i ? 'true' : undefined}
+						class="h-12 w-16 shrink-0 overflow-hidden border-2 transition-transform {activeGalleryIndex ===
+						i
+							? '-translate-y-0.5 border-border ring-2 ring-secondary'
+							: 'border-border/50 opacity-75 hover:opacity-100'}"
+					>
+						<img src={slide.image} alt="" class="h-full w-full object-cover" />
+					</button>
+				{/each}
+			</div>
+		</div>
+	{/if}
+</dialog>
+
+<!-- Native Modal Dialog for Full Featured Project Preview -->
+<dialog
+	bind:this={projectDialogEl}
+	closedby="any"
+	aria-labelledby="project-dialog-title"
+	onclose={handleProjectDialogClose}
+	onkeydown={(e) => {
+		if (e.key === 'ArrowLeft') prevProjectModal();
+		else if (e.key === 'ArrowRight') nextProjectModal();
+	}}
+	class="m-auto max-h-[90svh] w-[calc(100vw-2rem)] max-w-5xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg"
+>
+	{#if currentModalProject}
+		<div class="flex flex-col">
+			<div
+				class="flex items-center justify-between gap-4 border-b-2 border-border bg-primary px-5 py-3.5 text-primary-foreground"
+			>
+				<div class="min-w-0">
+					<h2
+						id="project-dialog-title"
+						class="truncate font-display text-base font-black uppercase sm:text-lg"
+					>
+						{currentModalProject.title}
+					</h2>
+					<p class="truncate font-mono text-xs font-semibold opacity-80">
+						{currentModalProject.role} &bull; {activeProjectModalIndex + 1} /
+						{projectsWithImages.length}
+					</p>
+				</div>
+
+				<div class="flex shrink-0 items-center gap-2">
+					<Button
+						variant="outline"
+						size="icon-sm"
+						onclick={prevProjectModal}
+						aria-label="Previous project preview"
+					>
+						<ChevronLeft class="size-4" />
+					</Button>
+					<Button
+						variant="outline"
+						size="icon-sm"
+						onclick={nextProjectModal}
+						aria-label="Next project preview"
+					>
+						<ChevronRight class="size-4" />
+					</Button>
+					<Button
+						variant="secondary"
+						size="icon-sm"
+						autofocus
+						onclick={closeProjectDialog}
+						aria-label="Close project preview"
+					>
+						<X class="size-4" />
+					</Button>
+				</div>
+			</div>
+
+			<div
+				class="neo-grid-bg flex max-h-[65svh] items-center justify-center overflow-hidden p-4 sm:p-6"
+			>
+				<img
+					src={currentModalProject.image}
+					alt={currentModalProject.title}
+					class="block h-auto max-h-[58svh] w-auto max-w-full border-2 border-border bg-neo-white object-contain shadow-neo"
+				/>
+			</div>
+
+			<div
+				class="flex items-center gap-2.5 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-5 py-3"
+			>
+				{#each projectsWithImages as proj, i (proj.id)}
+					<button
+						type="button"
+						onclick={() => (activeProjectModalIndex = i)}
+						aria-label={`Select ${proj.title}`}
+						aria-current={activeProjectModalIndex === i ? 'true' : undefined}
+						class="h-12 w-18 shrink-0 overflow-hidden border-2 transition-transform {activeProjectModalIndex ===
+						i
+							? '-translate-y-0.5 border-border ring-2 ring-secondary'
+							: 'border-border/50 opacity-75 hover:opacity-100'}"
+					>
+						<img src={proj.image} alt="" class="h-full w-full object-cover" />
+					</button>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </dialog>
 
 <style>
