@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Badge } from '#lib/components/ui/badge/index.js';
+	import { gsap, REDUCED_MOTION_QUERY, registerGsap, ScrollTrigger } from '#lib/gsap.js';
 	import { getLenisInstance } from '#lib/lenis.js';
 	import { Activity, Check, Eye, Layers, Pause, Play, Zap } from '@lucide/svelte';
 	import { cubicOut } from 'svelte/easing';
@@ -77,6 +78,7 @@
 	const TOKEN_SPACES = [40, 70, 110, 150];
 
 	let sectionEl: HTMLElement | undefined = $state();
+	let canvasEl: HTMLElement | undefined = $state();
 	let active = $state(0);
 	let scrollProgress = $state(0);
 	let supportsScrollTimeline = $state(false);
@@ -112,6 +114,9 @@
 	}
 
 	$effect(() => {
+		if (!sectionEl) return;
+		registerGsap();
+
 		const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 		reducedMotion = motionQuery.matches;
 		const handleMotionChange = (event: MediaQueryListEvent) => {
@@ -123,38 +128,156 @@
 			'(animation-timeline: scroll()) and (animation-range: 0% 100%)'
 		);
 
-		let rafId = 0;
-		const updateScroll = () => {
-			rafId = 0;
-			if (!sectionEl) return;
-			const rect = sectionEl.getBoundingClientRect();
-			const maxScroll = Math.max(1, rect.height - window.innerHeight);
-			const nextProgress = Math.min(1, Math.max(0, -rect.top / maxScroll));
-			scrollProgress = nextProgress;
-			const nextActive = Math.min(
-				PRINCIPLES.length - 1,
-				Math.max(0, Math.floor(nextProgress * PRINCIPLES.length))
+		const ctx = gsap.context(() => {
+			ScrollTrigger.create({
+				trigger: sectionEl,
+				start: 'top top',
+				end: 'bottom bottom',
+				onUpdate: (self) => {
+					scrollProgress = self.progress;
+					const nextActive = Math.min(
+						PRINCIPLES.length - 1,
+						Math.max(0, Math.floor(self.progress * PRINCIPLES.length))
+					);
+					if (nextActive !== active) {
+						active = nextActive;
+					}
+				}
+			});
+		}, sectionEl);
+
+		const mm = gsap.matchMedia(sectionEl);
+		mm.add(REDUCED_MOTION_QUERY, () => {
+			const tl = gsap.timeline({
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 80%',
+					once: true
+				}
+			});
+
+			tl.from('[data-craft-header]', {
+				y: 22,
+				opacity: 0,
+				duration: 0.55,
+				ease: 'power3.out',
+				clearProps: 'transform'
+			}).from(
+				'[data-craft-window]',
+				{
+					y: 34,
+					scale: 0.97,
+					opacity: 0,
+					duration: 0.65,
+					ease: 'power3.out',
+					clearProps: 'transform'
+				},
+				'-=0.32'
 			);
-			if (nextActive !== active) {
-				active = nextActive;
-			}
-		};
 
-		const onScrollOrResize = () => {
-			if (rafId !== 0) return;
-			rafId = window.requestAnimationFrame(updateScroll);
-		};
-
-		updateScroll();
-		window.addEventListener('scroll', onScrollOrResize, { passive: true });
-		window.addEventListener('resize', onScrollOrResize, { passive: true });
+			gsap.to('[data-craft-hint]', {
+				x: -14,
+				ease: 'none',
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top bottom',
+					end: 'bottom top',
+					scrub: true
+				}
+			});
+		});
 
 		return () => {
 			motionQuery.removeEventListener('change', handleMotionChange);
-			window.removeEventListener('scroll', onScrollOrResize);
-			window.removeEventListener('resize', onScrollOrResize);
-			if (rafId !== 0) window.cancelAnimationFrame(rafId);
+			mm.revert();
+			ctx.revert();
 		};
+	});
+
+	$effect(() => {
+		const currentActive = active;
+		const container = canvasEl;
+		if (reducedMotion || !container || currentActive < 0) return;
+
+		registerGsap();
+		const ctx = gsap.context(() => {
+			const scoreEl = container.querySelector('[data-craft-score]');
+			if (scoreEl) {
+				const counter = { value: 0 };
+				gsap.to(counter, {
+					value: 98,
+					duration: 0.9,
+					ease: 'power3.out',
+					onUpdate: () => {
+						scoreEl.textContent = String(Math.round(counter.value));
+					}
+				});
+			}
+
+			const perfRows = container.querySelectorAll('[data-craft-perf-row]');
+			if (perfRows.length) {
+				gsap.from(perfRows, {
+					x: 18,
+					opacity: 0,
+					duration: 0.4,
+					stagger: 0.08,
+					ease: 'power2.out',
+					clearProps: 'transform'
+				});
+			}
+
+			const a11yItems = container.querySelectorAll('[data-craft-a11y-item]');
+			if (a11yItems.length) {
+				gsap.from(a11yItems, {
+					x: -18,
+					opacity: 0,
+					duration: 0.38,
+					stagger: 0.08,
+					ease: 'power2.out',
+					clearProps: 'transform'
+				});
+			}
+
+			const motionMeta = container.querySelector('[data-craft-motion-meta]');
+			if (motionMeta) {
+				gsap.from(motionMeta, {
+					y: 12,
+					opacity: 0,
+					duration: 0.42,
+					delay: 0.15,
+					ease: 'power2.out',
+					clearProps: 'transform'
+				});
+			}
+
+			const swatches = container.querySelectorAll('[data-craft-swatch]');
+			if (swatches.length) {
+				gsap.from(swatches, {
+					scale: 0.72,
+					y: 12,
+					opacity: 0,
+					duration: 0.42,
+					stagger: 0.05,
+					ease: 'back.out(1.6)',
+					clearProps: 'transform'
+				});
+			}
+
+			const tokenRows = container.querySelectorAll('[data-craft-token-row]');
+			if (tokenRows.length) {
+				gsap.from(tokenRows, {
+					x: -14,
+					opacity: 0,
+					duration: 0.36,
+					stagger: 0.07,
+					delay: 0.12,
+					ease: 'power2.out',
+					clearProps: 'transform'
+				});
+			}
+		}, container);
+
+		return () => ctx.revert();
 	});
 </script>
 
@@ -165,15 +288,18 @@
 >
 	<div class="sticky top-16 flex min-h-[calc(100svh-4rem)] items-center py-8 sm:py-12">
 		<div class="mx-auto w-full max-w-7xl px-6 sm:px-8">
-			<div class="mb-5 flex flex-wrap items-center justify-between gap-4">
+			<div data-craft-header class="mb-5 flex flex-wrap items-center justify-between gap-4">
 				<Badge variant="lime">How I Build &bull; The Craft</Badge>
-				<span class="font-mono text-xs font-bold text-muted-foreground uppercase">
+				<span data-craft-hint class="font-mono text-xs font-bold text-muted-foreground uppercase">
 					keep scrolling to flip stories &darr;
 				</span>
 			</div>
 
 			<!-- Storybook Window (full max-w-7xl width + shadow-neo matching all sections) -->
-			<div class="w-full overflow-hidden border-2 border-border bg-card shadow-neo">
+			<div
+				data-craft-window
+				class="w-full overflow-hidden border-2 border-border bg-card shadow-neo"
+			>
 				<!-- Toolbar -->
 				<div
 					class="flex items-center gap-3 border-b-2 border-border bg-neo-surface-subtle px-5 py-3.5 sm:px-6"
@@ -254,6 +380,7 @@
 					<div class="min-w-0">
 						<!-- Story Canvas -->
 						<div
+							bind:this={canvasEl}
 							class="neo-grid-bg grid min-h-[280px] items-center justify-items-center p-6 sm:min-h-[340px] sm:p-10 [&>*]:col-start-1 [&>*]:row-start-1"
 						>
 							{#key active}
@@ -289,6 +416,7 @@
 												</svg>
 												<div class="absolute inset-0 flex flex-col items-center justify-center">
 													<span
+														data-craft-score
 														class="font-display text-4xl leading-none font-black text-foreground"
 													>
 														98
@@ -303,6 +431,7 @@
 											<div class="min-w-[140px] flex-1 space-y-2.5">
 												{#each PERF_METRICS as metric (metric.label)}
 													<div
+														data-craft-perf-row
 														class="flex items-center justify-between border-b-2 border-border pb-1"
 													>
 														<span class="font-mono text-xs font-bold text-muted-foreground">
@@ -318,11 +447,8 @@
 									{:else if activePrinciple.visual === 'a11y'}
 										<!-- 02 Accessibility Checklist -->
 										<ul class="w-full max-w-sm space-y-3">
-											{#each A11Y_ITEMS as label, idx (label)}
-												<li
-													class="craft-stagger-item flex items-center gap-3"
-													style:--delay={`${idx * 90}ms`}
-												>
+											{#each A11Y_ITEMS as label (label)}
+												<li data-craft-a11y-item class="flex items-center gap-3">
 													<span
 														class="flex size-7 shrink-0 items-center justify-center border-2 border-border bg-secondary text-secondary-foreground shadow-neo-sm"
 													>
@@ -348,7 +474,10 @@
 													></span>
 												{/each}
 											</div>
-											<div class="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+											<div
+												data-craft-motion-meta
+												class="mt-6 flex flex-wrap items-center justify-center gap-2.5"
+											>
 												<span class="font-mono text-xs font-bold text-muted-foreground uppercase">
 													easing
 												</span>
@@ -377,6 +506,7 @@
 											<div class="flex gap-2">
 												{#each TOKEN_SWATCHES as swatchColor (swatchColor)}
 													<span
+														data-craft-swatch
 														aria-hidden="true"
 														class="h-9 flex-1 border-2 border-border shadow-neo-sm"
 														style:background-color={swatchColor}
@@ -385,7 +515,7 @@
 											</div>
 											<div class="mt-5 space-y-2.5">
 												{#each TOKEN_SPACES as widthPx, idx (widthPx)}
-													<div class="flex items-center gap-3">
+													<div data-craft-token-row class="flex items-center gap-3">
 														<span
 															class="craft-token-bar h-3 origin-left border-2 border-border bg-primary"
 															style:width={`${widthPx}px`}
@@ -485,22 +615,6 @@
 			stroke-dasharray: 327;
 			stroke-dashoffset: 6.5;
 			animation: craft-ring-draw 950ms cubic-bezier(0.22, 1, 0.36, 1) both;
-		}
-
-		@keyframes craft-slide-in {
-			from {
-				opacity: 0;
-				transform: translateX(-14px);
-			}
-			to {
-				opacity: 1;
-				transform: translateX(0);
-			}
-		}
-
-		.craft-stagger-item {
-			animation: craft-slide-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
-			animation-delay: var(--delay, 0ms);
 		}
 
 		@keyframes craft-bar-grow {

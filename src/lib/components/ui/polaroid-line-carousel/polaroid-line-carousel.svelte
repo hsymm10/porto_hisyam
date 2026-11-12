@@ -281,6 +281,7 @@
 </script>
 
 <script lang="ts">
+	import { gsap, REDUCED_MOTION_QUERY, registerGsap, ScrollTrigger } from '#lib/gsap.js';
 	import { cn } from '#lib/utils.js';
 	import { untrack } from 'svelte';
 
@@ -513,6 +514,75 @@
 			window.cancelAnimationFrame(raf);
 			io.disconnect();
 		};
+	});
+
+	// GSAP ScrollTrigger entrance & scroll-velocity physical breeze on the Polaroid line
+	$effect(() => {
+		const root = rootEl;
+		if (!root) return;
+		registerGsap();
+
+		const mm = gsap.matchMedia(root);
+		mm.add(REDUCED_MOTION_QUERY, () => {
+			const tl = gsap.timeline({
+				scrollTrigger: {
+					trigger: root,
+					start: 'top 82%',
+					once: true,
+					onEnter: () => {
+						for (let i = 0; i < n; i++) {
+							sim.w[i] = (i % 2 === 0 ? 1 : -1) * 1.45;
+						}
+					}
+				}
+			});
+
+			tl.from('.pl-string', {
+				y: -14,
+				opacity: 0,
+				duration: 0.5,
+				ease: 'power2.out',
+				clearProps: 'transform'
+			})
+				.from(
+					'.pl-stage',
+					{
+						y: 20,
+						opacity: 0,
+						duration: 0.55,
+						ease: 'power3.out',
+						clearProps: 'transform'
+					},
+					'-=0.35'
+				)
+				.from(
+					'.pl-bar',
+					{
+						y: 22,
+						opacity: 0,
+						duration: 0.5,
+						ease: 'back.out(1.4)',
+						clearProps: 'transform'
+					},
+					'-=0.3'
+				);
+
+			ScrollTrigger.create({
+				trigger: root,
+				start: 'top bottom',
+				end: 'bottom top',
+				onUpdate: (self) => {
+					if (dragState || reducedMotion) return;
+					const impulse = Math.max(-0.35, Math.min(0.35, self.getVelocity() * 0.00014));
+					if (Math.abs(impulse) < 0.02) return;
+					for (let i = 0; i < n; i++) {
+						sim.w[i] = (sim.w[i] || 0) + impulse * (i % 2 === 0 ? 1 : 0.7) * 0.15;
+					}
+				}
+			});
+		});
+
+		return () => mm.revert();
 	});
 
 	// Autoplay timer (skipped when reducedMotion or hovered/focused or during pointer interaction)
