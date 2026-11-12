@@ -1,0 +1,336 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   NEOBRUTALISM DESIGN TOKENS
+   Inspired by the Neo-Pop Bento Portfolio aesthetic:
+   - Canvas & Surfaces: Light Gray Frame (#ECECEC), Pure White (#FFFFFF)
+   - Accents: Acid Lime (#AEE82A), Electric Violet (#7542FF), Bubblegum Pink (#FF6E9F)
+   - Structural: Crisp 2px-3px #0D0D0D Borders, Zero Radius, Hard Offset Shadows
+   ========================================================================== */
+
+:root {
+	/* Tier 1: Literal Palette Tokens */
+	--neo-black: #0d0d0d;
+	--neo-white: #ffffff;
+	--neo-canvas: #ececec;
+	--neo-surface: #ffffff;
+	--neo-surface-subtle: #f5f5f5;
+	--neo-surface-muted: #d9d9d9;
+	--neo-ink: #0d0d0d;
+	--neo-ink-muted: #3f3f46;
+
+	/* Brand / Neo-Pop Accent Colors */
+	--neo-lime: #aee82a;
+	--neo-lime-hover: #9ed91a;
+	--neo-violet: #7542ff;
+	--neo-violet-hover: #632ef5;
+	--neo-pink: #ff6e9f;
+	--neo-pink-hover: #fc568e;
+	--neo-amber: #f97316;
+	--neo-sky: #60a5fa;
+
+	/* Tier 1: Geometry, Borders & Hard Shadows */
+	--neo-border-width: 2px;
+	--neo-border-width-thick: 3px;
+	--neo-border-color: var(--neo-black);
+	--neo-radius: 0px;
+
+	--neo-shadow-sm: 2px 2px 0px 0px var(--neo-black);
+	--neo-shadow: 4px 4px 0px 0px var(--neo-black);
+	--neo-shadow-md: 6px 6px 0px 0px var(--neo-black);
+	--neo-shadow-lg: 8px 8px 0px 0px var(--neo-black);
+	--neo-shadow-lime: 6px 6px 0px 0px var(--neo-lime);
+	--neo-shadow-pink: 6px 6px 0px 0px var(--neo-pink);
+	--neo-shadow-violet: 6px 6px 0px 0px var(--neo-violet);
+
+	/* Tier 1: Grid Pattern Tokens */
+	--neo-grid-size: 24px;
+	--neo-grid-line: rgb(13 13 13 / 0.08);
+	--neo-grid-line-on-violet: rgb(255 255 255 / 0.16);
+
+	/* Tier 2: Semantic shadcn-svelte Tokens */
+	--radius: var(--neo-radius);
+	--background: var(--neo-canvas);
+	--foreground: var(--neo-ink);
+	--card: var(--neo-surface);
+	--card-foreground: var(--neo-ink);
+	--popover: var(--neo-surface);
+	--popover-foreground: var(--neo-ink);
+	--primary: var(--neo-lime);
+	--primary-foreground: var(--neo-black);
+	--secondary: var(--neo-violet);
+	--secondary-foreground: var(--neo-white);
+	--accent: var(--neo-pink);
+	--accent-foreground: var(--neo-black);
+	--muted: var(--neo-surface-muted);
+	--muted-foreground: var(--neo-ink-muted);
+	--destructive: #ef4444;
+	--destructive-foreground: var(--neo-white);
+	--border: var(--neo-black);
+	--input: var(--neo-black);
+	--ring: var(--neo-violet);
+
+	/* Chart & Data Tokens */
+	--chart-1: var(--neo-lime);
+	--chart-2: var(--neo-violet);
+	--chart-3: var(--neo-pink);
+	--chart-4: var(--neo-amber);
+	--chart-5: var(--neo-sky);
+
+	/* Sidebar Tokens */
+	--sidebar: var(--neo-surface);
+	--sidebar-foreground: var(--neo-ink);
+	--sidebar-primary: var(--neo-lime);
+	--sidebar-primary-foreground: var(--neo-black);
+	--sidebar-accent: var(--neo-violet);
+	--sidebar-accent-foreground: var(--neo-white);
+	--sidebar-border: var(--neo-black);
+	--sidebar-ring: var(--neo-violet);
+
+	color-scheme: light;
+}
+
+.dark {
+	--neo-canvas: #121215;
+	--neo-surface: #1b1b20;
+	--neo-surface-subtle: #24242b;
+	--neo-surface-muted: #2e2e37;
+	--neo-ink: #f5f5f5;
+	--neo-ink-muted: #b4b4c0;
+	--neo-border-color: #f5f5f5;
+	--neo-grid-line: rgb(255 255 255 / 0.08);
+	--neo-grid-line-on-violet: rgb(255 255 255 / 0.16);
+
+	--neo-shadow-sm: 2px 2px 0px 0px #000000;
+	--neo-shadow: 4px 4px 0px 0px #000000;
+	--neo-shadow-md: 6px 6px 0px 0px #000000;
+	--neo-shadow-lg: 8px 8px 0px 0px #000000;
+
+	--background: var(--neo-canvas);
+	--foreground: var(--neo-ink);
+	--card: var(--neo-surface);
+	--card-foreground: var(--neo-ink);
+	--popover: var(--neo-surface);
+	--popover-foreground: var(--neo-ink);
+	--primary: var(--neo-lime);
+	--primary-foreground: var(--neo-black);
+	--secondary: var(--neo-violet);
+	--secondary-foreground: var(--neo-white);
+	--accent: var(--neo-pink);
+	--accent-foreground: var(--neo-black);
+	--muted: var(--neo-surface-muted);
+	--muted-foreground: var(--neo-ink-muted);
+	--border: var(--neo-border-color);
+	--input: var(--neo-border-color);
+	--ring: var(--neo-lime);
+
+	--sidebar: var(--neo-surface);
+	--sidebar-foreground: var(--neo-ink);
+	--sidebar-border: var(--neo-border-color);
+
+	color-scheme: dark;
+}
+
+@theme inline {
+	/* Typography */
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+	--font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+	/* Sharp Neobrutalist Radii */
+	--radius-xs: 0px;
+	--radius-sm: 0px;
+	--radius-md: 0px;
+	--radius-lg: 0px;
+	--radius-xl: 0px;
+
+	/* Semantic shadcn Colors */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	/* Named Neobrutalist Palette Utilities */
+	--color-neo-black: var(--neo-black);
+	--color-neo-white: var(--neo-white);
+	--color-neo-canvas: var(--neo-canvas);
+	--color-neo-surface: var(--neo-surface);
+	--color-neo-surface-subtle: var(--neo-surface-subtle);
+	--color-neo-surface-muted: var(--neo-surface-muted);
+	--color-neo-lime: var(--neo-lime);
+	--color-neo-lime-hover: var(--neo-lime-hover);
+	--color-neo-violet: var(--neo-violet);
+	--color-neo-violet-hover: var(--neo-violet-hover);
+	--color-neo-pink: var(--neo-pink);
+	--color-neo-pink-hover: var(--neo-pink-hover);
+	--color-neo-amber: var(--neo-amber);
+	--color-neo-sky: var(--neo-sky);
+
+	/* Hard Offset Shadows */
+	--shadow-neo-sm: var(--neo-shadow-sm);
+	--shadow-neo: var(--neo-shadow);
+	--shadow-neo-md: var(--neo-shadow-md);
+	--shadow-neo-lg: var(--neo-shadow-lg);
+	--shadow-neo-lime: var(--neo-shadow-lime);
+	--shadow-neo-pink: var(--neo-shadow-pink);
+	--shadow-neo-violet: var(--neo-shadow-violet);
+
+	/* Chart & Sidebar */
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+	html,
+	body {
+		cursor:
+			url('../lib/assets/pointer.cur') 0 0,
+			auto;
+	}
+
+	body {
+		background-color: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans);
+		line-height: 1.5;
+		text-align: start;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		font-family: var(--font-display);
+		text-wrap: balance;
+	}
+
+	button:not(:disabled),
+	[role='button']:not([aria-disabled='true']),
+	a[href] {
+		cursor:
+			url('../lib/assets/pointer.cur') 0 0,
+			pointer;
+	}
+}
+
+/* ==========================================================================
+   NEOBRUTALISM PATTERN & SURFACE UTILITIES
+   ========================================================================== */
+
+@layer utilities {
+	.neo-box {
+		border: var(--neo-border-width) solid var(--border);
+		box-shadow: var(--neo-shadow);
+	}
+
+	.neo-box-sm {
+		border: var(--neo-border-width) solid var(--border);
+		box-shadow: var(--neo-shadow-sm);
+	}
+
+	.neo-box-lg {
+		border: var(--neo-border-width-thick) solid var(--border);
+		box-shadow: var(--neo-shadow-lg);
+	}
+
+	.neo-press {
+		transition:
+			transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+			box-shadow 120ms cubic-bezier(0.2, 0.8, 0.2, 1),
+			background-color 120ms ease;
+	}
+
+	.neo-press:hover:not(:disabled) {
+		transform: translate(-2px, -2px);
+		box-shadow: var(--neo-shadow-md);
+	}
+
+	.neo-press:active:not(:disabled) {
+		transform: translate(2px, 2px);
+		box-shadow: none;
+	}
+
+	.neo-grid-bg {
+		background-color: var(--card);
+		background-image:
+			linear-gradient(to right, var(--neo-grid-line) 1px, transparent 1px),
+			linear-gradient(to bottom, var(--neo-grid-line) 1px, transparent 1px);
+		background-size: var(--neo-grid-size) var(--neo-grid-size);
+	}
+
+	.neo-grid-violet-bg {
+		background-color: var(--neo-violet);
+		background-image:
+			linear-gradient(to right, var(--neo-grid-line-on-violet) 1px, transparent 1px),
+			linear-gradient(to bottom, var(--neo-grid-line-on-violet) 1px, transparent 1px);
+		background-size: var(--neo-grid-size) var(--neo-grid-size);
+	}
+}
+
+@keyframes neo-marquee-scroll {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
+.neo-marquee-track {
+	display: flex;
+	width: max-content;
+	will-change: transform;
+
+	@media (prefers-reduced-motion: no-preference) {
+		animation: neo-marquee-scroll 26s linear infinite;
+	}
+}
+
+.neo-marquee:hover .neo-marquee-track,
+.neo-marquee:focus-within .neo-marquee-track,
+.neo-marquee[data-paused='true'] .neo-marquee-track {
+	animation-play-state: paused;
+}
+
+/* Support Windows High Contrast / Forced Colors Mode */
+@media (forced-colors: active) {
+	.neo-box,
+	.neo-box-sm,
+	.neo-box-lg {
+		border-color: CanvasText;
+		box-shadow: none;
+	}
+}
