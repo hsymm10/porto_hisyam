@@ -545,11 +545,12 @@
 				clearProps: 'transform'
 			})
 				.from(
-					'.pl-stage',
+					'.pl-print',
 					{
 						y: 20,
 						opacity: 0,
 						duration: 0.55,
+						stagger: 0.04,
 						ease: 'power3.out',
 						clearProps: 'transform'
 					},
