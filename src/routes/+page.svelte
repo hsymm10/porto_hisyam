@@ -6,6 +6,10 @@
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
+	import {
+		PolaroidLineCarousel,
+		type Slide
+	} from '#lib/components/ui/polaroid-line-carousel/index.js';
 	import { Separator } from '#lib/components/ui/separator/index.js';
 	import {
 		siGit,
@@ -109,6 +113,54 @@
 		}
 	];
 
+	const unsplashPhoto = (id: string) =>
+		`https://images.unsplash.com/photo-${id}?q=80&w=1800&auto=format&fit=crop`;
+
+	const polaroidSlides: Slide[] = [
+		{
+			image: unsplashPhoto('1506905925346-21bda4d32df4'),
+			title: 'Above the Clouds',
+			caption: 'Valais, Switzerland — sunrise at 3,100 m.',
+			palette: 'dawn',
+			seed: 3
+		},
+		{
+			image: unsplashPhoto('1501785888041-af3ef285b470'),
+			title: 'Glass Lake',
+			caption: 'Lago di Braies, a rowboat at noon.',
+			palette: 'alpine',
+			seed: 8
+		},
+		{
+			image: unsplashPhoto('1469474968028-56623f02e42e'),
+			title: 'Gold Valley',
+			caption: 'Late light pouring over the ridge.',
+			palette: 'dusk',
+			seed: 14
+		},
+		{
+			image: unsplashPhoto('1464822759023-fed622ff2c3b'),
+			title: 'Snow Line',
+			caption: 'Pines, river flats and the high range.',
+			palette: 'mist',
+			seed: 21
+		},
+		{
+			image: unsplashPhoto('1500534314209-a25ddb2bd429'),
+			title: 'Blue Ridges',
+			caption: 'Seven layers of haze before dusk.',
+			palette: 'dawn',
+			seed: 34
+		},
+		{
+			image: unsplashPhoto('1433086966358-54859d0ed716'),
+			title: 'Falls Bridge',
+			caption: 'Multnomah Falls after the rain.',
+			palette: 'alpine',
+			seed: 55
+		}
+	];
+
 	let activeProjectIndex = $state(0);
 	const currentProject = $derived(projects[activeProjectIndex]);
 
@@ -146,7 +198,7 @@
 				<a href="#projects" class="underline-offset-4 hover:underline">Projects</a>
 				<a href="#craft" class="underline-offset-4 hover:underline">Craft</a>
 				<a href="#experience" class="underline-offset-4 hover:underline">Experience</a>
-				<a href="#certifications" class="underline-offset-4 hover:underline">Certifications</a>
+				<a href="#gallery" class="underline-offset-4 hover:underline">Gallery</a>
 				<a href="#contact" class="underline-offset-4 hover:underline">Contact</a>
 			</nav>
 
@@ -701,6 +753,30 @@
 						/>
 					</svg>
 				</aside>
+			</div>
+		</section>
+
+		<!-- Polaroid Line Carousel Section (Placed After Experience) -->
+		<section id="gallery" class="w-full border-b-2 border-border bg-card py-16 sm:py-20">
+			<div class="mx-auto w-full max-w-7xl space-y-6 px-6 sm:px-8">
+				<div class="flex flex-wrap items-end justify-between gap-4">
+					<div class="space-y-2.5">
+						<Badge variant="pink">Snapshots &bull; Off the Clock</Badge>
+						<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
+							Field Notes on a Line
+						</h2>
+					</div>
+				</div>
+
+				<div class="overflow-hidden border-2 border-border bg-neo-surface-subtle shadow-neo">
+					<PolaroidLineCarousel
+						slides={polaroidSlides}
+						height="520px"
+						cardWidth={250}
+						sag={42}
+						ariaLabel="Polaroid photography gallery"
+					/>
+				</div>
 			</div>
 		</section>
 	</main>
