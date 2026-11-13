@@ -34,6 +34,14 @@ export function toggleLanguage() {
 
 export const t = {
 	id: {
+		loader: {
+			title: 'MEMUAT SISTEM & ASET 3D...',
+			fontStep: 'Memuat font & gaya antarmuka...',
+			lanyardStep: 'Memuat model & tekstur 3D lanyard...',
+			renderStep: 'Merender kanvas WebGL...',
+			readyStep: 'Sistem Siap!',
+			badge: 'hszamm__ • inisialisasi'
+		},
 		nav: {
 			skills: 'Keahlian',
 			projects: 'Proyek',
@@ -219,6 +227,14 @@ export const t = {
 		}
 	},
 	en: {
+		loader: {
+			title: 'LOADING SYSTEM & 3D ASSETS...',
+			fontStep: 'Loading typography & design system...',
+			lanyardStep: 'Loading 3D lanyard models & textures...',
+			renderStep: 'Rendering WebGL canvas...',
+			readyStep: 'System Ready!',
+			badge: 'hszamm__ • system readying'
+		},
 		nav: {
 			skills: 'Skills',
 			projects: 'Projects',

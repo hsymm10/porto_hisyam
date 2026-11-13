@@ -31,8 +31,9 @@
 	} from '#lib/components/ui/polaroid-line-carousel/index.js';
 	import { Separator } from '#lib/components/ui/separator/index.js';
 	import { gsap, REDUCED_MOTION_QUERY, registerGsap, ScrollTrigger } from '#lib/gsap.js';
+	import { getLenisInstance } from '#lib/lenis.js';
 	import Icon from '@iconify/svelte';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import {
 		siCss,
 		siFigma,
@@ -93,6 +94,141 @@
 	function toggleMarquee() {
 		isMarqueePaused = !isMarqueePaused;
 	}
+
+	let isLanyardReady = $state(false);
+	let isLoaderComplete = $state(false);
+	let isLoaderHidden = $state(false);
+	let loadingProgress = $state(20);
+	let heroEntranceTimeline: gsap.core.Timeline | undefined;
+
+	let loaderStatusText = $derived(() => {
+		if (loadingProgress < 40) return t[$currentLang].loader.fontStep;
+		if (loadingProgress < 75) return t[$currentLang].loader.lanyardStep;
+		if (loadingProgress < 100) return t[$currentLang].loader.renderStep;
+		return t[$currentLang].loader.readyStep;
+	});
+
+	function handleLanyardLoaded() {
+		if (isLanyardReady) return;
+		isLanyardReady = true;
+		completeLoader();
+	}
+
+	function completeLoader() {
+		loadingProgress = 100;
+		setTimeout(() => {
+			isLoaderComplete = true;
+			setTimeout(() => {
+				isLoaderHidden = true;
+				heroEntranceTimeline?.play();
+			}, 480);
+		}, 320);
+	}
+
+	onMount(() => {
+		loadingProgress = 32;
+
+		document.fonts?.ready?.then(() => {
+			if (loadingProgress < 50) loadingProgress = 50;
+		});
+
+		if (document.readyState === 'complete') {
+			if (loadingProgress < 70) loadingProgress = 70;
+		} else {
+			window.addEventListener('load', () => {
+				if (loadingProgress < 70) loadingProgress = 70;
+			});
+		}
+
+		const progressInterval = setInterval(() => {
+			if (loadingProgress < 88 && !isLanyardReady) {
+				loadingProgress += 3;
+			}
+		}, 140);
+
+		// Safety fallback timeout to ensure the UI is never permanently blocked
+		const safetyTimeout = setTimeout(() => {
+			if (!isLanyardReady) {
+				handleLanyardLoaded();
+			}
+		}, 3800);
+
+		return () => {
+			clearInterval(progressInterval);
+			clearTimeout(safetyTimeout);
+		};
+	});
+
+	$effect(() => {
+		if (typeof document === 'undefined') return;
+
+		if (!isLoaderHidden) {
+			const lenis = getLenisInstance();
+			lenis?.stop();
+
+			const origDocOverflow = document.documentElement.style.overflow;
+			const origDocHeight = document.documentElement.style.height;
+			const origDocOverscroll = document.documentElement.style.overscrollBehavior;
+			const origBodyOverflow = document.body.style.overflow;
+			const origBodyHeight = document.body.style.height;
+			const origBodyOverscroll = document.body.style.overscrollBehavior;
+
+			document.documentElement.style.overflow = 'hidden';
+			document.documentElement.style.height = '100%';
+			document.documentElement.style.overscrollBehavior = 'none';
+			document.body.style.overflow = 'hidden';
+			document.body.style.height = '100%';
+			document.body.style.overscrollBehavior = 'none';
+
+			const preventDefault = (e: Event) => {
+				e.preventDefault();
+			};
+
+			const preventKeyScroll = (e: KeyboardEvent) => {
+				if (
+					e.key === 'ArrowUp' ||
+					e.key === 'ArrowDown' ||
+					e.key === 'PageUp' ||
+					e.key === 'PageDown' ||
+					e.key === 'Home' ||
+					e.key === 'End' ||
+					e.key === ' ' ||
+					e.code === 'Space'
+				) {
+					e.preventDefault();
+				}
+			};
+
+			window.addEventListener('wheel', preventDefault, { passive: false });
+			window.addEventListener('touchmove', preventDefault, { passive: false });
+			window.addEventListener('keydown', preventKeyScroll, { passive: false });
+
+			// Polling ensures Lenis stays stopped even if Lenis instance initializes right after
+			const lenisCheckInterval = setInterval(() => {
+				if (!isLoaderHidden) {
+					getLenisInstance()?.stop();
+				}
+			}, 100);
+
+			return () => {
+				clearInterval(lenisCheckInterval);
+				window.removeEventListener('wheel', preventDefault);
+				window.removeEventListener('touchmove', preventDefault);
+				window.removeEventListener('keydown', preventKeyScroll);
+
+				document.documentElement.style.overflow = origDocOverflow;
+				document.documentElement.style.height = origDocHeight;
+				document.documentElement.style.overscrollBehavior = origDocOverscroll;
+				document.body.style.overflow = origBodyOverflow;
+				document.body.style.height = origBodyHeight;
+				document.body.style.overscrollBehavior = origBodyOverscroll;
+
+				getLenisInstance()?.start();
+			};
+		} else {
+			getLenisInstance()?.start();
+		}
+	});
 
 	const skills = [
 		{ name: 'HTML5', icon: siHtml5 },
@@ -714,8 +850,11 @@
 			);
 
 			// 1. Hero entrance choreography
-			const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-			heroTl
+			heroEntranceTimeline = gsap.timeline({
+				paused: !isLoaderHidden,
+				defaults: { ease: 'power3.out' }
+			});
+			heroEntranceTimeline
 				.from('[data-hero-stagger]', {
 					y: 24,
 					opacity: 0,
@@ -1015,6 +1154,83 @@
 </script>
 
 <div id="top" bind:this={pageRootEl} class="flex min-h-screen w-full flex-col bg-background">
+	{#if !isLoaderHidden}
+		<div
+			class="fixed inset-0 z-50 flex touch-none flex-col items-center justify-center overscroll-none bg-background px-4 transition-all duration-500 select-none {isLoaderComplete
+				? 'pointer-events-none -translate-y-full opacity-0'
+				: 'opacity-100'}"
+			style="transition-timing-function: cubic-bezier(0.85, 0, 0.15, 1); touch-action: none; overscroll-behavior: none;"
+			role="status"
+			aria-live="polite"
+			aria-label={t[$currentLang].loader.title}
+			onwheel={(e) => e.preventDefault()}
+			ontouchmove={(e) => e.preventDefault()}
+		>
+			<!-- Background retro grid effect -->
+			<div class="neo-grid-bg pointer-events-none absolute inset-0 opacity-70"></div>
+
+			<!-- Retro Neo-Brutalist Loader Card -->
+			<div
+				class="relative z-10 w-full max-w-md border-2 border-border bg-card p-6 shadow-neo sm:p-8"
+			>
+				<!-- Window Toolbar Header -->
+				<div class="mb-5 flex items-center justify-between border-b-2 border-border pb-3.5">
+					<div class="flex items-center gap-1.5" aria-hidden="true">
+						<span class="size-3 rounded-full border-2 border-border bg-[#fe7a25]"></span>
+						<span class="size-3 rounded-full border-2 border-border bg-[#e9e8ca]"></span>
+						<span class="size-3 rounded-full border-2 border-border bg-[#006732]"></span>
+					</div>
+					<Badge variant="lime" class="px-2.5 py-0.5 text-[0.6875rem]">
+						{t[$currentLang].loader.badge}
+					</Badge>
+				</div>
+
+				<!-- Center Content + Text -->
+				<div class="space-y-4">
+					<div class="flex items-center justify-between gap-2">
+						<span
+							class="truncate font-display text-xs font-black tracking-tight text-foreground uppercase sm:text-sm"
+						>
+							{t[$currentLang].loader.title}
+						</span>
+						<span class="font-mono text-sm font-black text-primary">
+							{Math.round(loadingProgress)}%
+						</span>
+					</div>
+
+					<!-- Chunky Neo Brutalist Progress Bar -->
+					<div
+						class="relative h-6 w-full overflow-hidden border-2 border-border bg-neo-surface-subtle p-0.5 shadow-neo-sm"
+					>
+						<div
+							class="h-full bg-primary transition-all duration-200 ease-out"
+							style:width={`${loadingProgress}%`}
+						>
+							<!-- Retro diagonal stripes -->
+							<div
+								class="h-full w-full opacity-25"
+								style="background-image: repeating-linear-gradient(45deg, #000 0, #000 10px, transparent 10px, transparent 20px);"
+							></div>
+						</div>
+					</div>
+
+					<!-- Status Step Subtitle -->
+					<div
+						class="flex items-center justify-between pt-1 font-mono text-xs text-muted-foreground"
+					>
+						<span class="truncate">
+							{loaderStatusText()}
+						</span>
+						<span
+							class="flex size-2 shrink-0 animate-pulse rounded-full bg-primary"
+							aria-hidden="true"
+						></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Full-Screen Sticky Header with max-w-7xl centered content -->
 	<header class="sticky top-0 z-40 w-full border-b-2 border-border bg-card">
 		<div
@@ -1268,6 +1484,7 @@
 								breeze={0.45}
 								interactive={true}
 								intro={true}
+								onLoaded={handleLanyardLoaded}
 							/>
 						</div>
 

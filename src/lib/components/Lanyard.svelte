@@ -26,6 +26,7 @@
 		intro?: boolean;
 		class?: string;
 		style?: string;
+		onLoaded?: () => void;
 	}
 
 	let {
@@ -50,7 +51,8 @@
 		interactive = true,
 		intro = true,
 		class: className = '',
-		style = ''
+		style = '',
+		onLoaded
 	}: LanyardProps = $props();
 
 	const CARD_SIZES: Record<'portrait' | 'landscape', [number, number]> = {
@@ -1409,6 +1411,7 @@ if (foilStrength > 0.0) {
 
 			applyRef = apply2D;
 			resize2D();
+			onLoaded?.();
 
 			return () => {
 				alive = false;
@@ -1550,6 +1553,13 @@ if (foilStrength > 0.0) {
 		let imageToken = 0;
 		const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
+		let hasReportedLoaded = false;
+		const notifyLoaded = () => {
+			if (hasReportedLoaded) return;
+			hasReportedLoaded = true;
+			onLoaded?.();
+		};
+
 		const paintFaces = () => {
 			const s = currentSettings();
 			const color = parseColor(s.cardColor, [1, 1, 1]);
@@ -1660,6 +1670,8 @@ if (foilStrength > 0.0) {
 					images.strap = strap;
 					paintFaces();
 					repaintStrap();
+					renderScene();
+					notifyLoaded();
 				});
 			}
 			const faceKey = `${layoutKey}|${s.cardColor}|${s.imageFit}`;
@@ -1975,6 +1987,9 @@ if (foilStrength > 0.0) {
 
 		applyRef = apply;
 		resize();
+		if (!frontImage && !backImage && !strapImage) {
+			notifyLoaded();
+		}
 
 		return () => {
 			alive = false;
