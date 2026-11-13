@@ -54,7 +54,14 @@
 		siTypescript,
 		siVuedotjs
 	} from 'simple-icons';
-	import { currentLang, projectTranslations, t, toggleLanguage } from '#lib/i18n.js';
+	import {
+		activityTranslations,
+		certificationTranslations,
+		currentLang,
+		projectTranslations,
+		t,
+		toggleLanguage
+	} from '#lib/i18n.js';
 	import {
 		ArrowRight,
 		ArrowUpRight,
@@ -293,6 +300,7 @@
 				role: trans?.role ?? p.role,
 				title: trans?.title ?? p.title,
 				description: trans?.description ?? p.description,
+				tags: trans?.tags ?? p.tags,
 				linkLabel: label
 			};
 		})
@@ -305,38 +313,25 @@
 		image: string;
 	};
 
-	const certifications: Certification[] = [
-		{
-			id: 'algonova-l8',
-			title: 'Algonova Python Pro — 1st Year (IT HERO Level 8)',
-			issuer: 'Algorithmics • Dec 2025',
-			image: sertif1
-		},
-		{
-			id: 'algonova-l9',
-			title: 'Algonova Python Pro — 2nd Year (IT HERO Level 9)',
-			issuer: 'Algorithmics • Jan 2026',
-			image: sertif2
-		},
-		{
-			id: 'naspo-2021',
-			title: 'NASPO 2021 — Medali Perunggu',
-			issuer: 'IYSA • Dec 2021',
-			image: sertif3
-		},
-		{
-			id: 'kisef-2023',
-			title: 'KISEF 2023 — Bronze Medal',
-			issuer: 'Karangturi • Feb 2023',
-			image: sertif4
-		},
-		{
-			id: 'aiseef-2023',
-			title: 'AISEEF 2023 — Silver Medal',
-			issuer: 'IYSA • Feb 2023',
-			image: sertif5
-		}
+	const rawCertifications: { id: string; image: string }[] = [
+		{ id: 'algonova-l8', image: sertif1 },
+		{ id: 'algonova-l9', image: sertif2 },
+		{ id: 'naspo-2021', image: sertif3 },
+		{ id: 'kisef-2023', image: sertif4 },
+		{ id: 'aiseef-2023', image: sertif5 }
 	];
+
+	const certifications = $derived<Certification[]>(
+		rawCertifications.map((c) => {
+			const trans = certificationTranslations[c.id]?.[$currentLang];
+			return {
+				id: c.id,
+				title: trans?.title ?? c.id,
+				issuer: trans?.issuer ?? '',
+				image: c.image
+			};
+		})
+	);
 
 	type ExperienceEntry = {
 		title: string;
@@ -450,10 +445,15 @@
 
 	// Set nomor WhatsApp format internasional tanpa tanda '+' (contoh: '6281234567890')
 	const WHATSAPP_NUMBER = '6282111159144';
-	const WHATSAPP_MESSAGE = 'Halo Hisyam, saya tertarik untuk berdiskusi mengenai proyek.';
-	const whatsappHref = WHATSAPP_NUMBER
-		? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-		: '#contact';
+	const whatsappHref = $derived(
+		WHATSAPP_NUMBER
+			? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+					$currentLang === 'id'
+						? 'Halo Hisyam, saya tertarik untuk berdiskusi mengenai proyek.'
+						: 'Hello Hisyam, I am interested in discussing a project collaboration.'
+				)}`
+			: '#contact'
+	);
 
 	const activityPhotoModules = import.meta.glob<string>(
 		'../lib/assets/Dokumentasi_Kegiatan/*.{jpeg,jpg,png,webp}',
@@ -463,113 +463,41 @@
 		}
 	);
 
-	const ACTIVITY_CAPTIONS: Record<string, { title: string; caption: string }> = {
-		'Menyampaikan sambutan kepada peserta sebagai Ketua Pelaksana Acara.jpeg': {
-			title: 'Menyampaikan Sambutan sebagai Ketua Pelaksana',
-			caption: 'Menyampaikan sambutan kepada peserta sebagai Ketua Pelaksana Acara.'
-		},
-		'Event acara youth science and education fair.jpeg': {
-			title: 'Event Acara Youth Science and Education Fair',
-			caption: 'Dokumentasi event acara Youth Science and Education Fair.'
-		},
-		'belajar bersama menggunakan arduino.jpeg': {
-			title: 'Belajar Bersama Menggunakan Arduino',
-			caption: 'Dokumentasi kegiatan belajar bersama menggunakan Arduino.'
-		},
-		'bermain game bersama.jpeg': {
-			title: 'Bermain Game Bersama',
-			caption: 'Dokumentasi kegiatan bermain game bersama.'
-		},
-		'diskusi projek.jpeg': {
-			title: 'Diskusi Projek',
-			caption: 'Dokumentasi kegiatan diskusi projek.'
-		},
-		'Dokumentasi Google Meet Saat Magang di PT Traspac.png': {
-			title: 'Dokumentasi Google Meet Saat Magang di PT Traspac',
-			caption: 'Dokumentasi Google Meet saat magang di PT Traspac.'
-		},
-		'foto bersama anggota DPRD.jpeg': {
-			title: 'Foto Bersama Anggota DPRD',
-			caption: 'Dokumentasi foto bersama anggota DPRD.'
-		},
-		'foto bersama.jpeg': {
-			title: 'Foto Bersama',
-			caption: 'Dokumentasi foto bersama.'
-		},
-		'foto di dalam gedung DPRD.jpeg': {
-			title: 'Foto di Dalam Gedung DPRD',
-			caption: 'Dokumentasi foto di dalam gedung DPRD.'
-		},
-		'foto panitia.jpeg': {
-			title: 'Foto Panitia',
-			caption: 'Dokumentasi foto panitia.'
-		},
-		'graduation less python.jpeg': {
-			title: 'Graduation Les Python',
-			caption: 'Dokumentasi graduation les Python.'
-		},
-		'kegiatan belajar bersama KIR.jpeg': {
-			title: 'Kegiatan Belajar Bersama KIR',
-			caption: 'Dokumentasi kegiatan belajar bersama KIR.'
-		},
-		'mengenalkan cara jalannya sistem.jpeg': {
-			title: 'Mengenalkan Cara Jalannya Sistem',
-			caption: 'Dokumentasi kegiatan mengenalkan cara jalannya sistem.'
-		},
-		'pare kampung inggris.png': {
-			title: 'Pare Kampung Inggris',
-			caption: 'Dokumentasi kegiatan di Pare Kampung Inggris.'
-		},
-		'presentasi projek uic press.jpeg': {
-			title: 'Presentasi Projek UIC Press',
-			caption: 'Dokumentasi presentasi projek UIC Press.'
-		},
-		'presentasi tentang robotik.jpeg': {
-			title: 'Presentasi Tentang Robotik',
-			caption: 'Dokumentasi presentasi tentang robotik.'
-		},
-		'Presentasi kepada Dosen UIC Mengenai Pengembangan Sistem Pemesanan Buku.png': {
-			title: 'Presentasi kepada Dosen UIC Mengenai Pengembangan Sistem Pemesanan Buku',
-			caption: 'Presentasi kepada Dosen UIC mengenai pengembangan sistem pemesanan buku.'
-		},
-		'Presentasi kepada Klien Mengenai Website Company Profile.png': {
-			title: 'Presentasi kepada Klien Mengenai Website Company Profile',
-			caption: 'Presentasi kepada klien mengenai website company profile.'
-		},
-		'Presentasi Proyek E-Presensi Kelas Industri.png': {
-			title: 'Presentasi Proyek E-Presensi Kelas Industri',
-			caption: 'Dokumentasi presentasi proyek E-Presensi Kelas Industri.'
-		},
-		'testing game bersama.jpeg': {
-			title: 'Testing Game Bersama',
-			caption: 'Dokumentasi kegiatan testing game bersama.'
-		}
-	};
-
 	const PALETTES: NonNullable<Slide['palette']>[] = ['dawn', 'alpine', 'dusk', 'mist'];
 
-	function filenameToSlideText(filename: string): { title: string; caption: string } {
-		const meta = ACTIVITY_CAPTIONS[filename];
+	function filenameToSlideText(
+		filename: string,
+		lang: 'id' | 'en'
+	): { title: string; caption: string } {
+		const meta = activityTranslations[filename]?.[lang];
 		if (meta) return meta;
 		const clean = filename.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
 		const title = clean.charAt(0).toUpperCase() + clean.slice(1);
-		return { title, caption: 'Dokumentasi kegiatan dan kolaborasi.' };
+		return {
+			title,
+			caption:
+				lang === 'id'
+					? 'Dokumentasi kegiatan dan kolaborasi.'
+					: 'Field documentation and collaboration.'
+		};
 	}
 
-	const polaroidSlides: Slide[] = Object.entries(activityPhotoModules)
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([path, src], index) => {
-			const filename = path.split('/').pop() ?? '';
-			const { title, caption } = filenameToSlideText(filename);
-			return {
-				image: src,
-				title,
-				caption,
-				alt: title,
-				palette: PALETTES[index % PALETTES.length],
-				seed: (index + 1) * 7
-			};
-		});
+	const polaroidSlides = $derived<Slide[]>(
+		Object.entries(activityPhotoModules)
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([path, src], index) => {
+				const filename = path.split('/').pop() ?? '';
+				const { title, caption } = filenameToSlideText(filename, $currentLang);
+				return {
+					image: src,
+					title,
+					caption,
+					alt: title,
+					palette: PALETTES[index % PALETTES.length],
+					seed: (index + 1) * 7
+				};
+			})
+	);
 
 	let pageRootEl: HTMLDivElement | undefined = $state();
 	let projectCardWrapperEl: HTMLDivElement | undefined = $state();
@@ -740,10 +668,10 @@
 	}
 
 	const NAV_LINKS = $derived([
-		{ id: 'skills', label: $currentLang === 'id' ? 'Keahlian' : 'Skills' },
+		{ id: 'skills', label: t[$currentLang].nav.skills },
 		{ id: 'projects', label: t[$currentLang].nav.projects },
 		{ id: 'craft', label: t[$currentLang].nav.craft },
-		{ id: 'experience', label: $currentLang === 'id' ? 'Pengalaman' : 'Experience' },
+		{ id: 'experience', label: t[$currentLang].nav.experience },
 		{ id: 'gallery', label: t[$currentLang].nav.snapshots },
 		{ id: 'contact', label: t[$currentLang].nav.contact }
 	]);
@@ -1344,7 +1272,7 @@
 						</div>
 
 						<div class="pointer-events-none absolute right-4 bottom-4 z-10">
-							<Badge variant="lime">Drag &bull; Click to Flip</Badge>
+							<Badge variant="lime">{t[$currentLang].hero.lanyardBadge}</Badge>
 						</div>
 					</div>
 				</div>
@@ -1364,7 +1292,7 @@
 					class="flex shrink-0 flex-col justify-center gap-1.5 border-x-2 border-border bg-secondary px-6 py-5 text-secondary-foreground sm:min-w-44 sm:px-8 sm:py-6"
 				>
 					<span class="font-display text-base font-black tracking-wider uppercase sm:text-lg">
-						Skills
+						{t[$currentLang].hero.skillsLabel}
 					</span>
 					<span data-skills-arrow class="inline-flex">
 						<ArrowRight class="size-4" aria-hidden="true" />
@@ -1427,7 +1355,9 @@
 					type="button"
 					data-skills-toggle
 					onclick={toggleMarquee}
-					aria-label={isMarqueePaused ? 'Play skills marquee' : 'Pause skills marquee'}
+					aria-label={isMarqueePaused
+						? t[$currentLang].hero.marqueePlay
+						: t[$currentLang].hero.marqueePause}
 					class="flex shrink-0 items-center justify-center border-x-2 border-border bg-card px-3.5 text-foreground transition-colors hover:bg-neo-surface-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
 				>
 					{#if isMarqueePaused}
@@ -1450,7 +1380,7 @@
 					<div class="flex flex-wrap items-start justify-between gap-4">
 						<div class="space-y-3">
 							<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
-								Featured Projects
+								{t[$currentLang].projects.title}
 							</h2>
 							<Button
 								variant="outline"
@@ -1458,9 +1388,9 @@
 								onclick={() => (showAllProjects = !showAllProjects)}
 							>
 								{#if showAllProjects}
-									Back to Carousel
+									{t[$currentLang].projects.backToCarousel}
 								{:else}
-									View All Projects ({projects.length})
+									{t[$currentLang].projects.viewAll} ({projects.length})
 								{/if}
 								<ArrowRight class="size-3.5" />
 							</Button>
@@ -1477,7 +1407,7 @@
 									variant="accent"
 									size="icon-sm"
 									onclick={prevProject}
-									aria-label="Previous project"
+									aria-label={t[$currentLang].projects.prevProject}
 								>
 									<ChevronLeft class="size-4" />
 								</Button>
@@ -1485,7 +1415,7 @@
 									variant="accent"
 									size="icon-sm"
 									onclick={nextProject}
-									aria-label="Next project"
+									aria-label={t[$currentLang].projects.nextProject}
 								>
 									<ChevronRight class="size-4" />
 								</Button>
@@ -1520,7 +1450,7 @@
 									</div>
 									<div class="flex items-center justify-between gap-2 pt-1">
 										<Button variant="outline" size="sm" onclick={() => selectProject(i)}>
-											Preview
+											{t[$currentLang].projects.preview}
 										</Button>
 										{#if project.url}
 											<Button
@@ -1530,7 +1460,7 @@
 												variant="secondary"
 												size="sm"
 											>
-												{project.linkLabel ?? 'View Project'}
+												{project.linkLabel ?? t[$currentLang].projects.viewProject}
 												<ArrowUpRight class="size-3.5" />
 											</Button>
 										{/if}
@@ -1549,7 +1479,7 @@
 											<button
 												type="button"
 												onclick={() => openProjectDialog(currentProject.id)}
-												aria-label={`Lihat preview penuh ${currentProject.title}`}
+												aria-label={`${t[$currentLang].projects.seeFullPreview} ${currentProject.title}`}
 												class="group relative h-full w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
 											>
 												<img
@@ -1577,7 +1507,7 @@
 													class="inline-flex items-center gap-1.5 border-2 border-dashed border-border bg-card px-3 py-1 font-mono text-[0.6875rem] font-semibold text-muted-foreground"
 												>
 													<ImageIcon class="size-3.5" aria-hidden="true" />
-													Preview Image Coming Soon
+													{t[$currentLang].projects.previewComingSoon}
 												</span>
 											</div>
 										{/if}
@@ -1610,7 +1540,7 @@
 											variant="outline"
 											size="sm"
 										>
-											{currentProject.linkLabel ?? 'View Project'}
+											{currentProject.linkLabel ?? t[$currentLang].projects.viewProject}
 											<ArrowUpRight class="size-3.5" />
 										</Button>
 									{/if}
@@ -1644,7 +1574,7 @@
 				>
 					<div class="flex items-center justify-between gap-2">
 						<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
-							Certifications
+							{t[$currentLang].certs.title}
 						</h2>
 						<span
 							class="border-2 border-border bg-card px-2 py-0.5 font-mono text-xs font-bold text-foreground shadow-neo-sm"
@@ -1686,7 +1616,7 @@
 						class="w-full justify-between"
 						onclick={() => openCertDialog(0)}
 					>
-						<span>View All Certifications ({certifications.length})</span>
+						<span>{t[$currentLang].certs.viewAll} ({certifications.length})</span>
 						<ArrowRight class="size-4" />
 					</Button>
 				</aside>
@@ -1709,7 +1639,7 @@
 						class="neo-grid-accent-bg flex shrink-0 flex-col justify-center gap-2 border-b-2 border-border px-6 py-5 text-accent-foreground sm:w-44 sm:border-r-2 sm:border-b-0 sm:px-7 sm:py-8 md:w-48"
 					>
 						<h2 class="font-display text-xl font-black tracking-tight uppercase sm:text-2xl">
-							Experience
+							{t[$currentLang].experiences.sidebarLabel}
 						</h2>
 						<ArrowRight class="size-5" aria-hidden="true" />
 					</div>
@@ -1775,7 +1705,7 @@
 								size="lg"
 								class="border-border bg-card text-[var(--retro-green-text)] shadow-neo hover:bg-neo-surface-subtle"
 							>
-								View Full Resume
+								{t[$currentLang].experiences.viewResume}
 								<ArrowRight class="size-4" />
 							</Button>
 						</div>
@@ -1793,7 +1723,8 @@
 							data-cta-stagger
 							class="font-display text-2xl leading-[1.08] font-black tracking-tight uppercase sm:text-3xl"
 						>
-							Let's Build<br />Something<br />Amazing<br />Together.
+							{t[$currentLang].contact.ctaHeadline1}<br />{t[$currentLang].contact.ctaHeadline2}<br
+							/>{t[$currentLang].contact.ctaHeadline3}<br />{t[$currentLang].contact.ctaHeadline4}
 						</h2>
 						<div data-cta-stagger>
 							<Button
@@ -1804,7 +1735,7 @@
 								size="lg"
 								class="border-neo-black bg-neo-white text-neo-black shadow-neo hover:bg-neo-surface-subtle hover:text-foreground"
 							>
-								Get In Touch
+								{t[$currentLang].contact.ctaButton}
 								<ArrowRight class="size-4" />
 							</Button>
 						</div>
@@ -1834,9 +1765,9 @@
 			<div class="mx-auto w-full max-w-7xl space-y-6 px-6 sm:px-8">
 				<div data-gallery-header class="flex flex-wrap items-end justify-between gap-4">
 					<div class="space-y-2.5">
-						<Badge variant="pink">Dokumentasi Kegiatan &bull; Snapshots</Badge>
+						<Badge variant="pink">{t[$currentLang].snapshots.badge}</Badge>
 						<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
-							Field Notes on a Line
+							{t[$currentLang].snapshots.title}
 						</h2>
 					</div>
 				</div>
@@ -1869,7 +1800,7 @@
 				hszamm__
 			</Badge>
 			<p class="font-mono text-xs text-muted-foreground">
-				@hszam__ Building digital solutions with purpose.
+				{t[$currentLang].footer.bio}
 			</p>
 			<div class="flex items-center gap-2">
 				<Button
@@ -1959,11 +1890,16 @@
 					variant="outline"
 					size="icon-sm"
 					onclick={prevCert}
-					aria-label="Previous certificate"
+					aria-label={t[$currentLang].certs.prevCert}
 				>
 					<ChevronLeft class="size-4" />
 				</Button>
-				<Button variant="outline" size="icon-sm" onclick={nextCert} aria-label="Next certificate">
+				<Button
+					variant="outline"
+					size="icon-sm"
+					onclick={nextCert}
+					aria-label={t[$currentLang].certs.nextCert}
+				>
 					<ChevronRight class="size-4" />
 				</Button>
 				<Button
@@ -1971,7 +1907,7 @@
 					size="icon-sm"
 					autofocus
 					onclick={closeCertDialog}
-					aria-label="Close certificate preview"
+					aria-label={t[$currentLang].certs.closeModal}
 				>
 					<X class="size-4" />
 				</Button>
@@ -2043,7 +1979,7 @@
 						variant="outline"
 						size="icon-sm"
 						onclick={prevGallerySlide}
-						aria-label="Previous photo"
+						aria-label={t[$currentLang].snapshots.prevPhoto}
 					>
 						<ChevronLeft class="size-4" />
 					</Button>
@@ -2051,7 +1987,7 @@
 						variant="outline"
 						size="icon-sm"
 						onclick={nextGallerySlide}
-						aria-label="Next photo"
+						aria-label={t[$currentLang].snapshots.nextPhoto}
 					>
 						<ChevronRight class="size-4" />
 					</Button>
@@ -2060,7 +1996,7 @@
 						size="icon-sm"
 						autofocus
 						onclick={closeGalleryDialog}
-						aria-label="Close photo preview"
+						aria-label={t[$currentLang].snapshots.closeModal}
 					>
 						<X class="size-4" />
 					</Button>
@@ -2134,7 +2070,7 @@
 						variant="outline"
 						size="icon-sm"
 						onclick={prevProjectModal}
-						aria-label="Previous project preview"
+						aria-label={t[$currentLang].projects.prevProject}
 					>
 						<ChevronLeft class="size-4" />
 					</Button>
@@ -2142,7 +2078,7 @@
 						variant="outline"
 						size="icon-sm"
 						onclick={nextProjectModal}
-						aria-label="Next project preview"
+						aria-label={t[$currentLang].projects.nextProject}
 					>
 						<ChevronRight class="size-4" />
 					</Button>
@@ -2151,7 +2087,7 @@
 						size="icon-sm"
 						autofocus
 						onclick={closeProjectDialog}
-						aria-label="Close project preview"
+						aria-label={t[$currentLang].projects.closeModal}
 					>
 						<X class="size-4" />
 					</Button>

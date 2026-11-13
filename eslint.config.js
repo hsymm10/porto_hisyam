@@ -11,12 +11,7 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	{
-		ignores: [
-			'static/apps/**',
-			'93_printing*/**',
-			'game_hszam*/**',
-			'photobooth*/**'
-		]
+		ignores: ['static/apps/**', '93_printing*/**', 'game_hszam*/**', 'photobooth*/**']
 	},
 	js.configs.recommended,
 	ts.configs.recommended,

@@ -5,6 +5,7 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import { gsap, registerGsap, ScrollTrigger } from '#lib/gsap.js';
 	import { setLenisInstance } from '#lib/lenis.js';
+	import { currentLang } from '#lib/i18n.js';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -59,17 +60,34 @@
 			lenis.destroy();
 		};
 	});
+
+	$effect(() => {
+		if (typeof document !== 'undefined') {
+			document.documentElement.lang = $currentLang;
+		}
+	});
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 
 	<!-- Primary Meta Tags -->
-	<title>Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio</title>
-	<meta name="title" content="Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio" />
+	<title>
+		{$currentLang === 'id'
+			? 'Hisyam Sayyid Alzam | Portofolio Pengembang Web & Desainer UI/UX'
+			: 'Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio'}
+	</title>
+	<meta
+		name="title"
+		content={$currentLang === 'id'
+			? 'Hisyam Sayyid Alzam | Portofolio Pengembang Web & Desainer UI/UX'
+			: 'Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio'}
+	/>
 	<meta
 		name="description"
-		content="Portofolio resmi Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, Nuxt, dan Modern Web App."
+		content={$currentLang === 'id'
+			? 'Portofolio resmi Hisyam Sayyid Alzam. Pengembang Web Full Stack & Desainer UI/UX spesialisasi SvelteKit, Laravel, Nuxt, dan Aplikasi Web Modern.'
+			: 'Official portfolio of Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer specializing in SvelteKit, Laravel, Nuxt, and Modern Web Applications.'}
 	/>
 	<meta
 		name="keywords"

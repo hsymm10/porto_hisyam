@@ -72,51 +72,32 @@
 	]);
 
 	// Visual 01: Arsitektur Web (Full Stack Pipeline)
-	const ARCH_PIPELINE = [
+	const ARCH_PIPELINE = $derived([
 		{
 			step: '01',
-			label: 'Frontend UI',
-			desc: 'SvelteKit / Nuxt / Tailwind',
+			label: t[$currentLang].craft.p1.pipeline[0].label,
+			desc: t[$currentLang].craft.p1.pipeline[0].desc,
 			icon: Code2,
-			badge: 'Reactive'
+			badge: t[$currentLang].craft.p1.pipeline[0].badge
 		},
 		{
 			step: '02',
-			label: 'RESTful API',
-			desc: 'Laravel / Node.js Endpoint',
+			label: t[$currentLang].craft.p1.pipeline[1].label,
+			desc: t[$currentLang].craft.p1.pipeline[1].desc,
 			icon: Server,
-			badge: 'Protected'
+			badge: t[$currentLang].craft.p1.pipeline[1].badge
 		},
 		{
 			step: '03',
-			label: 'Database',
-			desc: 'PostgreSQL / MySQL Schema',
+			label: t[$currentLang].craft.p1.pipeline[2].label,
+			desc: t[$currentLang].craft.p1.pipeline[2].desc,
 			icon: Database,
-			badge: 'Normalized'
+			badge: t[$currentLang].craft.p1.pipeline[2].badge
 		}
-	];
+	]);
 
 	// Visual 02: Desain UI/UX (Design Process Stages)
-	const UIUX_STAGES = [
-		{
-			no: '01',
-			name: 'Wireframe & Flow',
-			desc: 'Memetakan alur interaksi dan struktur informasi pengguna.',
-			tag: 'Figma'
-		},
-		{
-			no: '02',
-			name: 'Design System',
-			desc: 'Komponen modular, typography scale, dan palet warna konsisten.',
-			tag: 'Tokens'
-		},
-		{
-			no: '03',
-			name: 'Interactive Prototype',
-			desc: 'Uji simulasi usability sebelum masuk tahap implementasi kode.',
-			tag: 'Usability'
-		}
-	];
+	const UIUX_STAGES = $derived(t[$currentLang].craft.p2.stages);
 
 	// Visual 03: Performa & Interaksi
 	const PERF_METRICS = [
@@ -126,28 +107,7 @@
 	];
 
 	// Visual 04: Manajemen Proyek (Sprint & Milestones)
-	const SPRINT_ITEMS = [
-		{
-			task: 'Sprint Planning & Task Breakdown',
-			status: 'Completed',
-			owner: 'Lead / PM'
-		},
-		{
-			task: 'Feature Development & Code Review',
-			status: 'Completed',
-			owner: 'Dev Team'
-		},
-		{
-			task: 'Quality Assurance & User Testing',
-			status: 'Completed',
-			owner: 'QA & Client'
-		},
-		{
-			task: 'Production Release & Deployment',
-			status: 'On Schedule',
-			owner: 'DevOps / Lead'
-		}
-	];
+	const SPRINT_ITEMS = $derived(t[$currentLang].craft.p4.sprint);
 
 	let sectionEl: HTMLElement | undefined = $state();
 	let canvasEl: HTMLElement | undefined = $state();
@@ -385,7 +345,10 @@
 					<span
 						class="hidden truncate font-mono text-xs font-medium text-muted-foreground md:block"
 					>
-						craft / {activePrinciple.kicker} &rsaquo; Default
+						{$currentLang === 'id' ? 'proses' : 'craft'} / {activePrinciple.kicker} &rsaquo; {$currentLang ===
+						'id'
+							? 'Standar'
+							: 'Default'}
 					</span>
 					<span class="ml-auto font-mono text-xs font-bold text-muted-foreground">
 						{activePrinciple.no}/0{PRINCIPLES.length}
@@ -504,7 +467,8 @@
 													<div>
 														<div class="flex items-center justify-between">
 															<span class="font-mono text-xs font-bold text-accent">
-																STAGE {stage.no}
+																{t[$currentLang].craft.stageLabel}
+																{stage.no}
 															</span>
 															<Badge variant="outline" class="text-[0.6875rem]">{stage.tag}</Badge>
 														</div>
@@ -555,7 +519,7 @@
 													<span
 														class="mt-0.5 font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
 													>
-														score
+														{t[$currentLang].craft.scoreLabel}
 													</span>
 												</div>
 											</div>
@@ -582,17 +546,23 @@
 													<span
 														class="font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
 													>
-														Motion Easing
+														{t[$currentLang].craft.motionEasing}
 													</span>
 													<button
 														type="button"
 														onclick={toggleMotionDemo}
-														aria-label={motionDemoPaused ? 'Play motion demo' : 'Pause motion demo'}
+														aria-label={motionDemoPaused
+															? $currentLang === 'id'
+																? 'Jalankan demonstrasi gerak'
+																: 'Play motion demo'
+															: $currentLang === 'id'
+																? 'Jeda demonstrasi gerak'
+																: 'Pause motion demo'}
 														class="inline-flex items-center gap-1.5 border-2 border-border bg-card px-2 py-0.5 font-mono text-xs font-bold text-foreground shadow-neo-sm hover:bg-neo-surface-subtle"
 													>
 														{#if motionDemoPaused}
 															<Play class="size-3" aria-hidden="true" />
-															Play
+															{t[$currentLang].craft.motionPlay}
 														{:else}
 															<Pause class="size-3" aria-hidden="true" />
 															60fps
@@ -628,7 +598,9 @@
 															{item.owner}
 														</span>
 														<Badge
-															variant={item.status === 'Completed' ? 'lime' : 'outline'}
+															variant={item.status === 'Completed' || item.status === 'Selesai'
+																? 'lime'
+																: 'outline'}
 															class="text-[0.6875rem]"
 														>
 															{item.status}
