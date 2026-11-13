@@ -427,22 +427,6 @@ export const projectTranslations: Record<
 		en: { role: string; title: string; description: string; tags: string[] };
 	}
 > = {
-	'h2sn-photobooth': {
-		id: {
-			role: 'Pengembang Web Full Stack',
-			title: 'H2SN Photobooth',
-			description:
-				'Membangun website photobooth untuk mendukung operasional bisnis. Website menyediakan informasi layanan, galeri, paket, serta pengelolaan data secara digital.',
-			tags: ['Full Stack', 'Aplikasi Web', 'Galeri', 'Operasional Bisnis']
-		},
-		en: {
-			role: 'Full Stack Web Developer',
-			title: 'H2SN Photobooth',
-			description:
-				'Engineered a photobooth web application to support business operations with package listings, gallery showcases, and digital booking management.',
-			tags: ['Full Stack', 'Web App', 'Gallery', 'Business Ops']
-		}
-	},
 	'uic-press': {
 		id: {
 			role: 'Manajer Proyek',

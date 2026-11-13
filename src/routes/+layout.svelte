@@ -20,7 +20,8 @@
 		sameAs: [
 			'https://github.com/hsymm10',
 			'https://gitlab.com/hszamm',
-			'https://instagram.com/hszamm'
+			'https://instagram.com/hszamm',
+			'https://www.linkedin.com/in/hisyam-sayyid-alzam/'
 		]
 	});
 
