@@ -1007,10 +1007,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Building digital solutions with</title>
-</svelte:head>
-
 <div id="top" bind:this={pageRootEl} class="flex min-h-screen w-full flex-col bg-background">
 	<!-- Full-Screen Sticky Header with max-w-7xl centered content -->
 	<header class="sticky top-0 z-40 w-full border-b-2 border-border bg-card">

@@ -9,6 +9,20 @@
 
 	let { children }: LayoutProps = $props();
 
+	const personSchema = JSON.stringify({
+		'@context': 'https://schema.org',
+		'@type': 'Person',
+		name: 'Hisyam Sayyid Alzam',
+		alternateName: ['hszamm', 'hsymm10'],
+		url: 'https://hisyamsayyid.my.id/',
+		jobTitle: 'Full Stack Web Developer & UI/UX Designer',
+		sameAs: [
+			'https://github.com/hsymm10',
+			'https://gitlab.com/hszamm',
+			'https://instagram.com/hszamm'
+		]
+	});
+
 	$effect(() => {
 		registerGsap();
 
@@ -49,6 +63,49 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+
+	<!-- Primary Meta Tags -->
+	<title>Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio</title>
+	<meta name="title" content="Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio" />
+	<meta
+		name="description"
+		content="Portofolio resmi Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, Nuxt, dan Modern Web App."
+	/>
+	<meta
+		name="keywords"
+		content="Hisyam Sayyid Alzam, hszamm, hsymm10, Web Developer, UI UX Designer, SvelteKit, Laravel, Portfolio"
+	/>
+	<meta name="author" content="Hisyam Sayyid Alzam" />
+	<meta name="robots" content="index, follow" />
+	<link rel="canonical" href="https://hisyamsayyid.my.id/" />
+
+	<!-- Open Graph / Facebook / LinkedIn -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://hisyamsayyid.my.id/" />
+	<meta
+		property="og:title"
+		content="Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio"
+	/>
+	<meta
+		property="og:description"
+		content="Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, dan Modern Web App."
+	/>
+
+	<!-- Twitter / X -->
+	<meta property="twitter:card" content="summary" />
+	<meta property="twitter:url" content="https://hisyamsayyid.my.id/" />
+	<meta
+		property="twitter:title"
+		content="Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio"
+	/>
+	<meta
+		property="twitter:description"
+		content="Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, dan Modern Web App."
+	/>
+
+	<!-- Structured Data (JSON-LD) -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html `<script type="application/ld+json">${personSchema}</scr` + `ipt>`}
 </svelte:head>
 
 {@render children()}
