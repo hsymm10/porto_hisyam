@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🚗 Super Car Avoidance Premium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #2980b9;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --success: #2ecc71;
+      --coin: #f1c40f;
+      --dark: #121212;
+      --darker: #0a0a0a;
+      --text: #ecf0f1;
+      --road: #2c3e50;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      aspect-ratio: 2/3;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: linear-gradient(to bottom, #1a2a3a, #0f1a23);
+      border: 4px solid var(--primary);
+      border-radius: 10px;
+      box-shadow: 0 0 30px rgba(52, 152, 219, 0.3);
+    }
+
+    h1 {
+      margin: 15px 0;
+      font-size: 2rem;
+      background: linear-gradient(to right, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .score-display {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(0,0,0,0.7);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    .powerup-display {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .powerup-icon {
+      width: 30px;
+      height: 30px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background: #222;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      margin: 10px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(52, 152, 219, 0.6);
+    }
+
+    .btn-secondary {
+      background: #555;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+
+    .btn-secondary:hover {
+      background: #666;
+      box-shadow: 0 7px 20px rgba(0,0,0,0.6);
+    }
+
+    .mobile-controls {
+      display: none;
+      width: 100%;
+      max-width: 400px;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    .mobile-btn {
+      background: rgba(52, 152, 219, 0.8);
+      color: white;
+      border: none;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .mobile-controls {
+        display: flex;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .home-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 200;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <button class="home-btn" id="homeBtn" title="Back to Home">🏠</button>
+  
+  <h1>🚗 SUPER CAR AVOIDANCE PREMIUM 🚗</h1>
+  
+  <div class="game-container">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div class="score-display" id="scoreDisplay">Score: 0</div>
+    
+    <div class="powerup-display">
+      <div class="powerup-icon" id="shieldIcon" style="display:none">🛡️</div>
+      <div class="powerup-icon" id="magnetIcon" style="display:none">🧲</div>
+    </div>
+
+    <div id="startModal" class="modal">
+      <div class="modal-content">
+        <h2 class="pulse">SUPER CAR AVOIDANCE</h2>
+        <p>Drive safely and avoid other cars!</p>
+        <p>Collect coins and power-ups to boost your score.</p>
+        <button class="btn" id="startBtn">START GAME</button>
+        <button class="btn btn-secondary" id="backBtn">BACK TO HOME</button>
+      </div>
+    </div>
+
+    <div id="gameOverModal" class="modal" style="display:none">
+      <div class="modal-content">
+        <h2 style="color: var(--danger)">GAME OVER</h2>
+        <p>Your Score: <span id="finalScore">0</span></p>
+        <p>High Score: <span id="highScore">0</span></p>
+        <button class="btn" id="restartBtn">PLAY AGAIN</button>
+        <button class="btn btn-secondary" id="backBtnGameOver">BACK TO HOME</button>
+      </div>
+    </div>
+
+    <div class="mobile-controls">
+      <button class="mobile-btn" id="leftBtn">←</button>
+      <button class="mobile-btn" id="rightBtn">→</button>
+    </div>
+  </div>
+
+  <script>
+  // Ambil nilai dari CSS variable
+  function getCSSVariable(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  
+  // Game Elements
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Game State
+  let gameRunning = false;
+  let score = 0;
+  let highScore = localStorage.getItem('highScore') || 0;
+  let level = 1;
+  let gameSpeed = 1;
+  
+  // Power-ups
+  let shieldActive = false;
+  let magnetActive = false;
+  
+  // Game Objects
+  const obstacles = [];
+  const coins = [];
+  const powerups = [];
+  const particles = [];
+
+  // Fallback untuk roundRect
+  function drawRoundedRect(x, y, w, h, r) {
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, r);
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  // Player Car
+  const car = {
+    x: 0,
+    y: 0,
+    width: 40,
+    height: 70,
+    speed: 15,
+    draw() {
+      const gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+      gradient.addColorStop(0, '#3498db');
+      gradient.addColorStop(1, '#2980b9');
+      
+      ctx.fillStyle = gradient;
+      drawRoundedRect(this.x, this.y, this.width, this.height, 10);
+
+      ctx.fillStyle = 'white';
+      ctx.font = '24px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🚗', this.x + this.width / 2, this.y + this.height / 2);
+
+      if (shieldActive) {
+        ctx.strokeStyle = 'rgba(52, 152, 219, 0.5)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2 + 10, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    },
+    moveLeft() {
+      this.x = Math.max(30, this.x - this.speed);
+    },
+    moveRight() {
+      this.x = Math.min(canvas.width / devicePixelRatio - 30 - this.width, this.x + this.speed);
+    }
+  };
+  
+  // Initialize Game
+  function initGame() {
+    const container = document.querySelector('.game-container');
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = container.clientWidth * dpr;
+    canvas.height = container.clientWidth * 1.5 * dpr;
+    canvas.style.width = container.clientWidth + 'px';
+    canvas.style.height = container.clientWidth * 1.5 + 'px';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+
+    car.x = container.clientWidth / 2 - car.width / 2;
+    car.y = container.clientWidth * 1.5 - car.height - 30;
+
+    document.getElementById('highScore').textContent = highScore;
+  }
+  
+  // Create Game Objects
+  function createObstacle() {
+    const types = [
+      { width: 40, height: 80, color: '#e74c3c', icon: '🚗' },
+      { width: 60, height: 50, color: '#f39c12', icon: '🚚' },
+      { width: 50, height: 90, color: '#9b59b6', icon: '🚙' }
+    ];
+    
+    const type = types[Math.floor(Math.random() * types.length)];
+    const x = 30 + Math.random() * (canvas.width - 60 - type.width);
+    
+    obstacles.push({
+      x: x,
+      y: -type.height,
+      width: type.width,
+      height: type.height,
+      speed: 1.2 + Math.random() * 1.2 * gameSpeed,
+      color: type.color,
+      icon: type.icon
+    });
+  }
+  
+  function createCoin() {
+    coins.push({
+      x: 30 + Math.random() * (canvas.width - 60),
+      y: -20,
+      size: 15,
+      speed: 3 * gameSpeed,
+      value: 1,
+      angle: 0
+    });
+  }
+  
+  function createPowerup() {
+    const types = [
+      { type: 'shield', color: '#3498db', symbol: '🛡️', duration: 300 },
+      { type: 'magnet', color: '#e74c3c', symbol: '🧲', duration: 250 },
+      { type: 'bonus', color: '#f1c40f', symbol: '💎', duration: 0 }
+    ];
+    
+    const type = types[Math.floor(Math.random() * types.length)];
+    
+    powerups.push({
+      x: 30 + Math.random() * (canvas.width - 60),
+      y: -30,
+      size: 25,
+      speed: 2 * gameSpeed,
+      type: type.type,
+      color: type.color,
+      symbol: type.symbol,
+      duration: type.duration,
+      angle: 0
+    });
+  }
+  
+  // Game Loop
+  function gameLoop() {
+    if (!gameRunning) return;
+    
+    ctx.clearRect(0, 0, canvas.width / devicePixelRatio, canvas.height / devicePixelRatio);
+
+    // Simulasi jalan bergerak dengan garis putus-putus yang bergeser
+    const roadMarkingOffset = (Date.now() / 8) % 60;
+    ctx.fillStyle = getCSSVariable('--road');
+    ctx.fillRect(30, 0, canvas.width / devicePixelRatio - 60, canvas.height / devicePixelRatio);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([30, 30]);
+    for (let y = -roadMarkingOffset; y < canvas.height / devicePixelRatio; y += 60) {
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / devicePixelRatio / 2 - 5, y);
+      ctx.lineTo(canvas.width / devicePixelRatio / 2 - 5, y + 30);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // Draw car
+    car.draw();
+    
+    // Update and draw obstacles
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      const obs = obstacles[i];
+      obs.y += obs.speed;
+
+      // Draw obstacle
+      ctx.fillStyle = obs.color;
+      ctx.beginPath();
+      ctx.roundRect(obs.x, obs.y, obs.width, obs.height, 5);
+      ctx.fill();
+
+      ctx.fillStyle = 'white';
+      ctx.font = `${Math.min(obs.width, obs.height)/1.5}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(obs.icon, obs.x + obs.width/2, obs.y + obs.height/2);
+
+      if (!shieldActive && isColliding(car, obs)) {
+        gameOver();
+        return;
+      }
+
+      if (obs.y > canvas.height) {
+        obstacles.splice(i, 1);
+        score += level;
+        updateScore();
+      }
+    }
+    
+    // Update and draw coins
+    for (let i = coins.length - 1; i >= 0; i--) {
+      const coin = coins[i];
+      coin.y += coin.speed;
+      coin.angle += 0.1;
+      
+      // Magnet effect
+      if (magnetActive) {
+        const dx = (car.x + car.width/2) - (coin.x + coin.size/2);
+        const dy = (car.y + car.height/2) - (coin.y + coin.size/2);
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        
+        if (distance < 150) {
+          coin.x += dx * 0.05;
+          coin.y += dy * 0.05;
+        }
+      }
+      
+      // Draw coin
+      ctx.save();
+      ctx.translate(coin.x, coin.y);
+      ctx.rotate(coin.angle);
+      
+      ctx.fillStyle = '#f1c40f';
+      ctx.beginPath();
+      ctx.arc(0, 0, coin.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.font = `${coin.size}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('$', 0, 0);
+      
+      ctx.restore();
+      
+      // Collect coin
+      if (isColliding(car, {x: coin.x, y: coin.y, width: coin.size, height: coin.size})) {
+        coins.splice(i, 1);
+        score += coin.value * level;
+        createParticles(coin.x, coin.y, 10, '#f1c40f');
+        updateScore();
+      }
+      
+      // Remove if off screen
+      if (coin.y > canvas.height) {
+        coins.splice(i, 1);
+      }
+    }
+    
+    // Update and draw powerups
+    for (let i = powerups.length - 1; i >= 0; i--) {
+      const p = powerups[i];
+      p.y += p.speed;
+      p.angle += 0.05;
+      
+      // Draw powerup
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 15;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'white';
+      ctx.font = `${p.size}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.symbol, 0, 0);
+      
+      ctx.restore();
+      
+      // Collect powerup
+      if (isColliding(car, {x: p.x, y: p.y, width: p.size, height: p.size})) {
+        activatePowerup(p.type, p.duration);
+        createParticles(p.x, p.y, 15, p.color);
+        powerups.splice(i, 1);
+      }
+      
+      // Remove if off screen
+      if (p.y > canvas.height) {
+        powerups.splice(i, 1);
+      }
+    }
+    
+    // Update and draw particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.life--;
+      
+      ctx.globalAlpha = p.life / 60;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+    ctx.globalAlpha = 1;
+    
+    // Spawn objects
+    if (obstacles.length < 2 && Math.random() < 0.008 * gameSpeed) createObstacle();
+    if (Math.random() < 0.01) createCoin();
+    if (Math.random() < 0.005) createPowerup();
+    
+    // Level progression
+    if (score >= level * 50) {
+      level++;
+      gameSpeed = 1 + level * 0.1;
+      createParticles(canvas.width/2, 50, 30, '#ffffff');
+    }
+    
+    requestAnimationFrame(gameLoop);
+  }
+  
+  // Helper Functions
+  function isColliding(a, b) {
+    return a.x < b.x + b.width &&
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y;
+  }
+  
+  function createParticles(x, y, count, color) {
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: x,
+        y: y,
+        size: 2 + Math.random() * 4,
+        color: color,
+        speedX: Math.random() * 6 - 3,
+        speedY: Math.random() * 6 - 3,
+        life: 30 + Math.random() * 30
+      });
+    }
+  }
+  
+  function activatePowerup(type, duration) {
+    switch(type) {
+      case 'shield':
+        shieldActive = true;
+        document.getElementById('shieldIcon').style.display = 'flex';
+        setTimeout(() => {
+          shieldActive = false;
+          document.getElementById('shieldIcon').style.display = 'none';
+        }, duration * 16.67);
+        break;
+        
+      case 'magnet':
+        magnetActive = true;
+        document.getElementById('magnetIcon').style.display = 'flex';
+        setTimeout(() => {
+          magnetActive = false;
+          document.getElementById('magnetIcon').style.display = 'none';
+        }, duration * 16.67);
+        break;
+        
+      case 'bonus':
+        score += 10 * level;
+        updateScore();
+        break;
+    }
+  }
+  
+  function updateScore() {
+    document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+  }
+  
+  // Game Control
+  function startGame() {
+    // Tutup semua modal
+    document.getElementById('startModal').style.display = 'none';
+    document.getElementById('gameOverModal').style.display = 'none';
+
+    // Reset game state
+    gameRunning = true;
+    score = 0;
+    level = 1;
+    gameSpeed = 1;
+    shieldActive = false;
+    magnetActive = false;
+    obstacles.length = 0;
+    coins.length = 0;
+    powerups.length = 0;
+    particles.length = 0;
+
+    // Reset posisi mobil
+    car.x = canvas.width / 2 / devicePixelRatio - car.width / 2;
+    car.y = canvas.height / devicePixelRatio - car.height - 30;
+
+    // Update UI
+    updateScore();
+    document.getElementById('shieldIcon').style.display = 'none';
+    document.getElementById('magnetIcon').style.display = 'none';
+
+    // Mulai game loop
+    gameLoop();
+  }
+  
+  function gameOver() {
+    gameRunning = false;
+    highScore = Math.max(highScore, score);
+    localStorage.setItem('highScore', highScore);
+    
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('highScore').textContent = highScore;
+    document.getElementById('gameOverModal').style.display = 'flex';
+    
+    // Explosion effect
+    createParticles(car.x + car.width/2, car.y + car.height/2, 50, '#e74c3c');
+  }
+
+  function goToHome() {
+    window.location.href = 'index.html';
+  }
+  
+  // Event Listeners
+  document.getElementById('startBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    startGame();
+  });
+  
+  document.getElementById('restartBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    startGame();
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    goToHome();
+  });
+
+  document.getElementById('backBtnGameOver').addEventListener('click', function(e) {
+    e.preventDefault();
+    goToHome();
+  });
+
+  document.getElementById('homeBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    goToHome();
+  });
+  
+  // Keyboard controls
+  document.addEventListener('keydown', (e) => {
+    if (!gameRunning) {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        startGame();
+      }
+      return;
+    }
+    
+    if (e.code === 'ArrowLeft') car.moveLeft();
+    if (e.code === 'ArrowRight') car.moveRight();
+  });
+  
+  // Mobile controls
+  document.getElementById('leftBtn').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (gameRunning) car.moveLeft();
+  });
+  
+  document.getElementById('rightBtn').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (gameRunning) car.moveRight();
+  });
+  
+  // Touch controls
+  let dragging = false;
+  let dragOffsetX = 0;
+
+  canvas.addEventListener("touchstart", (e) => {
+    if (!gameRunning) {
+      startGame();
+      return;
+    }
+    const rect = canvas.getBoundingClientRect();
+    const touchX = e.touches[0].clientX - rect.left;
+    const touchY = e.touches[0].clientY - rect.top;
+    if (
+      touchX >= car.x && touchX <= car.x + car.width &&
+      touchY >= car.y && touchY <= car.y + car.height
+    ) {
+      dragging = true;
+      dragOffsetX = touchX - car.x;
+    }
+  });
+
+  canvas.addEventListener("touchmove", (e) => {
+    if (dragging && gameRunning) {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touchX = e.touches[0].clientX - rect.left;
+      car.x = touchX - dragOffsetX;
+      if (car.x < 30) car.x = 30;
+      if (car.x + car.width > canvas.width / devicePixelRatio - 30) {
+        car.x = canvas.width / devicePixelRatio - 30 - car.width;
+      }
+    }
+  });
+
+  canvas.addEventListener("touchend", () => {
+    dragging = false;
+  });
+
+  // Initialize game
+  window.addEventListener('load', initGame);
+  window.addEventListener('resize', initGame);
+  </script>
+  <footer> <p> ❤️ | Super Car </p><footer>
+</body>
+</html>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Challenge</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #A94A4A, #F4D793 60%, #FFF6DA 100%);
+            color: #A94A4A;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #FFF6DA;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(169, 74, 74, 0.15);
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px #F4D793;
+            margin-bottom: 10px;
+            color: #A94A4A;
+        }
+
+        .player-names label,
+        .player-name {
+            color: #A94A4A;
+        }
+
+        .name-input input {
+            font-size: 1rem;
+            padding: 8px;
+            width: 200px;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid #A94A4A;
+            background: #FFF6DA;
+            color: #A94A4A;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background: linear-gradient(to bottom, #F4D793, #FFF6DA);
+            border: 2px solid #A94A4A;
+            color: #A94A4A;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 25px;
+            box-shadow: 0 4px 8px rgba(169, 74, 74, 0.10);
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px #A94A4A;
+            background: linear-gradient(to bottom, #FFF6DA, #F4D793);
+        }
+
+        .mode-btn.active {
+            background: #A94A4A;
+            color: #FFF6DA;
+            box-shadow: 0 0 15px #A94A4A;
+            border-color: #F4D793;
+        }
+
+        .operation-btn {
+            background: #F4D793;
+            border: 2px solid #A94A4A;
+            color: #A94A4A;
+            padding: 10px 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            margin: 0 2px;
+        }
+
+        .operation-btn:hover,
+        .operation-btn.selected {
+            background: #A94A4A;
+            color: #FFF6DA;
+            border-color: #F4D793;
+            box-shadow: 0 0 10px #F4D793;
+        }
+
+        .math-problem {
+            font-size: 3rem;
+            margin: 30px 0;
+            min-height: 80px;
+            color: #A94A4A;
+            background: #FFF6DA;
+            border-radius: 10px;
+            padding: 10px 0;
+        }
+
+        .answer-input {
+            font-size: 2rem;
+            padding: 10px;
+            width: 150px;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid #A94A4A;
+            background: #FFF6DA;
+            color: #A94A4A;
+        }
+
+        .submit-btn {
+            background: #A94A4A;
+            color: #FFF6DA;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #F4D793;
+            background: #F4D793;
+            color: #A94A4A;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background-color: #F4D793;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #A94A4A;
+        }
+
+        .player-score {
+            font-size: 1.3rem;
+        }
+
+        .score {
+            font-size: 1.8rem;
+            color: #A94A4A;
+        }
+
+        .feedback {
+            font-size: 1.5rem;
+            min-height: 40px;
+            margin: 15px 0;
+            color: #A94A4A;
+            background: #FFF6DA;
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: inline-block;
+        }
+
+        .correct {
+            color: #FFF6DA;
+            background: #A94A4A;
+            border-radius: 8px;
+            padding: 2px 8px;
+            display: inline-block;
+        }
+
+        .incorrect {
+            color: #A94A4A;
+            background: #F4D793;
+            border-radius: 8px;
+            padding: 2px 8px;
+            display: inline-block;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            margin: 15px 0;
+            color: #A94A4A;
+            background: #FFF6DA;
+            border-radius: 8px;
+            display: inline-block;
+            padding: 4px 16px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(to bottom, #F4D793, #FFF6DA);
+            color: #A94A4A;
+            border: 2px solid #A94A4A;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px #A94A4A;
+            background: #A94A4A;
+            color: #FFF6DA;
+        }
+
+        .rules {
+            background-color: #FFF6DA;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            color: #A94A4A;
+        }
+
+        .rules h2 {
+            margin-top: 0;
+            text-align: center;
+            color: #A94A4A;
+        }
+
+        .rules ul {
+            padding-left: 20px;
+        }
+
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .start-btn {
+            background: #A94A4A;
+            color: #FFF6DA;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #F4D793;
+            background: #F4D793;
+            color: #A94A4A;
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #F4D793;
+            border-radius: 10px;
+            color: #A94A4A;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .math-problem {
+                font-size: 2rem;
+            }
+
+            .answer-input {
+                font-size: 1.5rem;
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🧮 Math Challenge 🧮</h1>
+        
+        <div class="start-screen" id="start-screen">
+            <div class="player-names">
+                <div class="name-input">
+                    <label for="player1-name">Player 1 Name:</label>
+                    <input type="text" id="player1-name" placeholder="Enter your name">
+                </div>
+                <div class="name-input" id="player2-name-input" style="display: none;">
+                    <label for="player2-name">Player 2 Name:</label>
+                    <input type="text" id="player2-name" placeholder="Enter second player name">
+                </div>
+            </div>
+            
+            <div class="mode-selector">
+                <button class="mode-btn active" id="single-mode">Single Player</button>
+                <button class="mode-btn" id="multi-mode">Two Players</button>
+                <button class="mode-btn" id="vs-computer">VS Computer</button>
+            </div>
+            
+            <div class="operation-selector">
+                <button class="operation-btn selected" data-op="+">➕</button>
+                <button class="operation-btn selected" data-op="-">➖</button>
+                <button class="operation-btn selected" data-op="×">✖️</button>
+                <button class="operation-btn selected" data-op="÷">➗</button>
+            </div>
+            
+            <div class="rules" id="rules">
+                <h2>Game Rules</h2>
+                <ul>
+                    <li>Select game mode: Single Player, Two Players, or VS Computer</li>
+                    <li>Enter player names (for single player, only Player 1 name is needed)</li>
+                    <li>Choose which math operations you want to practice</li>
+                    <li>You have 2 minutes to solve as many problems as you can</li>
+                    <li>Each correct answer gives you 1 point</li>
+                    <li>In multiplayer mode, players take turns answering</li>
+                    <li>In VS Computer mode, the computer will also answer questions</li>
+                    <li>Click "New Game" to restart at any time</li>
+                </ul>
+            </div>
+            
+            <button class="start-btn" id="start-btn">Start Game</button>
+        </div>
+        
+        <div class="game-screen" id="game-screen">
+            <div class="score-board">
+                <div class="player-score" id="player1-score">
+                    <div class="player-name" id="player1-name-display">Player 1</div>
+                    <div class="score">0</div>
+                </div>
+                <div class="player-score" id="player2-score" style="display: none;">
+                    <div class="player-name" id="player2-name-display">Player 2</div>
+                    <div class="score">0</div>
+                </div>
+                <div class="player-score" id="computer-score" style="display: none;">
+                    <div class="player-name">Computer</div>
+                    <div class="score">0</div>
+                </div>
+            </div>
+            
+            <div class="timer">
+                Time: <span id="time">120</span>s
+            </div>
+            
+            <div class="math-problem" id="problem">
+                Ready to start!
+            </div>
+            
+            <div>
+                <input type="number" class="answer-input" id="answer" placeholder="Answer">
+                <button class="submit-btn" id="submit">Submit</button>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="controls">
+                <button class="control-btn" id="new-game">New Game</button>
+                <button class="control-btn" id="change-operations">Change Operations</button>
+                <button class="control-btn" id="show-rules">Show Rules</button>
+                <button class="control-btn" id="back-to-menu">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p> ❤️ | Math Challenge Game </p>
+    </footer>
+   
+
+    <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+    <audio id="gameOverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+
+    <script>
+        // Game elements
+        const startScreen = document.getElementById("start-screen");
+        const gameScreen = document.getElementById("game-screen");
+        const singleModeBtn = document.getElementById("single-mode");
+        const multiModeBtn = document.getElementById("multi-mode");
+        const vsComputerBtn = document.getElementById("vs-computer");
+        const player1NameInput = document.getElementById("player1-name");
+        const player2NameInput = document.getElementById("player2-name");
+        const player2NameInputDiv = document.getElementById("player2-name-input");
+        const operationBtns = document.querySelectorAll(".operation-btn");
+        const problemElement = document.getElementById("problem");
+        const answerInput = document.getElementById("answer");
+        const submitBtn = document.getElementById("submit");
+        const feedbackElement = document.getElementById("feedback");
+        const newGameBtn = document.getElementById("new-game");
+        const changeOpsBtn = document.getElementById("change-operations");
+        const showRulesBtn = document.getElementById("show-rules");
+        const backToMenuBtn = document.getElementById("back-to-menu");
+        const startBtn = document.getElementById("start-btn");
+        const rulesDiv = document.getElementById("rules");
+        const player1ScoreDiv = document.getElementById("player1-score");
+        const player2ScoreDiv = document.getElementById("player2-score");
+        const computerScoreDiv = document.getElementById("computer-score");
+        const player1NameDisplay = document.getElementById("player1-name-display");
+        const player2NameDisplay = document.getElementById("player2-name-display");
+        const timeDisplay = document.getElementById("time");
+        
+        // Audio elements
+        const correctSound = document.getElementById("correctSound");
+        const wrongSound = document.getElementById("wrongSound");
+        const gameOverSound = document.getElementById("gameOverSound");
+        
+        // Game state
+        let currentProblem = null;
+        let score = [0, 0];
+        let gameMode = "single"; // "single", "multi", or "computer"
+        let selectedOperations = ["+", "-", "×", "÷"];
+        let currentPlayer = 1;
+        let timeLeft = 120;
+        let timer;
+        let gameActive = false;
+        let computerThinkingTimeout;
+        let playerNames = ["Player 1", "Player 2"];
+        
+        // Initialize game
+        initGame();
+        
+        function initGame() {
+            // Show rules by default
+            rulesDiv.style.display = "block";
+            
+            // Event listeners
+            singleModeBtn.addEventListener("click", () => setGameMode("single"));
+            multiModeBtn.addEventListener("click", () => setGameMode("multi"));
+            vsComputerBtn.addEventListener("click", () => setGameMode("computer"));
+            
+            operationBtns.forEach(btn => {
+                btn.addEventListener("click", toggleOperation);
+            });
+            
+            startBtn.addEventListener("click", startGame);
+            submitBtn.addEventListener("click", checkAnswer);
+            answerInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") checkAnswer();
+            });
+            
+            newGameBtn.addEventListener("click", startNewGame);
+            changeOpsBtn.addEventListener("click", changeOperations);
+            showRulesBtn.addEventListener("click", toggleRules);
+            backToMenuBtn.addEventListener("click", backToMenu);
+        }
+        
+        function setGameMode(mode) {
+            gameMode = mode;
+            
+            // Update button states
+            singleModeBtn.classList.remove("active");
+            multiModeBtn.classList.remove("active");
+            vsComputerBtn.classList.remove("active");
+            
+            if (mode === "single") {
+                singleModeBtn.classList.add("active");
+                player2NameInputDiv.style.display = "none";
+            } else if (mode === "multi") {
+                multiModeBtn.classList.add("active");
+                player2NameInputDiv.style.display = "flex";
+            } else {
+                vsComputerBtn.classList.add("active");
+                player2NameInputDiv.style.display = "none";
+            }
+        }
+        
+        function toggleOperation(e) {
+            const op = e.target.dataset.op;
+            e.target.classList.toggle("selected");
+            
+            if (selectedOperations.includes(op)) {
+                selectedOperations = selectedOperations.filter(o => o !== op);
+            } else {
+                selectedOperations.push(op);
+            }
+            
+            // Ensure at least one operation is selected
+            if (selectedOperations.length === 0) {
+                e.target.classList.add("selected");
+                selectedOperations.push(op);
+            }
+        }
+        
+        function startGame() {
+            // Get player names
+            playerNames[0] = player1NameInput.value.trim() || "Player 1";
+            
+            if (gameMode === "multi") {
+                playerNames[1] = player2NameInput.value.trim() || "Player 2";
+            }
+            
+            // Update displays
+            player1NameDisplay.textContent = playerNames[0];
+            player2NameDisplay.textContent = playerNames[1];
+            
+            // Switch to game screen
+            startScreen.style.display = "none";
+            gameScreen.style.display = "block";
+            
+            // Start the game
+            startNewGame();
+        }
+        
+        function changeOperations() {
+            if (gameActive) {
+                pauseGame();
+                if (confirm("Change operations? Current game will be paused.")) {
+                    answerInput.value = "";
+                    feedbackElement.textContent = "Select operations and click New Game";
+                    feedbackElement.className = "feedback";
+                } else {
+                    resumeGame();
+                }
+            } else {
+                // If game isn't active, just allow changing operations
+                feedbackElement.textContent = "Select operations and click New Game";
+                feedbackElement.className = "feedback";
+            }
+        }
+        
+        function toggleRules() {
+            rulesDiv.style.display = rulesDiv.style.display === "none" ? "block" : "none";
+        }
+        
+        function backToMenu() {
+            if (gameActive) {
+                if (confirm("Return to menu? Current game will be lost.")) {
+                    // Stop any ongoing game
+                    clearInterval(timer);
+                    clearTimeout(computerThinkingTimeout);
+                    gameActive = false;
+                    
+                    // Reset displays
+                    answerInput.value = "";
+                    feedbackElement.textContent = "";
+                    feedbackElement.className = "feedback";
+                    
+                    // Switch to start screen
+                    gameScreen.style.display = "none";
+                    startScreen.style.display = "block";
+                }
+            } else {
+                // If game isn't active, just return to menu
+                gameScreen.style.display = "none";
+                startScreen.style.display = "block";
+            }
+        }
+        
+        function startNewGame() {
+            // Clear any existing timeouts
+            clearTimeout(computerThinkingTimeout);
+            
+            // Reset scores
+            score = [0, 0];
+            updateScores();
+            
+            // Update player displays based on mode
+            if (gameMode === "single") {
+                player2ScoreDiv.style.display = "none";
+                computerScoreDiv.style.display = "none";
+            } else if (gameMode === "multi") {
+                player2ScoreDiv.style.display = "block";
+                computerScoreDiv.style.display = "none";
+            } else {
+                player2ScoreDiv.style.display = "none";
+                computerScoreDiv.style.display = "block";
+            }
+            
+            // Reset timer
+            timeLeft = 120;
+            timeDisplay.textContent = timeLeft;
+            
+            // Reset player
+            currentPlayer = 1;
+            
+            // Generate first problem
+            generateProblem();
+            
+            // Start timer if not already running
+            if (!gameActive) {
+                startTimer();
+            }
+            
+            gameActive = true;
+            answerInput.disabled = false;
+            submitBtn.disabled = false;
+            answerInput.focus();
+            
+            // If playing against computer, start computer's turn if it's their turn
+            if (gameMode === "computer" && currentPlayer === 2) {
+                computerTurn();
+            }
+        }
+        
+        function generateProblem() {
+            if (selectedOperations.length === 0) return;
+            
+            const op = selectedOperations[Math.floor(Math.random() * selectedOperations.length)];
+            let a, b, solution;
+            
+            switch(op) {
+                case "+":
+                    a = Math.floor(Math.random() * 50) + 1;
+                    b = Math.floor(Math.random() * 50) + 1;
+                    solution = a + b;
+                    break;
+                case "-":
+                    a = Math.floor(Math.random() * 50) + 1;
+                    b = Math.floor(Math.random() * a) + 1;
+                    solution = a - b;
+                    break;
+                case "×":
+                    a = Math.floor(Math.random() * 12) + 1;
+                    b = Math.floor(Math.random() * 12) + 1;
+                    solution = a * b;
+                    break;
+                case "÷":
+                    b = Math.floor(Math.random() * 10) + 1;
+                    solution = Math.floor(Math.random() * 10) + 1;
+                    a = b * solution;
+                    break;
+            }
+            
+            currentProblem = { a, b, op, solution };
+            problemElement.textContent = `${a} ${op} ${b} = ?`;
+            
+            // For division, show as fraction format
+            if (op === "÷") {
+                problemElement.textContent = `${a} ÷ ${b} = ?`;
+            }
+            
+            answerInput.value = "";
+            if (gameMode === "multi") {
+                feedbackElement.textContent = `${playerNames[currentPlayer - 1]}'s turn`;
+            } else if (gameMode === "computer" && currentPlayer === 2) {
+                feedbackElement.textContent = "Computer's turn...";
+            } else {
+                feedbackElement.textContent = "";
+            }
+            feedbackElement.className = "feedback";
+        }
+        
+        function checkAnswer() {
+            if (!currentProblem || !gameActive) return;
+            
+            const userAnswer = parseInt(answerInput.value);
+            
+            if (isNaN(userAnswer)) {
+                feedbackElement.textContent = "Please enter a valid number!";
+                feedbackElement.className = "feedback incorrect";
+                return;
+            }
+            
+            if (userAnswer === currentProblem.solution) {
+                // Correct answer
+                score[currentPlayer - 1]++;
+                updateScores();
+                
+                feedbackElement.textContent = "Correct! 🎉";
+                feedbackElement.className = "feedback correct";
+                
+                if (correctSound) {
+                    correctSound.currentTime = 0;
+                    correctSound.play();
+                }
+                
+                // Switch player in multiplayer/computer mode
+                if (gameMode === "multi" || gameMode === "computer") {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                }
+                
+                generateProblem();
+                
+                // If playing against computer and it's their turn, let them answer
+                if (gameMode === "computer" && currentPlayer === 2) {
+                    computerTurn();
+                }
+            } else {
+                // Wrong answer
+                feedbackElement.textContent = `Wrong! The answer was ${currentProblem.solution}`;
+                feedbackElement.className = "feedback incorrect";
+                
+                if (wrongSound) {
+                    wrongSound.currentTime = 0;
+                    wrongSound.play();
+                }
+                
+                // In multiplayer/computer mode, switch player after wrong answer
+                if (gameMode === "multi" || gameMode === "computer") {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                    if (gameMode === "multi") {
+                        feedbackElement.textContent += ` - ${playerNames[currentPlayer - 1]}'s turn`;
+                    } else {
+                        feedbackElement.textContent += ` - Computer's turn...`;
+                    }
+                }
+                
+                generateProblem();
+                
+                // If playing against computer and it's their turn, let them answer
+                if (gameMode === "computer" && currentPlayer === 2) {
+                    computerTurn();
+                }
+            }
+        }
+        
+        function computerTurn() {
+            // Computer takes some time to "think" before answering
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+            
+            // Computer has an 80% chance to answer correctly
+            const isCorrect = Math.random() < 0.8;
+            
+            computerThinkingTimeout = setTimeout(() => {
+                if (isCorrect) {
+                    // Computer answers correctly
+                    score[1]++;
+                    updateScores();
+                    
+                    feedbackElement.textContent = "Computer answered correctly!";
+                    feedbackElement.className = "feedback correct";
+                    
+                    if (correctSound) {
+                        correctSound.currentTime = 0;
+                        correctSound.play();
+                    }
+                } else {
+                    // Computer answers incorrectly
+                    feedbackElement.textContent = `Computer answered wrong! The answer was ${currentProblem.solution}`;
+                    feedbackElement.className = "feedback incorrect";
+                    
+                    if (wrongSound) {
+                        wrongSound.currentTime = 0;
+                        wrongSound.play();
+                    }
+                }
+                
+                // Switch back to player
+                currentPlayer = 1;
+                generateProblem();
+                
+                answerInput.disabled = false;
+                submitBtn.disabled = false;
+                answerInput.focus();
+            }, 1500); // Computer takes 1.5 seconds to answer
+        }
+        
+        function updateScores() {
+            document.querySelector("#player1-score .score").textContent = score[0];
+            document.querySelector("#player2-score .score").textContent = score[1];
+            document.querySelector("#computer-score .score").textContent = score[1];
+        }
+        
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function pauseGame() {
+            clearInterval(timer);
+            clearTimeout(computerThinkingTimeout);
+            gameActive = false;
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+        }
+        
+        function resumeGame() {
+            gameActive = true;
+            answerInput.disabled = false;
+            submitBtn.disabled = false;
+            startTimer();
+            
+            // If playing against computer and it's their turn, resume their turn
+            if (gameMode === "computer" && currentPlayer === 2) {
+                computerTurn();
+            }
+        }
+        
+        function endGame() {
+            clearInterval(timer);
+            clearTimeout(computerThinkingTimeout);
+            gameActive = false;
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+            
+            let message;
+            if (gameMode === "single") {
+                message = `Game over! ${playerNames[0]}'s score: ${score[0]}`;
+            } else if (gameMode === "multi") {
+                if (score[0] > score[1]) {
+                    message = `${playerNames[0]} wins! ${score[0]} - ${score[1]}`;
+                } else if (score[1] > score[0]) {
+                    message = `${playerNames[1]} wins! ${score[1]} - ${score[0]}`;
+                } else {
+                    message = `It's a tie! ${score[0]} - ${score[1]}`;
+                }
+            } else {
+                // VS Computer mode
+                if (score[0] > score[1]) {
+                    message = `You win! ${score[0]} - ${score[1]}`;
+                } else if (score[1] > score[0]) {
+                    message = `Computer wins! ${score[1]} - ${score[0]}`;
+                } else {
+                    message = `It's a tie! ${score[0]} - ${score[1]}`;
+                }
+            }
+            
+            feedbackElement.textContent = message;
+            feedbackElement.className = "feedback";
+            
+            problemElement.textContent = "Game Over!";
+            answerInput.value = "";
+            
+            if (gameOverSound) {
+                gameOverSound.currentTime = 0;
+                gameOverSound.play();
+            }
+        }
+    </script>
+</body>
+</html>

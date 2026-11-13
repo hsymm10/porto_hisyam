@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+<title>🧟 Zombie Shooter Premium</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin:0; 
+    padding:0; 
+    overflow-x:hidden; 
+    background:#111; 
+    color:#fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select:none;
+    height: 100%;
+    width: 100%;
+  }
+  #gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px 10px;
+    overflow: auto;
+  }
+  #gameCanvas {
+    display:block;
+    background: linear-gradient(to bottom, #222, #000);
+    border: 4px solid #0f0;
+    border-radius: 12px;
+    touch-action: none;
+    max-width: 100%;
+    max-height: 80vh;
+  }
+  #hud {
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto;
+    display:flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 5px 10px;
+    user-select:none;
+  }
+  #powerupList {
+    display:flex;
+    gap: 10px;
+  }
+  .powerup-icon {
+    background: #0f0;
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 18px;
+    color: #000;
+    font-weight: bold;
+  }
+  #startOverlay, #gameOverOverlay, #iconSelectOverlay {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.9);
+    color: #0f0;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    user-select:none;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  button {
+    background: #0f0;
+    border:none;
+    color:#000;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 12px 25px;
+    margin-top: 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 0 15px #0f0;
+    transition: transform 0.2s ease;
+  }
+  button:hover {
+    transform: scale(1.1);
+  }
+  /* Animasi kabut */
+  #fogCanvas {
+    position: fixed;
+    top:0; left:0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.15;
+  }
+  /* Icon selection */
+  #iconSelectOverlay {
+    display: none;
+  }
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+    max-width: 100%;
+  }
+  .icon-option {
+    font-size: 2rem;
+    padding: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .icon-option:hover, .icon-option.selected {
+    border-color: #0f0;
+    background: rgba(0,255,0,0.1);
+    transform: scale(1.1);
+  }
+  .current-icon {
+    font-size: 3rem;
+    margin: 20px 0;
+  }
+  h1 {
+    text-align:center; 
+    user-select:none; 
+    color:#0f0; 
+    text-shadow: 0 0 5px #0f0;
+    margin: 10px 0;
+    font-size: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+  }
+   footer {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: #111;
+    color: white;
+  }
+  .back-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    background: rgba(0,0,0,0.7);
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- Back Button -->
+<button class="back-button" id="backButton">← Back</button>
+
+<div id="gameContainer">
+  <h1>🧟 Zombie Shooter Premium 🧟</h1>
+
+  <div id="hud">
+    <div>Score: <span id="score">0</span></div>
+    <div>Lives: <span id="lives">3</span></div>
+    <div>Wave: <span id="wave">1</span></div>
+    <div id="powerupList"></div>
+  </div>
+
+  <canvas id="gameCanvas" width="400" height="600" tabindex="0"></canvas>
+  <canvas id="fogCanvas"></canvas>
+</div>
+
+<div id="startOverlay">
+  <h2>Welcome to Zombie Shooter!</h2>
+  <p>Tap/click zombies to shoot them down.</p>
+  <p>Collect power-ups to survive longer.</p>
+  <div class="current-icon" id="currentIconDisplay">🧟</div>
+  <button id="changeIconBtn">CHANGE ICON</button>
+  <button id="startBtn">START GAME</button>
+</div>
+
+<div id="iconSelectOverlay">
+  <h2>Select Your Character</h2>
+  <div class="icon-grid" id="iconGrid">
+    <!-- Icons will be added by JavaScript -->
+  </div>
+  <button id="confirmIconBtn">CONFIRM SELECTION</button>
+</div>
+
+<div id="gameOverOverlay" style="display:none;">
+  <h2>GAME OVER</h2>
+  <p>Your Score: <span id="finalScore">0</span></p>
+  <p>High Score: <span id="highScore">0</span></p>
+  <button id="restartBtn">PLAY AGAIN</button>
+</div>
+
+<script>
+// Setup canvases
+const gameCanvas = document.getElementById('gameCanvas');
+const ctx = gameCanvas.getContext('2d');
+
+const fogCanvas = document.getElementById('fogCanvas');
+const fogCtx = fogCanvas.getContext('2d');
+
+function resizeCanvas(){
+  // Set canvas size based on screen dimensions
+  const maxWidth = Math.min(400, window.innerWidth - 40);
+  const maxHeight = Math.min(600, window.innerHeight * 0.8);
+  
+  const scale = Math.min(maxWidth / 400, maxHeight / 600);
+  
+  gameCanvas.width = 400;
+  gameCanvas.height = 600;
+  gameCanvas.style.width = (400 * scale) + 'px';
+  gameCanvas.style.height = (600 * scale) + 'px';
+  
+  fogCanvas.width = window.innerWidth;
+  fogCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// Sounds
+const sounds = {
+  shoot: new Audio('https://actions.google.com/sounds/v1/impacts/plastic_hit.ogg'),
+  zombieDie: new Audio('https://actions.google.com/sounds/v1/creatures/zombie_groan.ogg'),
+  powerup: new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg'),
+  bgm: new Audio('https://cdn.pixabay.com/download/audio/2022/04/23/audio_a0d506f57b.mp3?filename=dark-ambient-11221.mp3')
+};
+sounds.bgm.loop = true;
+sounds.bgm.volume = 0.15;
+
+// Game state
+let zombies = [];
+let score = 0;
+let lives = 3;
+let wave = 1;
+let spawnTimer = 0;
+let multiShot = 1; // shots per tap
+let shieldActive = false;
+let slowActive = false;
+let powerupsActive = {};
+let powerupTimers = {};
+const powerupDuration = 7000; // ms
+let gameOverFlag = false;
+let playerIcon = '🧟'; // Default icon
+const highScoreKey = 'zombieShooterHighScore';
+
+// Available icons
+const availableIcons = [
+  '🧟', '👻', '💀', '🦹', 
+  '🧛', '🧙', '🦸', '🧟‍♂️',
+  '🧟‍♀️', '🤖', '👽', '👾',
+  '🐲', '🦖', '🦕', '🐉'
+];
+
+// Initialize icon selection
+function initIconSelection() {
+  const iconGrid = document.getElementById('iconGrid');
+  iconGrid.innerHTML = '';
+  
+  availableIcons.forEach(icon => {
+    const iconElement = document.createElement('div');
+    iconElement.className = 'icon-option';
+    iconElement.textContent = icon;
+    iconElement.addEventListener('click', () => {
+      // Remove selected class from all
+      document.querySelectorAll('.icon-option').forEach(el => {
+        el.classList.remove('selected');
+      });
+      // Add to clicked one
+      iconElement.classList.add('selected');
+      playerIcon = icon;
+      document.getElementById('currentIconDisplay').textContent = icon;
+    });
+    iconGrid.appendChild(iconElement);
+  });
+}
+
+// Show icon selection
+document.getElementById('changeIconBtn').addEventListener('click', () => {
+  document.getElementById('startOverlay').style.display = 'none';
+  document.getElementById('iconSelectOverlay').style.display = 'flex';
+});
+
+// Confirm icon selection
+document.getElementById('confirmIconBtn').addEventListener('click', () => {
+  document.getElementById('iconSelectOverlay').style.display = 'none';
+  document.getElementById('startOverlay').style.display = 'flex';
+});
+
+// Zombie types
+class Zombie {
+  constructor(type = 'normal') {
+    this.type = type;
+    this.size = type === 'big' ? 60 : 40;
+    this.x = Math.random() * (gameCanvas.width - this.size);
+    this.y = -this.size;
+    this.speed = type === 'big' ? 0.8 + wave * 0.2 : 1.5 + wave * 0.3;
+    this.health = type === 'big' ? 3 : 1;
+    this.alive = true;
+    this.color = type === 'big' ? '#0a0' : '#0f0';
+  }
+  draw(){
+    ctx.fillStyle = this.alive ? this.color : '#400';
+    ctx.beginPath();
+    ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = this.size*0.6 + 'px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(this.alive ? playerIcon : '💥', this.x + this.size/2, this.y + this.size/2 + (this.size*0.1));
+  }
+  update(){
+    if(!this.alive) return;
+    this.y += slowActive ? this.speed * 0.4 : this.speed;
+    if(this.y > gameCanvas.height && this.alive){
+      this.alive = false;
+      loseLife();
+    }
+  }
+}
+
+function loseLife(){
+  if(shieldActive){
+    shieldActive = false;
+    removePowerup('shield');
+    return;
+  }
+  lives--;
+  updateHUD();
+  if(lives <= 0) gameOver();
+}
+
+function gameOver(){
+  gameOverFlag = true;
+  stopAllPowerups();
+  updateHUD();
+  document.getElementById('finalScore').textContent = score;
+  let hs = localStorage.getItem(highScoreKey) || 0;
+  if(score > hs){
+    localStorage.setItem(highScoreKey, score);
+    hs = score;
+  }
+  document.getElementById('highScore').textContent = hs;
+  document.getElementById('gameOverOverlay').style.display = 'flex';
+  sounds.bgm.pause();
+}
+
+function resetGame(){
+  zombies = [];
+  score = 0;
+  lives = 3;
+  wave = 1;
+  spawnTimer = 0;
+  multiShot = 1;
+  shieldActive = false;
+  slowActive = false;
+  powerupsActive = {};
+  powerupTimers = {};
+  gameOverFlag = false;
+  updateHUD();
+  document.getElementById('gameOverOverlay').style.display = 'none';
+  document.getElementById('startOverlay').style.display = 'none';
+  sounds.bgm.currentTime = 0;
+  sounds.bgm.play();
+}
+
+function spawnZombie(){
+  // Chance big zombie per wave
+  let bigChance = Math.min(wave * 0.1, 0.3);
+  let type = Math.random() < bigChance ? 'big' : 'normal';
+  zombies.push(new Zombie(type));
+}
+
+function updateHUD(){
+  document.getElementById('score').textContent = score;
+  document.getElementById('lives').textContent = lives;
+  document.getElementById('wave').textContent = wave;
+  // Show powerups
+  const powerupList = document.getElementById('powerupList');
+  powerupList.innerHTML = '';
+  for(const key in powerupsActive){
+    if(powerupsActive[key]){
+      let icon = '';
+      switch(key){
+        case 'shield': icon = '🛡️'; break;
+        case 'slow': icon = '🐢'; break;
+        case 'multishot': icon = '🔫'; break;
+      }
+      powerupList.innerHTML += `<div class="powerup-icon" title="${key}">${icon}</div>`;
+    }
+  }
+}
+
+// Power-up system
+function activatePowerup(type){
+  sounds.powerup.play();
+  powerupsActive[type] = true;
+  updateHUD();
+  if(powerupTimers[type]){
+    clearTimeout(powerupTimers[type]);
+  }
+  powerupTimers[type] = setTimeout(() => {
+    powerupsActive[type] = false;
+    if(type === 'shield') shieldActive = false;
+    if(type === 'slow') slowActive = false;
+    if(type === 'multishot') multiShot = 1;
+    updateHUD();
+  }, powerupDuration);
+  if(type === 'shield') shieldActive = true;
+  if(type === 'slow') slowActive = true;
+  if(type === 'multishot') multiShot = 3;
+}
+
+function removePowerup(type) {
+  powerupsActive[type] = false;
+  if(powerupTimers[type]){
+    clearTimeout(powerupTimers[type]);
+  }
+  updateHUD();
+}
+
+function stopAllPowerups() {
+  for(const type in powerupsActive) {
+    removePowerup(type);
+  }
+  shieldActive = false;
+  slowActive = false;
+  multiShot = 1;
+}
+
+// Tambahkan/replace kode berikut di bagian JS utama (jika belum ada):
+// Variabel global untuk powerups jatuh
+let powerups = [];
+
+// Fungsi untuk mencoba menjatuhkan powerup dari zombie mati
+function tryDropPowerup(x, y){
+  if(Math.random() > 0.25) return; // 25% chance drop powerup
+  const types = ['shield', 'slow', 'multishot', 'bomb'];
+  const type = types[Math.floor(Math.random() * types.length)];
+  powerups.push(new Powerup(x, y, type));
+}
+
+// Class powerup sebagai objek jatuh bisa diambil
+class Powerup {
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.size = 30;
+    this.type = type;
+    this.speed = 2; // turun perlahan
+    this.color = '#0f0';
+    this.alive = true;
+    this.symbol = this.getSymbol();
+  }
+  getSymbol(){
+    switch(this.type){
+      case 'shield': return '🛡️';
+      case 'slow': return '🐢';
+      case 'multishot': return '🔫';
+      case 'bomb': return '💣';
+      default: return '?';
+    }
+  }
+  draw(){
+    if(!this.alive) return;
+    ctx.save();
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = '22px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(this.symbol, this.x + this.size/2, this.y + this.size/2);
+    ctx.restore();
+  }
+  update(){
+    if(!this.alive) return;
+    this.y += this.speed;
+    if(this.y > gameCanvas.height) this.alive = false;
+  }
+}
+
+// Update fungsi shoot agar zombie bisa drop powerup
+function shoot(e){
+  if(gameOverFlag) return;
+  const rect = gameCanvas.getBoundingClientRect();
+  const scaleX = gameCanvas.width / rect.width;
+  const scaleY = gameCanvas.height / rect.height;
+  
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  sounds.shoot.play();
+
+  let shots = multiShot;
+  let hitCount = 0;
+  for(let i=0; i<zombies.length; i++){
+    let z = zombies[i];
+    if(!z.alive) continue;
+    // Cek kena tembakan
+    if(mx > z.x && mx < z.x+z.size && my > z.y && my < z.y+z.size){
+      z.health--;
+      if(z.health <= 0){
+        z.alive = false;
+        score++;
+        sounds.zombieDie.play();
+        tryDropPowerup(z.x, z.y);  // drop powerup
+      }
+      hitCount++;
+      if(hitCount >= shots) break;
+    }
+  }
+  updateHUD();
+}
+
+// Update fungsi gameLoop supaya update dan gambar powerups jatuh
+function gameLoop(){
+  if(gameOverFlag) return;
+
+  ctx.clearRect(0,0,gameCanvas.width, gameCanvas.height);
+
+  spawnTimer++;
+  let spawnInterval = Math.max(15, 60 - wave*3);
+  if(spawnTimer > spawnInterval){
+    spawnZombie();
+    spawnTimer = 0;
+  }
+
+  for(let i = zombies.length -1; i>=0; i--){
+    let z = zombies[i];
+    z.update();
+    if(!z.alive){
+      zombies.splice(i,1);
+      continue;
+    }
+    z.draw();
+  }
+
+  // Update & draw powerups jatuh
+  for(let i = powerups.length -1; i>=0; i--){
+    let p = powerups[i];
+    p.update();
+    if(!p.alive){
+      powerups.splice(i,1);
+      continue;
+    }
+    p.draw();
+  }
+
+  drawFog();
+
+  if(score >= wave * 15){
+    wave++;
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+// Fungsi cek ambil powerup (misal dengan mousemove / touchmove)
+gameCanvas.addEventListener('mousemove', checkPowerupPick);
+gameCanvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  checkPowerupPick(e.touches[0]);
+});
+
+function checkPowerupPick(e){
+  if(gameOverFlag) return;
+  const rect = gameCanvas.getBoundingClientRect();
+  const scaleX = gameCanvas.width / rect.width;
+  const scaleY = gameCanvas.height / rect.height;
+  
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  for(let i = powerups.length -1; i>=0; i--){
+    let p = powerups[i];
+    if(!p.alive) continue;
+    if(mx > p.x && mx < p.x+p.size && my > p.y && my < p.y+p.size){
+      if(p.type === 'bomb'){
+        explodeBomb();
+      } else {
+        activatePowerup(p.type);
+      }
+      p.alive = false;
+      powerups.splice(i,1);
+      break;
+    }
+  }
+  updateHUD();
+}
+
+// Start/restart buttons
+document.getElementById('startBtn').onclick = () => {
+  resetGame();
+  document.getElementById('startOverlay').style.display = 'none';
+  gameLoop();
+};
+document.getElementById('restartBtn').onclick = () => {
+  resetGame();
+  document.getElementById('gameOverOverlay').style.display = 'none';
+  gameLoop();
+};
+
+// Fog animation
+let fogParticles = [];
+function initFog(){
+  fogParticles = [];
+  for(let i=0; i<30; i++){
+    fogParticles.push({
+      x: Math.random() * fogCanvas.width,
+      y: Math.random() * fogCanvas.height,
+      radius: 50 + Math.random() * 50,
+      speed: 0.2 + Math.random() * 0.3,
+      alpha: 0.15 + Math.random()*0.15,
+      direction: Math.random() < 0.5 ? 1 : -1,
+    });
+  }
+}
+function drawFog(){
+  fogCtx.clearRect(0,0,fogCanvas.width, fogCanvas.height);
+  fogParticles.forEach(p => {
+    p.x += p.speed * p.direction;
+    if(p.x > fogCanvas.width + p.radius) p.x = -p.radius;
+    if(p.x < -p.radius) p.x = fogCanvas.width + p.radius;
+    let grad = fogCtx.createRadialGradient(p.x, p.y, p.radius*0.1, p.x, p.y, p.radius);
+    grad.addColorStop(0, `rgba(200,255,200,${p.alpha})`);
+    grad.addColorStop(1, 'rgba(200,255,200,0)');
+    fogCtx.fillStyle = grad;
+    fogCtx.beginPath();
+    fogCtx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+    fogCtx.fill();
+  });
+}
+
+// Initialize game
+initFog();
+initIconSelection();
+
+// Aktifkan klik dan tap
+gameCanvas.addEventListener('click', shoot);
+gameCanvas.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  shoot(e.touches[0]);
+});
+
+// Set first icon as selected by default
+if (document.querySelector('.icon-option')) {
+  document.querySelector('.icon-option').classList.add('selected');
+}
+
+// Fix touch events on mobile
+document.addEventListener('touchstart', function(e) {
+  if (e.target === gameCanvas) {
+    e.preventDefault();
+  }
+}, { passive: false });
+document.addEventListener('touchmove', function(e) {
+  if (e.target === gameCanvas) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// Back button functionality
+document.getElementById('backButton').addEventListener('click', function() {
+  window.location.href = 'index.html';
+});
+
+</script>
+
+     <footer><p> ❤️ | Zombie Shooter</p></footer>
+</body>
+</html>

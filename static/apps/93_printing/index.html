@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>93 Printing - Cetak Tanpa Batas!</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo-wrapper">
+                <div class="logo-interactive-glow" id="preloader-glow"></div>
+                <img src="asset/bahan/logo-baru.png" alt="93 Printing Logo" class="preloader-logo">
+            </div>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+            <p class="loading-text">Preparing Excellence...</p>
+        </div>
+    </div>
+
+    <!-- Persistent Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#home" class="nav-brand">
+                <img src="asset/bahan/logo-baru.png" alt="93 Printing Logo">
+                <span>93 PRINTING</span>
+            </a>
+            
+            <!-- Mobile Toggle -->
+            <div class="nav-toggle" id="nav-toggle">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <ul class="nav-links" id="nav-menu">
+                <li class="mobile-menu-header">
+                    <div class="menu-user-profile">
+                        <div class="menu-avatar">
+                            <img src="asset/bahan/logo-baru.png" alt="93 Printing Logo">
+                        </div>
+                        <div class="menu-user-info">
+                            <span class="greeting">Halo, Selamat Datang!</span>
+                            <span class="brand-status">93 Printing Siap Cetak</span>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#home">Beranda</a></li>
+                <li><a href="#about">Tentang Kami</a></li>
+                <li><a href="#products">Produk</a></li>
+                <li><a href="#contact">Kontak</a></li>
+                <li class="mobile-menu-footer">
+                    <div class="menu-social">
+                        <a href="https://instagram.com/93.printing" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://tiktok.com/@93_printing" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://wa.me/6282111159144" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <header id="home" class="hero">
+
+        <div class="container hero-content">
+            <div class="hero-logo-wrapper" data-aos="fade-down" data-aos-duration="1000">
+                <div class="logo-interactive-glow" id="logo-glow"></div>
+                <img src="asset/bahan/logo-baru.png" alt="93 Printing Logo" class="hero-main-logo">
+            </div>
+            <h1 data-aos="fade-up" data-aos-duration="1000">
+                CETAK <span class="text-gradient">TANPA BATAS!</span>
+            </h1>
+
+            <div class="hero-buttons" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="50">
+                <a href="#products" class="btn btn-primary">Lihat Produk</a>
+                <a href="#contact" class="btn btn-outline">Hubungi Kami</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features / Layanan Unggulan -->
+    <section class="features-bar">
+        <div class="container feature-container">
+            <div class="feature-item" data-aos="fade-up">
+                <i class="fas fa-bolt"></i>
+                <div class="feature-text">
+                    <h4>Proses Kilat</h4>
+                    <p>Pengerjaan cepat & tepat waktu.</p>
+                </div>
+            </div>
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="50">
+                <i class="fas fa-check-double"></i>
+                <div class="feature-text">
+                    <h4>Kualitas High-End</h4>
+                    <p>Warna tajam, bahan premium.</p>
+                </div>
+            </div>
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="50">
+                <i class="fas fa-tags"></i>
+                <div class="feature-text">
+                    <h4>Harga Bersahabat</h4>
+                    <p>Solusi cetak hemat & berkualitas.</p>
+                </div>
+            </div>
+            <div class="feature-item" data-aos="fade-up" data-aos-delay="150">
+                <i class="fas fa-headset"></i>
+                <div class="feature-text">
+                    <h4>Konsultasi Gratis</h4>
+                    <p>Bantuan desain & pemilihan bahan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text" data-aos="fade-right">
+                    <h2 class="section-title">Kenapa Memilih <span class="text-gradient">93 Printing?</span></h2>
+                    <p>
+                        Kami adalah mitra terpercaya untuk segala kebutuhan percetakan Anda. Mulai dari kebutuhan promosi bisnis hingga personal, kami menyediakan layanan cetak dengan kualitas gambar yang tajam, warna yang hidup, dan material premium.
+                    </p>
+                    <ul class="about-features">
+                        <li><i class="fas fa-check-circle"></i> Kualitas Cetak HD & Tahan Lama</li>
+                        <li><i class="fas fa-check-circle"></i> Proses Pengerjaan Cepat</li>
+                        <li><i class="fas fa-check-circle"></i> Harga Kompetitif</li>
+                        <li><i class="fas fa-check-circle"></i> Berbagai Macam Pilihan Material</li>
+                    </ul>
+                </div>
+                <div class="about-image-container" data-aos="fade-left">
+                    <div class="glass-card aesthetic-card">
+                        <h3>Excellence in Every Print</h3>
+                        <p>Dedikasi kami adalah memastikan setiap tetes tinta menghasilkan karya yang melampaui ekspektasi Anda.</p>
+                        <div class="color-splashes">
+                            <span class="splash bg-cyan"></span>
+                            <span class="splash bg-magenta"></span>
+                            <span class="splash bg-yellow"></span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products section bg-light">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Produk & <span class="text-gradient">Layanan Kami</span></h2>
+                <p>Kami menerima berbagai macam cetakan untuk kebutuhan Anda</p>
+            </div>
+
+            <div class="product-grid">
+                <!-- 1: Digital Printing -->
+                <a href="product-detail.html?cat=digital-printing" class="product-card" data-aos="zoom-in" data-aos-delay="50">
+                    <span class="badge-new">Populer</span>
+                    <div class="product-img-card">
+                        <img src="asset/digital_printing/Print A3.png" alt="Digital Printing">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-print"></i></div>
+                    <h3>Digital Printing A3+</h3>
+                    <p>Cetak cepat dokumen & foto kualitas laser.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+                
+                <!-- 2: Sticker -->
+                <a href="product-detail.html?cat=sticker" class="product-card" data-aos="zoom-in" data-aos-delay="50">
+                    <div class="product-img-card">
+                        <img src="asset/stiker/Promo Sticker Vinyl A3.png" alt="Sticker & Label">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-tags"></i></div>
+                    <h3>Sticker & Label</h3>
+                    <p>Label kemasan produk & stiker vinyl custom.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 3: NameCard & Invitation -->
+                <a href="product-detail.html?cat=namecard" class="product-card" data-aos="zoom-in" data-aos-delay="150">
+                    <span class="badge-new">Elegan</span>
+                    <div class="product-img-card">
+                        <img src="asset/namecard&invitation/Kartu Nama.png" alt="NameCard">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-address-card"></i></div>
+                    <h3>NameCard & Invitation</h3>
+                    <p>Kartu nama premium & undangan mewah.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 4: Display Promotion -->
+                <a href="product-detail.html?cat=display" class="product-card" data-aos="zoom-in" data-aos-delay="50">
+                    <div class="product-img-card">
+                        <img src="asset/display_promotion/Roll Up Banner.png" alt="Display">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-bullhorn"></i></div>
+                    <h3>Display Promotion</h3>
+                    <p>Roll Up, X-Banner & Tripod media promosi.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 5: Large Format -->
+                <a href="product-detail.html?cat=large-format" class="product-card" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="product-img-card">
+                        <img src="asset/large_format/Spanduk_ Banner.png" alt="Large Format">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-expand"></i></div>
+                    <h3>Large Format</h3>
+                    <p>Cetak Spanduk, Flexi & Albatros ukuran jumbo.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 6: Garment & Textile -->
+                <a href="product-detail.html?cat=garment" class="product-card" data-aos="zoom-in" data-aos-delay="150">
+                    <span class="badge-new">Best Seller</span>
+                    <div class="product-img-card">
+                        <img src="asset/garment&textile/Kaos DTF.png" alt="Garment">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-tshirt"></i></div>
+                    <h3>Garment & Textile</h3>
+                    <p>Kaos, Jersey & Totebag sablon custom.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 7: Stationary -->
+                <a href="product-detail.html?cat=stationary" class="product-card" data-aos="zoom-in" data-aos-delay="350">
+                    <div class="product-img-card">
+                        <img src="asset/stationory/Lanyard Premium.png" alt="Stationary">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-pen-nib"></i></div>
+                    <h3>Stationary</h3>
+                    <p>Kop surat, Amplop & perlengkapan kantor.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 8: Merchandise -->
+                <a href="product-detail.html?cat=merchandise" class="product-card" data-aos="zoom-in" data-aos-delay="50">
+                    <div class="product-img-card">
+                        <img src="asset/merchandes/Mug Custom.png" alt="Merchandise">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-gift"></i></div>
+                    <h3>Merchandise</h3>
+                    <p>Mug, Tumbler & Gantungan Kunci custom logo.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 9: Packaging -->
+                <a href="product-detail.html?cat=packaging" class="product-card" data-aos="zoom-in" data-aos-delay="450">
+                    <div class="product-img-card">
+                        <img src="asset/packaging/Gift Box.png" alt="Packaging">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-box"></i></div>
+                    <h3>Packaging</h3>
+                    <p>Paper Bag & Box makanan desain sesuai brand.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+
+                <!-- 10: Home Decor & Photo -->
+                <a href="product-detail.html?cat=home-decor" class="product-card" data-aos="zoom-in" data-aos-delay="250">
+                    <div class="product-img-card">
+                        <img src="asset/home decor & photo/Canvas Spanram Persegi.png" alt="Home Decor">
+                    </div>
+                    <div class="product-icon"><i class="fas fa-camera-retro"></i></div>
+                    <h3>Home Decor & Photo</h3>
+                    <p>Hiasan dinding, bingkai foto & cetak blok kayu.</p>
+                    <small class="click-hint">Lihat Koleksi <i class="fas fa-arrow-right"></i></small>
+                </a>
+            </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Trusted By / Clients Section -->
+    <section class="clients section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h3 class="section-title">Kualitas Yang <span class="text-gradient">Terpercaya</span></h3>
+                <p>93 Printing telah melayani berbagai kebutuhan cetak untuk UMKM, Instansi, dan Kebutuhan Personal.</p>
+            </div>
+            <div class="client-logos" data-aos="fade-up">
+                <div class="client-badge"><i class="fas fa-certificate"></i> Premium Quality</div>
+                <div class="client-badge"><i class="fas fa-shipping-fast"></i> Fast Processing</div>
+                <div class="client-badge"><i class="fas fa-hand-holding-usd"></i> Best Value</div>
+                <div class="client-badge"><i class="fas fa-user-check"></i> Satisfied Clients</div>
+                <div class="client-badge"><i class="fas fa-shield-alt"></i> Guaranteed Quality</div>
+                <div class="client-badge"><i class="fas fa-briefcase"></i> Professional Service</div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Call to Action / Contact -->
+    <section id="contact" class="cta section">
+        <div class="container">
+            <div class="cta-card glass-card" data-aos="flip-up" data-aos-duration="1000">
+                <h2>Siap Untuk Mencetak Ide Anda?</h2>
+                <p>Hubungi pesanan Anda sekarang dan dapatkan penawaran terbaik dari 93 Printing.</p>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Nama Anda" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email / No HP" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Kirim Pesan <i class="fab fa-whatsapp"></i></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Order / Cara Pemesanan -->
+    <section class="how-to-order section bg-light">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Langkah Mudah <span class="text-gradient">Pemesanan</span></h2>
+                <p>Proses simpel untuk hasil cetak yang maksimal</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card" data-aos="fade-up">
+                    <div class="step-number">1</div>
+                    <h4>Konsultasi</h4>
+                    <p>Hubungi admin kami via WhatsApp untuk diskusi kebutuhan & kirim file desain.</p>
+                </div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="50">
+                    <div class="step-number">2</div>
+                    <h4>Pembayaran</h4>
+                    <p>Konfirmasi pesanan dengan melakukan pembayaran sesuai invoice yang diberikan.</p>
+                </div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="50">
+                    <div class="step-number">3</div>
+                    <h4>Proses Cetak</h4>
+                    <p>Tim kami akan memproses pesanan Anda dengan teknologi mesin cetak terbaru.</p>
+                </div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="150">
+                    <div class="step-number">4</div>
+                    <h4>Selesai</h4>
+                    <p>Pesanan dapat diambil langsung di workshop atau dikirim ke alamat Anda.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="asset/bahan/logo-baru.png" alt="93 Printing Mini Logo" style="height: 40px; filter: brightness(0) invert(1);">
+                </div>
+                <p class="footer-tagline">Solusi Cetak Tanpa Batas - Berkualitas & Terpercaya</p>
+                <div class="footer-social">
+                    <a href="https://instagram.com/93.printing" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://tiktok.com/@93_printing" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/6282111159144" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="footer-divider"></div>
+                <p class="footer-credits">Printed by <strong>93 PRINTING</strong> | Design by <strong>@hszamm__</strong></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for Image Zoom -->
+    <div id="imageModal" class="image-zoom-modal">
+        <span class="close-zoom">&times;</span>
+        <div class="modal-zoom-container">
+            <div id="zoom-img-wrapper" class="zoom-img-wrapper">
+                <img id="modalImg" src="" alt="Zoomed Product">
+                <div id="magnifier" class="magnifier"></div>
+            </div>
+            <div class="zoom-info">
+                <h3 id="zoom-title">Product Name</h3>
+                <p id="zoom-desc">Product description goes here.</p>
+            </div>
+            <div class="zoom-hint">Gerakkan kursor / sentuh gambar untuk zoom detail</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JS -->
+    <script src="./script.js"></script>
+</body>
+</html>

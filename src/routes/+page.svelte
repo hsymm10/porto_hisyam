@@ -54,6 +54,7 @@
 		siTypescript,
 		siVuedotjs
 	} from 'simple-icons';
+	import { currentLang, projectTranslations, t, toggleLanguage } from '#lib/i18n.js';
 	import {
 		ArrowRight,
 		ArrowUpRight,
@@ -120,7 +121,11 @@
 		previewBg: string;
 	};
 
-	const projects: Project[] = [
+	type DisplayProject = Project & {
+		linkLabel: string | undefined;
+	};
+
+	const rawProjects: Project[] = [
 		{
 			id: 'h2sn-photobooth',
 			role: 'Full Stack Web Developer',
@@ -128,8 +133,8 @@
 			description:
 				'Membangun website photobooth untuk mendukung operasional bisnis. Website menyediakan informasi layanan, galeri, paket, serta pengelolaan data secara digital.',
 			tags: ['Full Stack', 'Web App', 'Gallery', 'Business Ops'],
-			url: 'https://github.com/H2SN-Aksara-Kode/web_photoboth',
-			linkLabel: 'View Repository',
+			url: '/apps/photobooth/index.html',
+			linkLabel: 'Buka Sistem',
 			image: imgH2snPhotobooth,
 			previewBg: 'bg-neo-canvas'
 		},
@@ -200,8 +205,8 @@
 			description:
 				'Membangun website company profile sebagai media branding dan promosi digital bagi bisnis percetakan.',
 			tags: ['Frontend', 'Company Profile', 'Branding'],
-			url: 'https://github.com/hsymm10/web_93printing',
-			linkLabel: 'View Repository',
+			url: '/apps/93_printing/index.html',
+			linkLabel: 'Buka Sistem',
 			image: img93Printing,
 			previewBg: 'bg-accent'
 		},
@@ -212,8 +217,8 @@
 			description:
 				'Membangun lebih dari sepuluh game edukatif berbasis HTML, CSS, dan JavaScript sebagai media pembelajaran untuk kegiatan ekstrakurikuler KIR.',
 			tags: ['Game Dev', 'HTML', 'CSS', 'JavaScript'],
-			url: 'https://github.com/hsymm10/game_hszam',
-			linkLabel: 'View Repository',
+			url: '/apps/game_hszam/index.html',
+			linkLabel: 'Buka Sistem',
 			image: imgPlatformGame,
 			previewBg: 'bg-accent'
 		},
@@ -221,7 +226,7 @@
 			id: 'shortlink-linkku',
 			role: 'Web Developer',
 			title: 'Shortlink LinkKu',
-			description: 'Deskripsi menyusul.',
+			description: 'Layanan pemendek URL cepat dan mudah digunakan.',
 			tags: ['Web App', 'Shortlink'],
 			image: imgShortlinkLinkKu,
 			previewBg: 'bg-neo-canvas'
@@ -230,7 +235,7 @@
 			id: 'putra-sunda-jaya',
 			role: 'Web Developer',
 			title: 'Putra Sunda Jaya',
-			description: 'Deskripsi menyusul.',
+			description: 'Website profil bisnis dan layanan konstruksi & pengadaan.',
 			tags: ['Web App', 'Company Profile'],
 			image: imgPutraSundaJaya,
 			previewBg: 'bg-secondary'
@@ -239,7 +244,7 @@
 			id: 'web-keuangan',
 			role: 'Web Developer',
 			title: 'Sistem Keuangan',
-			description: 'Deskripsi menyusul.',
+			description: 'Aplikasi pembukuan dan pelaporan kas keuangan digital.',
 			tags: ['Web App', 'Finance'],
 			image: imgKeuangan,
 			previewBg: 'bg-accent'
@@ -248,7 +253,7 @@
 			id: 'web-kasir-custom',
 			role: 'Web Developer',
 			title: 'Kasir Custom',
-			description: 'Deskripsi menyusul.',
+			description: 'Aplikasi kasir (POS) fleksibel dengan pencatatan transaksi.',
 			tags: ['Web App', 'POS', 'Kasir'],
 			image: imgKasirCostom,
 			previewBg: 'bg-neo-canvas'
@@ -257,7 +262,7 @@
 			id: 'web-undangan-organisasi',
 			role: 'Web Developer',
 			title: 'Undangan Organisasi',
-			description: 'Deskripsi menyusul.',
+			description: 'Website undangan digital formal untuk acara rapat dan musyawarah.',
 			tags: ['Web App', 'Invitation'],
 			image: imgUndanganOrganisasi,
 			previewBg: 'bg-secondary'
@@ -266,12 +271,32 @@
 			id: 'web-buku-tamu',
 			role: 'Web Developer',
 			title: 'Buku Tamu Digital',
-			description: 'Deskripsi menyusul.',
+			description: 'Sistem pencatatan tamu digital untuk event dan kunjungan resmi.',
 			tags: ['Web App', 'Guestbook'],
 			image: imgBukuTamu,
 			previewBg: 'bg-accent'
 		}
 	];
+
+	const projects = $derived<DisplayProject[]>(
+		rawProjects.map((p) => {
+			const trans = projectTranslations[p.id]?.[$currentLang];
+			let label: string | undefined;
+			if (p.url) {
+				const isInternalLiveApp = p.url.startsWith('/apps/');
+				label = isInternalLiveApp
+					? t[$currentLang].projects.openLive
+					: t[$currentLang].projects.viewRepo;
+			}
+			return {
+				...p,
+				role: trans?.role ?? p.role,
+				title: trans?.title ?? p.title,
+				description: trans?.description ?? p.description,
+				linkLabel: label
+			};
+		})
+	);
 
 	type Certification = {
 		id: string;
@@ -324,7 +349,7 @@
 		items: ExperienceEntry[];
 	};
 
-	const experiences: ExperienceGroup[] = [
+	const rawExperiences: ExperienceGroup[] = [
 		{
 			category: 'Pengalaman Organisasi & Kepemimpinan',
 			items: [
@@ -370,6 +395,58 @@
 			]
 		}
 	];
+
+	const experiences = $derived(
+		$currentLang === 'en'
+			? [
+					{
+						category: t.en.experiences.org,
+						items: [
+							{
+								title: 'Organizer of Robotics Collaboration Program',
+								description:
+									'Initiated and organized inter-student collaborative programs in robotics education and foundational web engineering. Coordinated participants, designed practical learning materials, and facilitated hands-on workshops.'
+							}
+						]
+					},
+					{
+						category: t.en.experiences.training,
+						items: [
+							{
+								title: 'Algorithmics.asia — Python Programming Track',
+								period: 'October 2024 – January 2026'
+							},
+							{
+								title: 'Ngoding Bareng Dea — React JS & Tailwind CSS',
+								period: 'May 2025'
+							},
+							{
+								title: 'Titik Nol English Course Pare',
+								period: 'June 2026'
+							}
+						]
+					},
+					{
+						category: t.en.experiences.awards,
+						items: [
+							{
+								title:
+									'NASPO Competition Winner — Cultural Preservation via Plastic Waste Innovation',
+								period: '11–14 December 2021'
+							},
+							{
+								title: 'AISEEF Competition Winner — Lato-Lato Ronin Detector',
+								period: '10–14 February 2023'
+							},
+							{
+								title: 'KISEF Competition Winner — Bottle Recycling into Ondel-Ondel Arts',
+								period: '20–24 February 2023'
+							}
+						]
+					}
+				]
+			: rawExperiences
+	);
 
 	// Set nomor WhatsApp format internasional tanpa tanda '+' (contoh: '6281234567890')
 	const WHATSAPP_NUMBER = '6282111159144';
@@ -505,8 +582,10 @@
 	let activeGalleryIndex = $state(0);
 	let activeProjectModalIndex = $state(0);
 	let showAllProjects = $state(false);
-	const projectsWithImages = projects.filter((project): project is Project & { image: string } =>
-		Boolean(project.image)
+	const projectsWithImages = $derived(
+		projects.filter((project): project is DisplayProject & { image: string } =>
+			Boolean(project.image)
+		)
 	);
 	const currentProject = $derived(projects[activeProjectIndex]);
 	const currentCert = $derived(certifications[activeCertIndex]);
@@ -660,14 +739,14 @@
 		animateProjectCard();
 	}
 
-	const NAV_LINKS = [
-		{ id: 'skills', label: 'Skills' },
-		{ id: 'projects', label: 'Projects' },
-		{ id: 'craft', label: 'Craft' },
-		{ id: 'experience', label: 'Experience' },
-		{ id: 'gallery', label: 'Gallery' },
-		{ id: 'contact', label: 'Contact' }
-	];
+	const NAV_LINKS = $derived([
+		{ id: 'skills', label: $currentLang === 'id' ? 'Keahlian' : 'Skills' },
+		{ id: 'projects', label: t[$currentLang].nav.projects },
+		{ id: 'craft', label: t[$currentLang].nav.craft },
+		{ id: 'experience', label: $currentLang === 'id' ? 'Pengalaman' : 'Experience' },
+		{ id: 'gallery', label: t[$currentLang].nav.snapshots },
+		{ id: 'contact', label: t[$currentLang].nav.contact }
+	]);
 
 	$effect(() => {
 		const root = pageRootEl;
@@ -1037,6 +1116,24 @@
 			</nav>
 
 			<div class="flex items-center gap-2.5">
+				<!-- Language Switcher Toggle -->
+				<button
+					type="button"
+					onclick={toggleLanguage}
+					aria-label={$currentLang === 'id'
+						? 'Ganti bahasa ke English'
+						: 'Switch language to Indonesian'}
+					class="inline-flex items-center gap-1.5 border-2 border-border bg-card px-2.5 py-1.5 font-mono text-xs font-black text-foreground uppercase shadow-neo-sm transition-transform hover:-translate-y-0.5 active:translate-y-0"
+				>
+					<span class={$currentLang === 'id' ? 'text-primary underline' : 'text-muted-foreground'}
+						>ID</span
+					>
+					<span class="text-muted-foreground/60">/</span>
+					<span class={$currentLang === 'en' ? 'text-primary underline' : 'text-muted-foreground'}
+						>EN</span
+					>
+				</button>
+
 				<Button
 					variant="outline"
 					size="icon"
@@ -1050,7 +1147,7 @@
 					{/if}
 				</Button>
 				<Button href="#contact" variant="secondary">
-					Contact Me
+					{t[$currentLang].nav.contactMe}
 					<ArrowRight class="size-3.5" />
 				</Button>
 			</div>
@@ -1111,41 +1208,39 @@
 				<div data-hero-copy class="relative z-10 space-y-6 lg:col-span-7">
 					<div class="space-y-4">
 						<div data-hero-stagger>
-							<Badge variant="default">Hey, I'm Hisyam — Software Developer</Badge>
+							<Badge variant="default">{t[$currentLang].hero.badge}</Badge>
 						</div>
 
 						<h1
 							data-hero-stagger
 							class="font-display text-5xl leading-[0.95] font-black tracking-tight uppercase sm:text-6xl lg:text-7xl"
 						>
-							Software<br />Developer
+							{t[$currentLang].hero.headlinePrefix}<br />{t[$currentLang].hero.headlineSuffix}
 						</h1>
 
 						<p
 							data-hero-stagger
 							class="max-w-xl font-mono text-sm leading-relaxed text-muted-foreground sm:text-base"
 						>
-							Hisyam Sayyid Alzam, siswa SMK jurusan Rekayasa Perangkat Lunak yang berfokus pada
-							pengembangan website dan aplikasi. Berpengalaman sebagai Project Manager dan Developer
-							dalam proyek pengembangan sistem. Memiliki kemampuan teknis, kepemimpinan, koordinasi
-							tim, dan problem solving, serta berkomitmen untuk terus berkembang di bidang
-							teknologi.
+							{t[$currentLang].hero.bio}
 						</p>
 					</div>
 
 					<div data-hero-stagger class="flex flex-wrap items-center gap-3.5">
 						<Button href="#projects" size="lg" variant="default">
-							View My Work
+							{t[$currentLang].hero.viewWork}
 							<ArrowUpRight class="size-4" />
 						</Button>
 						<Button href="#contact" size="lg" variant="outline">
-							Download Resume
+							{t[$currentLang].hero.downloadResume}
 							<Download class="size-4" />
 						</Button>
 					</div>
 
 					<div data-hero-stagger class="space-y-2.5 pt-1">
-						<p class="font-mono text-xs font-bold tracking-wider uppercase">Connect With Me</p>
+						<p class="font-mono text-xs font-bold tracking-wider uppercase">
+							{t[$currentLang].hero.connect}
+						</p>
 						<div class="flex items-center gap-2.5">
 							<Button variant="outline" size="icon" aria-label="Terminal">
 								<Terminal class="size-4" />

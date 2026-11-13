@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu Game Premium</title>
+  <style>
+    :root {
+      --primary: #5BBCFF;
+      --secondary: #FFFAB7;
+      --accent: #FFD1E3;
+      --highlight: #7EA1FF;
+      --dark: #1A1A2E;
+      --light: #F8F9FA;
+      --text-dark: #16213E;
+      --text-light: #FFFFFF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--dark), #16213E);
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.5s ease;
+      overflow-x: hidden;
+    }
+
+    /* Enhanced Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0.8;
+      transition: opacity 0.5s ease;
+    }
+
+    body.light-mode .animated-bg {
+      opacity: 0.6;
+    }
+
+    .bg-element {
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+    }
+
+    /* UFO Animation */
+    .ufo {
+      width: 120px;
+      height: 60px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60"><path fill="%235BBCFF" d="M60 0C36 0 12 12 0 30c12 18 36 30 60 30s48-12 60-30C108 12 84 0 60 0zm0 42c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z"/><circle fill="%23FFD1E3" cx="60" cy="30" r="3"/><circle fill="%23FFD1E3" cx="48" cy="30" r="2"/><circle fill="%23FFD1E3" cx="72" cy="30" r="2"/></svg>');
+      animation: floatRight 20s infinite;
+      top: 15%;
+      opacity: 0.9;
+    }
+
+    /* Rocket Animation */
+    .rocket {
+      width: 80px;
+      height: 160px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 160"><path fill="%23FFD1E3" d="M40 0L15 160h10l7-80h16l7 80h15L40 0zm0 40c-8.8 0-16-7.2-16-16S31.2 8 40 8s16 7.2 16 16-7.2 16-16 16z"/><path fill="%23FFFAB7" d="M30 140l-5 20h30l-5-20z"/></svg>');
+      animation: floatLeft 25s infinite 3s;
+      top: 40%;
+      opacity: 0.9;
+    }
+
+    /* Planet Animation */
+    .planet {
+      width: 200px;
+      height: 200px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%237EA1FF" cx="50" cy="50" r="45"/><circle fill="%231A1A2E" cx="30" cy="40" r="10"/><circle fill="%231A1A2E" cx="60" cy="30" r="5"/><circle fill="%231A1A2E" cx="70" cy="60" r="7"/><path fill="%235BBCFF" d="M20 70a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm50-20a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>');
+      animation: rotate 50s infinite linear;
+      right: -80px;
+      bottom: -80px;
+      opacity: 0.8;
+    }
+
+    /* Comet Animation */
+    .comet {
+      width: 100px;
+      height: 20px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path fill="%23FFFAB7" d="M100 10L0 20V0z"/><circle fill="%23FFFAB7" cx="90" cy="10" r="5"/></svg>');
+      animation: cometFly 15s infinite 7s;
+      top: 20%;
+      opacity: 0.7;
+    }
+
+    /* Satellite Animation */
+    .satellite {
+      width: 80px;
+      height: 40px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 40"><rect fill="%235BBCFF" x="10" y="15" width="50" height="10" rx="2"/><circle fill="%23FFD1E3" cx="65" cy="20" r="5"/><rect fill="%237EA1FF" x="5" y="17" width="5" height="6" rx="1"/><rect fill="%237EA1FF" x="60" y="10" width="3" height="20" rx="1"/></svg>');
+      animation: satelliteOrbit 40s infinite 10s;
+      opacity: 0.8;
+    }
+
+    /* Stars */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #FFFAB7, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #FFD1E3, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 90px, #5BBCFF, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 20px, #7EA1FF, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 130px 50px, #FFFAB7, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 80px, #FFD1E3, rgba(0,0,0,0));
+      background-size: 200px 200px;
+      opacity: 0.5;
+      animation: twinkle 4s infinite alternate;
+    }
+
+    body.light-mode .stars {
+      opacity: 0.3;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #5EABD6, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #4A8CCF, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 90px, #7FCDF2, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 20px, #5EABD6, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 130px 50px, #4A8CCF, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 80px, #7FCDF2, rgba(0,0,0,0));
+    }
+
+    /* New Animations */
+    @keyframes floatRight {
+      0% {
+        transform: translateX(-150px) rotate(0deg);
+      }
+      100% {
+        transform: translateX(calc(100vw + 150px)) rotate(360deg);
+      }
+    }
+
+    @keyframes floatLeft {
+      0% {
+        transform: translateX(calc(100vw + 100px)) rotate(0deg);
+      }
+      100% {
+        transform: translateX(-150px) rotate(-360deg);
+      }
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes cometFly {
+      0% {
+        transform: translateX(calc(100vw + 100px)) translateY(-100px) rotate(30deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-200px) translateY(100px) rotate(30deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes satelliteOrbit {
+      0% {
+        transform: translate(calc(50vw - 100px), calc(50vh - 100px)) rotate(0deg);
+      }
+      25% {
+        transform: translate(calc(100vw - 100px), calc(30vh - 100px)) rotate(90deg);
+      }
+      50% {
+        transform: translate(calc(50vw - 100px), calc(0vh - 100px)) rotate(180deg);
+      }
+      75% {
+        transform: translate(calc(0vw - 100px), calc(30vh - 100px)) rotate(270deg);
+      }
+      100% {
+        transform: translate(calc(50vw - 100px), calc(50vh - 100px)) rotate(360deg);
+      }
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 0.8;
+      }
+    }
+
+    /* Rest of your existing CSS... */
+    header {
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+
+    header img {
+     height: 70px;
+     width: 70px; /* pastikan sama untuk tinggi dan lebar */
+     border-radius: 50%; /* membuat bentuk bulat */
+     object-fit: cover; /* biar isi gambar rapi */
+     filter: drop-shadow(0 0 10px rgba(91, 188, 255, 0.5));
+     border: 2px solid var(--primary); /* opsional: beri garis pinggir */
+    }
+    header img:hover {
+    box-shadow: 0 0 15px var(--primary), 0 0 30px var(--accent);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-top: 10px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 10px rgba(91, 188, 255, 0.3));
+    }
+
+    .tagline {
+      font-size: 1rem;
+      color: var(--secondary);
+      margin-top: 5px;
+      opacity: 0.9;
+    }
+
+    #themeToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(126, 161, 255, 0.2);
+      color: var(--text-light);
+      border: 1px solid var(--highlight);
+      padding: 8px 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    #themeToggle:hover {
+      background: rgba(126, 161, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-grow: 1;
+      z-index: 2;
+      position: relative;
+    }
+
+    .game-card {
+      background: rgba(26, 26, 46, 0.6);
+      border-radius: 15px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+      overflow: hidden;
+      border: 1px solid rgba(126, 161, 255, 0.1);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(126, 161, 255, 0.3);
+    }
+
+    .game-card:hover .game-image {
+      transform: scale(1.1);
+      filter: brightness(1.1) drop-shadow(0 0 10px var(--primary));
+    }
+
+    .game-card:hover .game-title {
+      color: var(--secondary);
+    }
+
+    .game-image-container {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(126, 161, 255, 0.1);
+      position: relative;
+    }
+
+    .game-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-card a {
+      text-decoration: none;
+      color: var(--text-light);
+      display: block;
+      padding: 15px;
+    }
+
+    .game-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 10px;
+      transition: color 0.3s ease;
+    }
+
+    .game-category {
+      font-size: 0.8rem;
+      color: var(--primary);
+      margin-top: 5px;
+      opacity: 0.8;
+    }
+    
+    body.light-mode {
+      background: linear-gradient(135deg, #FEFBC7, #FFF9D9);
+      color: #1A1A2E;
+    }
+
+    /* Tombol mode terang */
+    body.light-mode #themeToggle {
+      background: #5EABD6;
+      color: #FFFFFF;
+      border: 1px solid #4A8CCF;
+    }
+
+    /* Kartu game (game-card) */
+    body.light-mode .game-card {
+      background: linear-gradient(145deg, #5EABD6, #7FCDF2);
+      color: #FFFFFF;
+      border: 1px solid #4A8CCF;
+      box-shadow: 0 10px 30px rgba(94, 171, 214, 0.3);
+    }
+
+    body.light-mode .game-title {
+      color: #FFFFFF;
+    }
+
+    body.light-mode .game-category {
+      color: #FEFBC7;
+    }
+    body.light-mode header {
+      background: #5EABD6;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(94, 171, 214, 0.4);
+    }
+
+    body.light-mode h1 {
+      background: linear-gradient(to right, #FFFFFF, #FEFBC7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: none;
+    }
+
+    body.light-mode .tagline {
+      color: #FEFBC7;
+      opacity: 0.9;
+    }
+
+    body.light-mode .logo-container img {
+      border: 2px solid #FEFBC7;
+      background: #ffffff22;
+      padding: 4px;
+      border-radius: 50%;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.95rem;
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 2;
+      color: var(--text-light);
+    }
+
+    body.light-mode footer {
+      background: #5EABD6;
+      color: #FFFFFF;
+      border-top: 3px solid #4A8CCF;
+      box-shadow: 0 -4px 12px rgba(94, 171, 214, 0.2);
+    }
+
+    footer strong {
+      color: var(--accent);
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      background: rgba(255, 250, 183, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        padding: 20px;
+        gap: 15px;
+      }
+      
+      .game-image-container {
+        height: 100px;
+      }
+      
+      .game-image {
+        width: 60px;
+        height: 60px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        padding: 15px;
+        gap: 12px;
+      }
+      
+      .game-title {
+        font-size: 1rem;
+      }
+      
+      .logo-container {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      #themeToggle {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 10px auto;
+      }
+      
+      .animated-bg {
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Enhanced Animated Background -->
+  <div class="animated-bg">
+    <div class="stars"></div>
+    <div class="ufo bg-element"></div>
+    <div class="rocket bg-element"></div>
+    <div class="planet bg-element"></div>
+    <div class="comet bg-element"></div>
+    <div class="satellite bg-element"></div>
+  </div>
+
+  <header>
+    <button id="themeToggle">
+      <span class="theme-icon">🌙</span>
+      <span class="theme-text">Mode Gelap</span>
+    </button>
+    <div class="logo-container">
+      <img src="image/logo gamee.png" alt="Logo" />
+    </div>
+    <h1>Dibuat dengan Kode, Dimainkan dengan Gembira</h1>
+    <p class="tagline">Temukan petualangan seru di ujung jarimu</p>
+  </header>
+
+  <main>
+    <div class="game-card">
+      <a href="game1.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo 2048.png" alt="Game 1" />
+        </div>
+        <div class="game-title"> Puzzle 2048</div>
+        <div class="game-category">Ubin Angka</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game2.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo xox.png" alt="Game 2" />
+        </div>
+        <div class="game-title">Tic Tac Toe</div>
+        <div class="game-category">Noughts and Crosses</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game3.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo sped car.png" alt="Game 3" />
+        </div>
+        <div class="game-title">Turbo Race</div>
+        <div class="game-category">Balap</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game4.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo mtk.png" alt="Game 4" />
+        </div>
+        <div class="game-title">Math Challenge</div>
+        <div class="game-category">quiz</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game5.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo tebak kata.png" alt="Game 5" />
+        </div>
+        <div class="game-title">Word Search</div>
+        <div class="game-category">Menemukan </div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game6.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo bubble.png" alt="Game 6" />
+        </div>
+        <div class="game-title">Bubble Shooter</div>
+        <div class="game-category">Gelembung</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game7.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo flpy brd.png" alt="Game 7" />
+        </div>
+        <div class="game-title">Minecraft Flappy</div>
+        <div class="game-category">Terbang</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game8.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo snake.png" alt="Game 8" />
+        </div>
+        <div class="game-title">Snake Game</div>
+        <div class="game-category">Menggerakkan</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game9.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo epic jump.png" alt="Game 9" />
+        </div>
+        <div class="game-title">Epic Jump</div>
+        <div class="game-category">Rintangan</div>
+      </a>
+    </div>
+    <div class="game-card">
+      <a href="game10.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo mobil.png" alt="Game 10" />
+        </div>
+        <div class="game-title">Super Car</div>
+        <div class="game-category">Menghindari</div>
+      </a>
+    </div>
+     <div class="game-card">
+      <a href="game11.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo Brick Breaker Pro.png" alt="Game 10" />
+        </div>
+        <div class="game-title">Brick Breaker Pro</div>
+        <div class="game-category">Menghindari</div>
+      </a>
+    </div>
+     <div class="game-card">
+      <a href="game12.html">
+        <div class="game-image-container">
+          <img class="game-image" src="image/logo zombi.png" alt="Game 10" />
+        </div>
+        <div class="game-title"> Zombie Shooter</div>
+        <div class="game-category">Melawan</div>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    Dibuat <strong>oleh hszam © 10_24</strong>
+  </footer>
+
+  <script>
+    // Create floating particles
+    function createParticles() {
+      const colors = ['#5BBCFF', '#FFFAB7', '#FFD1E3', '#7EA1FF'];
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random properties
+        const size = Math.random() * 5 + 2;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = color;
+        particle.style.left = `${Math.random() * 100}vw`;
+        particle.style.top = `${Math.random() * 100}vh`;
+        particle.style.opacity = Math.random() * 0.6 + 0.2;
+        particle.style.animation = `float ${Math.random() * 20 + 10}s linear infinite`;
+        
+        document.body.appendChild(particle);
+      }
+    }
+
+    // Light/dark mode toggle
+    const toggleBtn = document.getElementById('themeToggle');
+    const themeIcon = toggleBtn.querySelector('.theme-icon');
+    const themeText = toggleBtn.querySelector('.theme-text');
+    
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+
+      if (document.body.classList.contains('light-mode')) {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Mode Gelap';
+        toggleBtn.style.background = '#5EABD6';
+        toggleBtn.style.color = '#FFFFFF';
+        toggleBtn.style.border = '1px solid #4A8CCF';
+      } else {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Mode Terang';
+        toggleBtn.style.background = 'rgba(126, 161, 255, 0.2)';
+        toggleBtn.style.color = 'var(--text-light)';
+        toggleBtn.style.border = '1px solid var(--highlight)';
+      }
+    });
+
+    // Add hover effect to game cards
+    const gameCards = document.querySelectorAll('.game-card');
+    gameCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const colors = ['#5BBCFF', '#FFFAB7', '#FFD1E3', '#7EA1FF'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        card.style.boxShadow = `0 15px 35px ${randomColor}40`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2)';
+      });
+    });
+
+    // Initialize
+    createParticles();
+    
+    // Add more background elements dynamically
+    function addMoreElements() {
+      const bg = document.querySelector('.animated-bg');
+      
+      // Add shooting stars
+      for (let i = 0; i < 3; i++) {
+        const star = document.createElement('div');
+        star.className = 'bg-element';
+        star.style.width = '60px';
+        star.style.height = '3px';
+        star.style.background = 'linear-gradient(to right, rgba(255,255,255,0), #FFFAB7)';
+        star.style.top = `${Math.random() * 100}vh`;
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.opacity = '0';
+        star.style.animation = `shootingStar ${Math.random() * 5 + 3}s linear infinite ${Math.random() * 10}s`;
+        bg.appendChild(star);
+      }
+      
+      // Add small planets
+      for (let i = 0; i < 2; i++) {
+        const smallPlanet = document.createElement('div');
+        smallPlanet.className = 'bg-element';
+        smallPlanet.style.width = '60px';
+        smallPlanet.style.height = '60px';
+        smallPlanet.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle fill="%23${Math.random().toString(16).substr(2,6)}" cx="30" cy="30" r="25"/></svg>')`;
+        smallPlanet.style.top = `${Math.random() * 100}vh`;
+        smallPlanet.style.left = `${Math.random() * 100}vw`;
+        smallPlanet.style.opacity = '0.6';
+        smallPlanet.style.animation = `floatRight ${Math.random() * 40 + 20}s linear infinite`;
+        bg.appendChild(smallPlanet);
+      }
+    }
+    
+    // Add CSS for new animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shootingStar {
+        0% {
+          transform: translateX(0) translateY(0) scale(0.5);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(200px) translateY(100px) scale(1.5);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Call the function to add more elements
+    addMoreElements();
+  </script>
+</body>
+</html>

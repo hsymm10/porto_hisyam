@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo Race Challenge</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #7D0A0A, #BF3131);
+            color: #EEEEEE;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+            color: #EAD196;
+        }
+        
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        #race-track {
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            background-image: 
+                linear-gradient(90deg, #555 1px, transparent 1px),
+                linear-gradient(#555 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 3px solid #EAD196;
+        }
+        
+        .player {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            left: 10px;
+            transition: left 0.1s ease-out;
+            font-size: 40px;
+            text-align: center;
+            line-height: 60px;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+        }
+        
+        #player1 {
+            top: 30px;
+        }
+        
+        #player2 {
+            top: 110px;
+        }
+        
+        #finish-line {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background-color: #EAD196;
+            box-shadow: 0 0 10px #EAD196;
+        }
+        
+        #result {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 60px;
+            color: #EAD196;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        button {
+            background: linear-gradient(to bottom, #BF3131, #7D0A0A);
+            border: none;
+            color: #EEEEEE;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            border: 1px solid #EAD196;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to bottom, #7D0A0A, #BF3131);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #EAD196;
+        }
+        
+        .player-score {
+            font-size: 1.2rem;
+            color: #EEEEEE;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+            color: #EAD196;
+        }
+        
+        .player-timer {
+            font-size: 1.5rem;
+            margin: 5px 0;
+        }
+        
+        .character-select {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .character-option {
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            background-color: rgba(234, 209, 150, 0.1);
+        }
+        
+        .character-option:hover {
+            transform: scale(1.2);
+            background-color: rgba(234, 209, 150, 0.3);
+        }
+        
+        .character-option.selected {
+            background-color: rgba(234, 209, 150, 0.5);
+            box-shadow: 0 0 15px #EAD196;
+        }
+        
+        .mobile-controls {
+            display: none;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .mobile-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.5rem;
+            background: linear-gradient(to bottom, #BF3131, #7D0A0A);
+            color: #EEEEEE;
+            border: 1px solid #EAD196;
+            border-radius: 10px;
+            touch-action: manipulation;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: flex;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .player {
+                width: 50px;
+                height: 50px;
+                font-size: 30px;
+                line-height: 50px;
+            }
+            
+            .controls button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            #result {
+                font-size: 1.5rem;
+            }
+        }
+        
+        .power-up {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 30px;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .boost-effect {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(234, 209, 150, 0.8) 0%, rgba(234, 209, 150, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fadeOut 0.5s forwards;
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(2); }
+        }
+        
+        .best-time {
+            font-size: 1rem;
+            color: #EAD196;
+            margin-top: 5px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #7D0A0A, #BF3131);
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 2px solid #EAD196;
+        }
+        
+        .modal h2 {
+            margin-top: 0;
+            color: #EAD196;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #EEEEEE;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #EAD196;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #EEEEEE;
+        }
+        
+        .modal-input::placeholder {
+            color: rgba(238, 238, 238, 0.7);
+        }
+        
+        .game-mode-select {
+            margin: 20px 0;
+        }
+        
+        .mode-select-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(234, 209, 150, 0.1);
+            border: 2px solid #EAD196;
+            color: #EEEEEE;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mode-select-btn:hover {
+            background: rgba(234, 209, 150, 0.2);
+        }
+        
+        .mode-select-btn.selected {
+            background: rgba(234, 209, 150, 0.3);
+            border-color: #EAD196;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to bottom, #BF3131, #7D0A0A);
+            color: #EEEEEE;
+            border: 1px solid #EAD196;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #EEEEEE;
+            border: 1px solid #EAD196;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(to bottom, #BF3131, #7D0A0A);
+            color: #EEEEEE;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+            border: 1px solid #EAD196;
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(to bottom, #7D0A0A, #BF3131);
+            transform: translateY(-2px);
+        }
+        
+        .difficulty-select {
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 15px;
+            background: rgba(234, 209, 150, 0.1);
+            border: 1px solid #EAD196;
+            color: #EEEEEE;
+            cursor: pointer;
+        }
+        
+        .difficulty-btn.selected {
+            background: rgba(234, 209, 150, 0.3);
+            border-color: #EAD196;
+        }
+        
+        .bot-thinking {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #EAD196;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .bot-thinking.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal" id="name-modal">
+        <div class="modal-content">
+            <h2>Game Setup</h2>
+            
+            <div class="game-mode-select">
+                <h3>Select Game Mode:</h3>
+                <button class="mode-select-btn selected" id="single-player-mode">Single Player (vs Computer)</button>
+                <button class="mode-select-btn" id="multi-player-mode">Multiplayer (2 Players)</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="p1-name">Player 1 Name:</label>
+                <input type="text" id="p1-name" class="modal-input" placeholder="Enter your name" maxlength="15">
+            </div>
+            
+            <div class="input-group" id="p2-input-group" style="display: none;">
+                <label for="p2-name">Player 2 Name:</label>
+                <input type="text" id="p2-name" class="modal-input" placeholder="Enter player 2 name" maxlength="15">
+            </div>
+            
+            <div class="difficulty-select" id="difficulty-group">
+                <h3>Computer Difficulty:</h3>
+                <button class="difficulty-btn selected" data-difficulty="easy">Easy</button>
+                <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+            </div>
+            
+            <button class="start-btn" id="start-game">Start Game</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="game" style="display: none;">
+        <h1>🏁 Turbo Race Challenge 🏁</h1>
+        
+        <div class="score-board">
+            <div class="player-score">
+                <div class="player-name" id="p1-name-display">Player 1</div>
+                <div class="player-timer" id="timer1">0.00s</div>
+                <div>Score: <span id="score1">0</span></div>
+                <div class="best-time">Best: <span id="best1">-</span></div>
+            </div>
+            
+            <div class="player-score">
+                <div class="player-name" id="p2-name-display">Computer</div>
+                <div class="player-timer" id="timer2">0.00s</div>
+                <div>Score: <span id="score2">0</span></div>
+                <div class="best-time">Best: <span id="best2">-</span></div>
+                <div class="bot-thinking" id="bot-thinking">Computer is thinking...</div>
+            </div>
+        </div>
+        
+        <div class="character-select">
+            <div>Select <span id="p1-select-name">Player 1</span>:</div>
+            <div class="character-option selected" data-player="1" data-char="🏎️">🏎️</div>
+            <div class="character-option" data-player="1" data-char="🚀">🚀</div>
+            <div class="character-option" data-player="1" data-char="🦄">🦄</div>
+            <div class="character-option" data-player="1" data-char="🚲">🚲</div>
+            <div class="character-option" data-player="1" data-char="🏍️">🏍️</div>
+        </div>
+        
+        <div class="character-select">
+            <div>Select <span id="p2-select-name">Player 2</span>:</div>
+            <div class="character-option selected" data-player="2" data-char="🏎️">🏎️</div>
+            <div class="character-option" data-player="2" data-char="🚀">🚀</div>
+            <div class="character-option" data-player="2" data-char="🦄">🦄</div>
+            <div class="character-option" data-player="2" data-char="🚲">🚲</div>
+            <div class="character-option" data-player="2" data-char="🏍️">🏍️</div>
+        </div>
+        
+        <div id="race-track">
+            <div id="player1" class="player">🏎️</div>
+            <div id="player2" class="player">🏎️</div>
+            <div id="finish-line"></div>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div class="controls">
+            <button id="reset-btn">Reset Race</button>
+            <button id="sound-btn">Sound: ON</button>
+            <button id="mode-btn">Single Race</button>
+            <button id="change-names">Change Settings</button>
+        </div>
+        
+        <div class="mobile-controls">
+            <button id="p1-btn" class="mobile-btn"><span id="p1-btn-name">P1</span> (A)</button>
+            <button id="p2-btn" class="mobile-btn"><span id="p2-btn-name">P2</span> (L)</button>
+        </div>
+        
+        <footer>
+            <p>Turbo Race Challenge - Play against computer or with a friend!</p>
+            <p>Use keys A (Player 1) and L (Player 2) to race to the finish line.</p>
+        </footer>
+    </div>
+
+    <audio id="keySound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+    <audio id="boostSound" src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3"></audio>
+    <audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-668.mp3"></audio>
+
+    <script>
+        // Game elements
+        const player1 = document.getElementById("player1");
+        const player2 = document.getElementById("player2");
+        const result = document.getElementById("result");
+        const finishLine = document.getElementById("finish-line");
+        const raceTrack = document.getElementById("race-track");
+        const resetBtn = document.getElementById("reset-btn");
+        const soundBtn = document.getElementById("sound-btn");
+        const modeBtn = document.getElementById("mode-btn");
+        const changeNamesBtn = document.getElementById("change-names");
+        const p1Btn = document.getElementById("p1-btn");
+        const p2Btn = document.getElementById("p2-btn");
+        const timer1 = document.getElementById("timer1");
+        const timer2 = document.getElementById("timer2");
+        const score1 = document.getElementById("score1");
+        const score2 = document.getElementById("score2");
+        const best1 = document.getElementById("best1");
+        const best2 = document.getElementById("best2");
+        const p1NameDisplay = document.getElementById("p1-name-display");
+        const p2NameDisplay = document.getElementById("p2-name-display");
+        const p1SelectName = document.getElementById("p1-select-name");
+        const p2SelectName = document.getElementById("p2-select-name");
+        const p1BtnName = document.getElementById("p1-btn-name");
+        const p2BtnName = document.getElementById("p2-btn-name");
+        const nameModal = document.getElementById("name-modal");
+        const p1NameInput = document.getElementById("p1-name");
+        const p2NameInput = document.getElementById("p2-name");
+        const startGameBtn = document.getElementById("start-game");
+        const gameContainer = document.getElementById("game");
+        const singlePlayerModeBtn = document.getElementById("single-player-mode");
+        const multiPlayerModeBtn = document.getElementById("multi-player-mode");
+        const p2InputGroup = document.getElementById("p2-input-group");
+        const difficultyGroup = document.getElementById("difficulty-group");
+        const botThinking = document.getElementById("bot-thinking");
+        
+        // Audio elements
+        const keySound = document.getElementById("keySound");
+        const winSound = document.getElementById("winSound");
+        const boostSound = document.getElementById("boostSound");
+        const bgMusic = document.getElementById("bgMusic");
+        
+        // Game state
+        let p1Position = 0;
+        let p2Position = 0;
+        let gameOver = false;
+        let soundEnabled = true;
+        let musicEnabled = true;
+        let p1StartTime = 0;
+        let p2StartTime = 0;
+        let p1Timer = 0;
+        let p2Timer = 0;
+        let timerInterval;
+        let powerUps = [];
+        let boostActive = {1: false, 2: false};
+        let p1Score = 0;
+        let p2Score = 0;
+        let p1BestTime = Infinity;
+        let p2BestTime = Infinity;
+        let raceTo = 5;
+        let raceMode = "single"; // "single" or "series"
+        let gameMode = "single"; // "single" or "multi"
+        let playerNames = {1: "Player 1", 2: "Computer"};
+        let computerInterval;
+        let computerSpeed = 1000; // ms between computer moves
+        let difficulty = "easy"; // "easy", "medium", "hard"
+        let computerBoostChance = 0.1; // 10% chance to use boost
+        let computerReactionTime = 300; // ms delay before computer reacts
+
+        // Show name input modal on load
+        nameModal.style.display = "flex";
+
+        // Game mode selection
+        singlePlayerModeBtn.addEventListener("click", () => {
+            gameMode = "single";
+            singlePlayerModeBtn.classList.add("selected");
+            multiPlayerModeBtn.classList.remove("selected");
+            p2InputGroup.style.display = "none";
+            p2NameInput.value = "Computer";
+            difficultyGroup.style.display = "block";
+        });
+
+        multiPlayerModeBtn.addEventListener("click", () => {
+            gameMode = "multi";
+            multiPlayerModeBtn.classList.add("selected");
+            singlePlayerModeBtn.classList.remove("selected");
+            p2InputGroup.style.display = "block";
+            p2NameInput.value = "";
+            difficultyGroup.style.display = "none";
+        });
+
+        // Difficulty selection
+        document.querySelectorAll(".difficulty-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".difficulty-btn").forEach(b => b.classList.remove("selected"));
+                btn.classList.add("selected");
+                difficulty = btn.getAttribute("data-difficulty");
+                
+                // Adjust computer behavior based on difficulty
+                switch(difficulty) {
+                    case "easy":
+                        computerSpeed = 1000;
+                        computerBoostChance = 0.1;
+                        computerReactionTime = 500;
+                        break;
+                    case "medium":
+                        computerSpeed = 700;
+                        computerBoostChance = 0.3;
+                        computerReactionTime = 300;
+                        break;
+                    case "hard":
+                        computerSpeed = 400;
+                        computerBoostChance = 0.5;
+                        computerReactionTime = 100;
+                        break;
+                }
+            });
+        });
+
+        // Initialize game after names are entered
+        startGameBtn.addEventListener("click", () => {
+            const p1Name = p1NameInput.value.trim() || "Player 1";
+            const p2Name = gameMode === "single" ? "Computer" : (p2NameInput.value.trim() || "Player 2");
+            
+            // Update player names immediately
+            playerNames[1] = p1Name;
+            playerNames[2] = p2Name;
+            updatePlayerNames();
+            
+            // Save names to localStorage
+            localStorage.setItem('playerNames', JSON.stringify({
+                p1: playerNames[1],
+                p2: playerNames[2],
+                difficulty: difficulty
+            }));
+            
+            nameModal.style.display = "none";
+            gameContainer.style.display = "block";
+            
+            // Start background music
+            if (musicEnabled) {
+                bgMusic.volume = 0.3;
+                bgMusic.play().catch(e => console.log("Autoplay prevented:", e));
+            }
+            
+            // Start the game immediately without countdown
+            initGame();
+        });
+
+        // Change names button
+        changeNamesBtn.addEventListener("click", () => {
+            p1NameInput.value = playerNames[1];
+            p2NameInput.value = gameMode === "single" ? "" : playerNames[2];
+            
+            // Set the correct mode button
+            if (gameMode === "single") {
+                singlePlayerModeBtn.classList.add("selected");
+                multiPlayerModeBtn.classList.remove("selected");
+                p2InputGroup.style.display = "none";
+                difficultyGroup.style.display = "block";
+            } else {
+                multiPlayerModeBtn.classList.add("selected");
+                singlePlayerModeBtn.classList.remove("selected");
+                p2InputGroup.style.display = "block";
+                difficultyGroup.style.display = "none";
+            }
+            
+            // Set the correct difficulty button
+            document.querySelectorAll(".difficulty-btn").forEach(btn => {
+                btn.classList.remove("selected");
+                if (btn.getAttribute("data-difficulty") === difficulty) {
+                    btn.classList.add("selected");
+                }
+            });
+            
+            nameModal.style.display = "flex";
+        });
+
+        function updatePlayerNames() {
+            p1NameDisplay.textContent = playerNames[1];
+            p2NameDisplay.textContent = playerNames[2];
+            p1SelectName.textContent = playerNames[1];
+            p2SelectName.textContent = playerNames[2];
+            p1BtnName.textContent = playerNames[1].substring(0, 5);
+            p2BtnName.textContent = playerNames[2].substring(0, 5);
+        }
+
+        function initGame() {
+            // Load saved scores and best times from localStorage
+            loadScores();
+            resetGame();
+            createPowerUps();
+
+            // Start computer player if single player mode
+            if (gameMode === "single") {
+                startComputerPlayer();
+            }
+        }
+
+        function startComputerPlayer() {
+            // Clear any existing interval
+            if (computerInterval) clearInterval(computerInterval);
+            
+            // Computer moves at random intervals with difficulty-based speed
+            computerInterval = setInterval(() => {
+                if (!gameOver && p2StartTime !== 0) {
+                    // Show thinking indicator
+                    botThinking.classList.add("active");
+                    
+                    // Computer reacts after a short delay
+                    setTimeout(() => {
+                        botThinking.classList.remove("active");
+                        
+                        // Decide whether to use boost (based on difficulty)
+                        if (Math.random() < computerBoostChance && !boostActive[2]) {
+                            applyPowerUp('boost', 2);
+                        }
+                        
+                        movePlayer(2);
+                    }, computerReactionTime);
+                }
+            }, computerSpeed);
+        }
+        
+        function loadScores() {
+            // Load from localStorage if available
+            if (localStorage.getItem('p1Score')) {
+                p1Score = parseInt(localStorage.getItem('p1Score'));
+                score1.textContent = p1Score;
+            }
+            
+            if (localStorage.getItem('p2Score')) {
+                p2Score = parseInt(localStorage.getItem('p2Score'));
+                score2.textContent = p2Score;
+            }
+            
+            if (localStorage.getItem('p1BestTime')) {
+                p1BestTime = parseFloat(localStorage.getItem('p1BestTime'));
+                best1.textContent = p1BestTime === Infinity ? "-" : p1BestTime.toFixed(2) + "s";
+            }
+            
+            if (localStorage.getItem('p2BestTime')) {
+                p2BestTime = parseFloat(localStorage.getItem('p2BestTime'));
+                best2.textContent = p2BestTime === Infinity ? "-" : p2BestTime.toFixed(2) + "s";
+            }
+            
+            if (localStorage.getItem('raceMode')) {
+                raceMode = localStorage.getItem('raceMode');
+                updateModeButton();
+            }
+            
+            if (localStorage.getItem('playerNames')) {
+                const savedNames = JSON.parse(localStorage.getItem('playerNames'));
+                playerNames[1] = savedNames.p1 || "Player 1";
+                playerNames[2] = savedNames.p2 || (gameMode === "single" ? "Computer" : "Player 2");
+                updatePlayerNames();
+            }
+            
+            if (localStorage.getItem('soundEnabled') !== null) {
+                soundEnabled = localStorage.getItem('soundEnabled') === 'true';
+                soundBtn.textContent = soundEnabled ? "Sound: ON" : "Sound: OFF";
+            }
+            
+            if (localStorage.getItem('musicEnabled') !== null) {
+                musicEnabled = localStorage.getItem('musicEnabled') === 'true';
+                if (musicEnabled) {
+                    bgMusic.play().catch(e => console.log("Autoplay prevented:", e));
+                } else {
+                    bgMusic.pause();
+                }
+            }
+            
+            if (localStorage.getItem('difficulty')) {
+                difficulty = localStorage.getItem('difficulty');
+                // Set the correct difficulty button
+                document.querySelectorAll(".difficulty-btn").forEach(btn => {
+                    btn.classList.remove("selected");
+                    if (btn.getAttribute("data-difficulty") === difficulty) {
+                        btn.classList.add("selected");
+                    }
+                });
+                
+                // Set difficulty parameters
+                switch(difficulty) {
+                    case "easy":
+                        computerSpeed = 1000;
+                        computerBoostChance = 0.1;
+                        computerReactionTime = 500;
+                        break;
+                    case "medium":
+                        computerSpeed = 700;
+                        computerBoostChance = 0.3;
+                        computerReactionTime = 300;
+                        break;
+                    case "hard":
+                        computerSpeed = 400;
+                        computerBoostChance = 0.5;
+                        computerReactionTime = 100;
+                        break;
+                }
+            }
+        }
+        
+        function saveScores() {
+            localStorage.setItem('p1Score', p1Score);
+            localStorage.setItem('p2Score', p2Score);
+            localStorage.setItem('p1BestTime', p1BestTime);
+            localStorage.setItem('p2BestTime', p2BestTime);
+            localStorage.setItem('raceMode', raceMode);
+            localStorage.setItem('playerNames', JSON.stringify({
+                p1: playerNames[1],
+                p2: playerNames[2]
+            }));
+            localStorage.setItem('soundEnabled', soundEnabled);
+            localStorage.setItem('musicEnabled', musicEnabled);
+            localStorage.setItem('difficulty', difficulty);
+        }
+        
+        function handleKeyPress(e) {
+            if (gameOver) return;
+            
+            if (e.key === "a" || e.key === "A") {
+                movePlayer(1);
+            } else if ((e.key === "l" || e.key === "L") && gameMode === "multi") {
+                movePlayer(2);
+            }
+        }
+        
+        function movePlayer(playerNum) {
+            if (gameOver) return;
+            
+            // Start timer on first move
+            if (playerNum === 1 && p1StartTime === 0) {
+                p1StartTime = Date.now();
+                startTimer();
+                
+                // In single player mode, start computer after player moves
+                if (gameMode === "single") {
+                    setTimeout(() => {
+                        p2StartTime = Date.now();
+                        startComputerPlayer();
+                    }, 500);
+                }
+            } else if (playerNum === 2 && p2StartTime === 0) {
+                p2StartTime = Date.now();
+                startTimer();
+            }
+            
+            // Play sound
+            if (soundEnabled) {
+                keySound.currentTime = 0;
+                keySound.play();
+            }
+            
+            // Move player with boost if active
+            const boost = boostActive[playerNum] ? 20 : 10;
+            
+            if (playerNum === 1) {
+                p1Position += boost;
+                player1.style.left = p1Position + "px";
+                
+                // Check for power-ups
+                checkPowerUps(player1, 1);
+                
+                // Check winner
+                checkWinner(playerNames[1], 1);
+            } else {
+                p2Position += boost;
+                player2.style.left = p2Position + "px";
+                
+                // Check for power-ups
+                checkPowerUps(player2, 2);
+                
+                // Check winner
+                checkWinner(playerNames[2], 2);
+            }
+            
+            // Visual feedback for boost
+            if (boostActive[playerNum]) {
+                createBoostEffect(playerNum);
+            }
+        }
+        
+        function checkPowerUps(playerElement, playerNum) {
+            const playerRect = playerElement.getBoundingClientRect();
+            
+            powerUps.forEach((powerUp, index) => {
+                const powerUpRect = powerUp.element.getBoundingClientRect();
+                
+                // Check collision
+                if (!(playerRect.right < powerUpRect.left || 
+                      playerRect.left > powerUpRect.right || 
+                      playerRect.bottom < powerUpRect.top || 
+                      playerRect.top > powerUpRect.bottom)) {
+                    
+                    // Apply power-up effect
+                    applyPowerUp(powerUp.type, playerNum);
+                    
+                    // Remove power-up from DOM and array
+                    raceTrack.removeChild(powerUp.element);
+                    powerUps.splice(index, 1);
+                    
+                    // Create new power-up after a delay
+                    setTimeout(createPowerUp, Math.random() * 3000 + 2000);
+                }
+            });
+        }
+        
+        function applyPowerUp(type, playerNum) {
+            if (soundEnabled) {
+                boostSound.currentTime = 0;
+                boostSound.play();
+            }
+            
+            switch(type) {
+                case 'boost':
+                    boostActive[playerNum] = true;
+                    setTimeout(() => {
+                        boostActive[playerNum] = false;
+                    }, 2000);
+                    break;
+                case 'slow':
+                    // Slow down the other player
+                    const otherPlayer = playerNum === 1 ? 2 : 1;
+                    const currentPos = otherPlayer === 1 ? p1Position : p2Position;
+                    const newPos = Math.max(0, currentPos - 30);
+                    
+                    if (otherPlayer === 1) {
+                        p1Position = newPos;
+                        player1.style.left = p1Position + "px";
+                    } else {
+                        p2Position = newPos;
+                        player2.style.left = p2Position + "px";
+                    }
+                    break;
+            }
+        }
+        
+        function createBoostEffect(playerNum) {
+            const playerElement = playerNum === 1 ? player1 : player2;
+            const rect = playerElement.getBoundingClientRect();
+            const trackRect = raceTrack.getBoundingClientRect();
+            
+            const effect = document.createElement("div");
+            effect.className = "boost-effect";
+            effect.style.left = (rect.left - trackRect.left - 50) + "px";
+            effect.style.top = (rect.top - trackRect.top - 50) + "px";
+            
+            raceTrack.appendChild(effect);
+            
+            // Remove effect after animation
+            setTimeout(() => {
+                if (effect.parentNode === raceTrack) {
+                    raceTrack.removeChild(effect);
+                }
+            }, 500);
+        }
+        
+        function createPowerUps() {
+            // Clear existing power-ups
+            powerUps.forEach(pu => {
+                if (pu.element.parentNode === raceTrack) {
+                    raceTrack.removeChild(pu.element);
+                }
+            });
+            powerUps = [];
+            
+            // Create initial power-ups
+            for (let i = 0; i < 3; i++) {
+                setTimeout(createPowerUp, Math.random() * 2000);
+            }
+        }
+        
+        function createPowerUp() {
+            if (gameOver) return;
+            
+            const types = ['boost', 'slow'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const emoji = type === 'boost' ? '⚡' : '🐢';
+            
+            const powerUp = document.createElement("div");
+            powerUp.className = "power-up";
+            powerUp.textContent = emoji;
+            
+            // Random position (not too close to start or finish)
+            const trackWidth = raceTrack.offsetWidth;
+            const left = Math.random() * (trackWidth - 100) + 50;
+            const top = Math.random() * 140 + 30;
+            
+            powerUp.style.left = left + "px";
+            powerUp.style.top = top + "px";
+            
+            raceTrack.appendChild(powerUp);
+            powerUps.push({element: powerUp, type: type});
+        }
+        
+        function checkWinner(playerName, playerNum) {
+            const trackWidth = raceTrack.offsetWidth;
+            const finish = trackWidth - 70;
+            
+            if (p1Position >= finish || p2Position >= finish) {
+                gameOver = true;
+                clearInterval(timerInterval);
+                if (computerInterval) clearInterval(computerInterval);
+                botThinking.classList.remove("active");
+                
+                let winner;
+                if (p1Position >= finish && p2Position >= finish) {
+                    // Both crossed finish line - check who was first
+                    const p1Time = (Date.now() - p1StartTime) / 1000;
+                    const p2Time = (Date.now() - p2StartTime) / 1000;
+                    winner = p1Time < p2Time ? playerNames[1] : playerNames[2];
+                } else {
+                    winner = p1Position >= finish ? playerNames[1] : playerNames[2];
+                }
+                
+                // Calculate final times
+                const p1FinalTime = (Date.now() - p1StartTime) / 1000;
+                const p2FinalTime = (Date.now() - p2StartTime) / 1000;
+                
+                // Update scores
+                if (winner === playerNames[1]) {
+                    p1Score++;
+                    score1.textContent = p1Score;
+                    
+                    // Update best time
+                    if (p1FinalTime < p1BestTime) {
+                        p1BestTime = p1FinalTime;
+                        best1.textContent = p1BestTime.toFixed(2) + "s";
+                    }
+                } else {
+                    p2Score++;
+                    score2.textContent = p2Score;
+                    
+                    // Update best time
+                    if (p2FinalTime < p2BestTime) {
+                        p2BestTime = p2FinalTime;
+                        best2.textContent = p2BestTime.toFixed(2) + "s";
+                    }
+                }
+                
+                // Save to localStorage
+                saveScores();
+                
+                // Display winner message with times
+                result.textContent = `🏆 ${winner} Wins! (${winner === playerNames[1] ? p1FinalTime.toFixed(2) : p2FinalTime.toFixed(2)}s) 🏆`;
+                result.style.color = winner === playerNames[1] ? "#4CAF50" : "#2196F3";
+                
+                if (soundEnabled) {
+                    winSound.currentTime = 0;
+                    winSound.play();
+                }
+                
+                // Confetti effect
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+                
+                // Check if series winner
+                if (raceMode === "series" && (p1Score >= raceTo || p2Score >= raceTo)) {
+                    const seriesWinner = p1Score >= raceTo ? playerNames[1] : playerNames[2];
+                    setTimeout(() => {
+                        result.textContent = `🎉 ${seriesWinner} Wins the Series! 🎉`;
+                        result.style.fontSize = "2.5rem";
+                        
+                        // Reset scores for new series
+                        p1Score = 0;
+                        p2Score = 0;
+                        score1.textContent = "0";
+                        score2.textContent = "0";
+                        saveScores();
+                    }, 2000);
+                }
+            }
+        }
+        
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                if (p1StartTime > 0) {
+                    p1Timer = (Date.now() - p1StartTime) / 1000;
+                    timer1.textContent = p1Timer.toFixed(2) + "s";
+                }
+                
+                if (p2StartTime > 0) {
+                    p2Timer = (Date.now() - p2StartTime) / 1000;
+                    timer2.textContent = p2Timer.toFixed(2) + "s";
+                }
+            }, 10);
+        }
+        
+        function resetGame() {
+            p1Position = 0;
+            p2Position = 0;
+            gameOver = false;
+            player1.style.left = "0px";
+            player2.style.left = "0px";
+            result.textContent = "";
+            result.style.color = "";
+            result.style.fontSize = "";
+            
+            // Reset timers
+            p1StartTime = 0;
+            p2StartTime = 0;
+            p1Timer = 0;
+            p2Timer = 0;
+            timer1.textContent = "0.00s";
+            timer2.textContent = "0.00s";
+            clearInterval(timerInterval);
+            
+            // Reset boosts
+            boostActive = {1: false, 2: false};
+            
+            // Recreate power-ups
+            createPowerUps();
+
+            // In single player mode, stop computer interval until player moves again
+            if (computerInterval) clearInterval(computerInterval);
+            botThinking.classList.remove("active");
+        }
+
+        // Toggle sound
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundBtn.textContent = soundEnabled ? "Sound: ON" : "Sound: OFF";
+            localStorage.setItem('soundEnabled', soundEnabled);
+            
+            // Also toggle music if sound is off
+            if (!soundEnabled && musicEnabled) {
+                musicEnabled = false;
+                bgMusic.pause();
+                localStorage.setItem('musicEnabled', false);
+            }
+        }
+
+        // Toggle race mode (single/series)
+        function toggleRaceMode() {
+            raceMode = raceMode === "single" ? "series" : "single";
+            updateModeButton();
+            localStorage.setItem('raceMode', raceMode);
+        }
+
+        function updateModeButton() {
+            modeBtn.textContent = raceMode === "single" ? "Single Race" : `Series (${raceTo} Wins)`;
+        }
+
+        // Character selection
+        function selectCharacter(e) {
+            const option = e.currentTarget;
+            const playerNum = parseInt(option.getAttribute("data-player"));
+            const char = option.getAttribute("data-char");
+
+            // Remove selected from all options for this player
+            document.querySelectorAll(`.character-option[data-player="${playerNum}"]`).forEach(opt => {
+                opt.classList.remove("selected");
+            });
+            option.classList.add("selected");
+
+            // Set character emoji
+            if (playerNum === 1) {
+                player1.textContent = char;
+            } else {
+                player2.textContent = char;
+            }
+        }
+
+        // Event listeners (only once)
+        document.addEventListener("keydown", handleKeyPress);
+        resetBtn.addEventListener("click", resetGame);
+        soundBtn.addEventListener("click", toggleSound);
+        modeBtn.addEventListener("click", toggleRaceMode);
+        p1Btn.addEventListener("click", () => movePlayer(1));
+        p1Btn.addEventListener("touchstart", (e) => { 
+            e.preventDefault(); 
+            movePlayer(1); 
+        }, {passive: false});
+        p2Btn.addEventListener("click", () => movePlayer(2));
+        p2Btn.addEventListener("touchstart", (e) => { 
+            e.preventDefault(); 
+            movePlayer(2); 
+        }, {passive: false});
+        document.querySelectorAll(".character-option").forEach(option => {
+            option.addEventListener("click", selectCharacter);
+        });
+
+        // Confetti library loader
+        if (typeof confetti === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js';
+            document.head.appendChild(script);
+        }
+
+        // Add back button to menu
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!document.querySelector('.back-btn')) {
+                const backBtn = document.createElement('a');
+                backBtn.href = 'index.html';
+                backBtn.className = 'back-btn';
+                backBtn.textContent = 'Back to Menu';
+                document.body.appendChild(backBtn);
+            }
+        });
+    </script>
+    <footer> <p> ❤️ | Super Car </p></footer>
+</body>
+</html>

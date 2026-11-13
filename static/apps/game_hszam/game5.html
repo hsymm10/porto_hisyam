@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pencarian Kata</title>
+    <style>
+        :root {
+            --color-bg: #F8F5E9;
+            --color-accent: #B6C4A2;
+            --color-main: #7D9D76;
+            --color-dark: #40513B;
+            --color-highlight: #FFE57F;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--color-bg), var(--color-accent) 80%);
+            color: var(--color-dark);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        h1 {
+            text-shadow: 2px 2px 8px #fff8;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+            color: var(--color-dark);
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 100%;
+            background: var(--color-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(64,81,59,0.10);
+            padding: 15px;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(10, minmax(20px, 1fr));
+            grid-template-rows: repeat(10, minmax(20px, 1fr));
+            gap: 2px;
+            background-color: var(--color-main);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(64,81,59,0.08);
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 1/1;
+            touch-action: none;
+        }
+
+        .cell {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1/1;
+            background-color: var(--color-accent);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(14px, 4vw, 18px);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            color: var(--color-dark);
+            box-shadow: 0 1px 2px #40513b11;
+        }
+
+        .cell.selected {
+            background-color: var(--color-main);
+            color: #fff;
+            box-shadow: 0 0 6px var(--color-main);
+        }
+
+        .cell.found {
+            background-color: var(--color-highlight);
+            color: var(--color-dark);
+            box-shadow: 0 0 6px var(--color-highlight);
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .word-item {
+            padding: 8px 15px;
+            background-color: #e6eddc;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px #40513b11;
+            color: var(--color-main);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .word-item.found {
+            background-color: var(--color-main);
+            color: #fff;
+            text-decoration: line-through;
+            transform: scale(0.95);
+        }
+
+        #message {
+            font-size: 1rem;
+            margin-top: 15px;
+            text-align: center;
+            min-height: 40px;
+            padding: 8px 15px;
+            background-color: #e6eddc;
+            border-radius: 20px;
+            width: 90%;
+            color: var(--color-dark);
+            box-shadow: 0 2px 4px #40513b11;
+        }
+
+        .selection-line {
+            position: absolute;
+            background-color: var(--color-main);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 10;
+            border-radius: 2px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(to bottom, var(--color-main), var(--color-accent));
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px #40513b22;
+            min-width: 100px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px #40513b22;
+        }
+
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .timer, .theme-display {
+            font-size: 1rem;
+            padding: 8px 15px;
+            background-color: #e6eddc;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--color-main);
+            box-shadow: 0 2px 4px #40513b11;
+            text-align: center;
+        }
+
+        .tutorial {
+            background-color: #e6eddc;
+            padding: 15px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 15px;
+            display: none;
+            box-shadow: 0 5px 12px #40513b11;
+            color: var(--color-dark);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .tutorial.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        .tutorial h2 {
+            color: var(--color-main);
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .tutorial ol {
+            padding-left: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .tutorial li {
+            margin-bottom: 8px;
+        }
+
+        .tutorial-close {
+            background: linear-gradient(to bottom, var(--color-main), var(--color-accent));
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 6px #40513b22;
+        }
+
+        .tutorial-close:active {
+            transform: scale(0.98);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        footer {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--color-dark);
+            text-align: center;
+        }
+
+        /* Untuk layar sangat kecil (misalnya iPhone 5/SE) */
+        @media (max-width: 320px) {
+            .cell {
+                font-size: 12px;
+            }
+            .word-item {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+            button {
+                min-width: 80px;
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Untuk tablet atau layar lebih besar */
+        @media (min-width: 768px) {
+            .game-container {
+                max-width: 500px;
+            }
+            .cell {
+                font-size: 18px;
+            }
+        }
+
+        /* Tombol kembali */
+        .back-btn {
+            background: linear-gradient(to bottom, #7D9D76, #c0e6cc) !important;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pencarian Kata</h1>
+    
+    <div class="timer-container">
+        <div class="theme-display" id="themeDisplay">Tema: Hewan</div>
+        <div class="timer">Waktu: <span id="time">05:00</span></div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="tutorial" id="tutorial">
+        <h2>Cara Bermain</h2>
+        <ol>
+            <li><strong>Temukan kata</strong> yang tersembunyi di dalam kotak huruf</li>
+            <li>Kata dapat ditemukan <strong>mendatar, menurun, atau diagonal</strong></li>
+            <li>Kata dapat dibaca <strong>maju atau mundur</strong></li>
+            <li><strong>Sentuh dan seret</strong> untuk memilih huruf-huruf yang membentuk kata</li>
+            <li>Setiap kata yang ditemukan akan ditandai dengan warna kuning</li>
+            <li>Kamu memiliki waktu <strong>5 menit</strong> untuk menemukan semua kata</li>
+            <li>Gunakan tombol <strong>Petunjuk</strong> jika kesulitan menemukan kata</li>
+            <li>Tekan <strong>Bantuan</strong> untuk melihat panduan ini kembali</li>
+        </ol>
+        <button class="tutorial-close" id="tutorialClose">Mulai Bermain</button>
+    </div>
+    
+    <div class="controls">
+        <button id="newGameBtn">Baru</button>
+        <button id="hintBtn">Petunjuk</button>
+        <button id="helpBtn">Bantuan</button>
+        <button id="backBtn" class="back-btn">Kembali</button>
+    </div>
+    
+    <div class="game-container">
+        <div id="grid"></div>
+        
+        <div class="word-list" id="wordList"></div>
+        
+        <div id="message">Siap untuk memulai!</div>
+    </div>
+
+    <audio id="selectSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="foundSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+    <audio id="hintSound" src="https://assets.mixkit.co/sfx/preview/mixkit-neutral-game-notification-955.mp3"></audio>
+
+    <script>
+        // Konfigurasi game dengan tema berbeda
+        const themes = {
+            animals: {
+                name: "Hewan",
+                words: ["SINGA", "HARIMAU", "GAJAH", "ZEBRA", "KUDA", "ULAR", "KUCING", "ANJING", "BURUNG", "IKAN"]
+            },
+            plants: {
+                name: "Tumbuhan",
+                words: ["POHON", "BUNGA", "DAUN", "RUMPUT", "PADI", "KELAPA", "BAMBU", "KAKTUS", "MANGGA", "JAMBU"]
+            },
+            countries: {
+                name: "Negara",
+                words: ["INDONESIA", "MALAYSIA", "JEPANG", "AMERIKA", "INGGRIS", "CHINA", "INDIA", "RUSIA", "BRAZIL", "MESIR"]
+            },
+            fruits: {
+                name: "Buah",
+                words: ["APEL", "PISANG", "JERUK", "MANGGA", "SEMANGKA", "MELON", "ANGGUR", "PEPAYA", "RAMBUTAN", "DURIAN"]
+            }
+        };
+
+        const grid = document.getElementById("grid");
+        const message = document.getElementById("message");
+        const wordList = document.getElementById("wordList");
+        const timeDisplay = document.getElementById("time");
+        const newGameBtn = document.getElementById("newGameBtn");
+        const hintBtn = document.getElementById("hintBtn");
+        const helpBtn = document.getElementById("helpBtn");
+        const backBtn = document.getElementById("backBtn");
+        const tutorial = document.getElementById("tutorial");
+        const tutorialClose = document.getElementById("tutorialClose");
+        const themeDisplay = document.getElementById("themeDisplay");
+        const overlay = document.getElementById("overlay");
+
+        const size = 10;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let selectedCells = [];
+        let foundWords = [];
+        let timeLeft = 300; // 5 menit dalam detik
+        let timer;
+        let isDragging = false;
+        let selectionLine = null;
+        let startCell = null;
+        let currentTheme = null;
+        let currentWords = [];
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // Inisialisasi game
+        initGame();
+        showTutorial();
+
+        function initGame() {
+            // Hentikan game sebelumnya
+            grid.innerHTML = "";
+            wordList.innerHTML = "";
+            message.textContent = "Siap untuk memulai!";
+            clearInterval(timer);
+            timeLeft = 300;
+            updateTimeDisplay();
+
+            // Mulai game
+            startGame();
+        }
+
+        function startGame() {
+            // Pilih tema acak
+            const themeKeys = Object.keys(themes);
+            currentTheme = themeKeys[Math.floor(Math.random() * themeKeys.length)];
+            themeDisplay.textContent = `Tema: ${themes[currentTheme].name}`;
+            
+            // Pilih 5-7 kata acak dari tema
+            const allWords = themes[currentTheme].words;
+            currentWords = [];
+            const wordCount = Math.min(5 + Math.floor(Math.random() * 3), allWords.length);
+            
+            while (currentWords.length < wordCount) {
+                const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+                if (!currentWords.includes(randomWord)) {
+                    currentWords.push(randomWord);
+                }
+            }
+            
+            // Buat daftar kata
+            currentWords.forEach(word => {
+                const wordItem = document.createElement("div");
+                wordItem.className = "word-item";
+                wordItem.textContent = word;
+                wordItem.dataset.word = word;
+                wordList.appendChild(wordItem);
+            });
+
+            // Buat sel grid
+            const cells = [];
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement("div");
+                cell.className = "cell";
+                cell.dataset.index = i;
+                
+                // Event listeners untuk touch devices
+                cell.addEventListener("touchstart", handleTouchStart, { passive: false });
+                cell.addEventListener("touchmove", handleTouchMove, { passive: false });
+                cell.addEventListener("touchend", handleTouchEnd, { passive: false });
+                
+                // Event listeners untuk mouse
+                cell.addEventListener("mousedown", handleMouseDown);
+                cell.addEventListener("mouseenter", handleMouseEnter);
+                
+                grid.appendChild(cell);
+                cells.push(cell);
+            }
+
+            // Tambahkan kata ke grid dengan arah acak
+            currentWords.forEach(word => {
+                let placed = false;
+                let attempts = 0;
+                
+                while (!placed && attempts < 100) {
+                    attempts++;
+                    
+                    // Arah acak (0: horizontal, 1: vertikal, 2: diagonal)
+                    const direction = Math.floor(Math.random() * 3);
+                    const reverse = Math.random() > 0.5;
+                    const wordToPlace = reverse ? word.split('').reverse().join('') : word;
+                    
+                    let row, col;
+                    
+                    // Hitung posisi awal maksimum berdasarkan arah
+                    if (direction === 0) { // Horizontal
+                        row = Math.floor(Math.random() * size);
+                        col = Math.floor(Math.random() * (size - word.length));
+                    } else if (direction === 1) { // Vertikal
+                        row = Math.floor(Math.random() * (size - word.length));
+                        col = Math.floor(Math.random() * size);
+                    } else { // Diagonal
+                        row = Math.floor(Math.random() * (size - word.length));
+                        col = Math.floor(Math.random() * (size - word.length));
+                    }
+                    
+                    let fits = true;
+                    
+                    // Cek apakah kata muat
+                    for (let i = 0; i < wordToPlace.length; i++) {
+                        let index;
+                        
+                        if (direction === 0) { // Horizontal
+                            index = row * size + col + i;
+                        } else if (direction === 1) { // Vertikal
+                            index = (row + i) * size + col;
+                        } else { // Diagonal
+                            index = (row + i) * size + (col + i);
+                        }
+                        
+                        const cellChar = cells[index]?.textContent;
+                        if (cellChar && cellChar !== wordToPlace[i]) {
+                            fits = false;
+                            break;
+                        }
+                    }
+                    
+                    if (fits) {
+                        // Tempatkan kata
+                        for (let i = 0; i < wordToPlace.length; i++) {
+                            let index;
+                            
+                            if (direction === 0) { // Horizontal
+                                index = row * size + col + i;
+                            } else if (direction === 1) { // Vertikal
+                                index = (row + i) * size + col;
+                            } else { // Diagonal
+                                index = (row + i) * size + (col + i);
+                            }
+                            
+                            if (cells[index]) {
+                                cells[index].textContent = wordToPlace[i];
+                                cells[index].dataset.word = word;
+                                cells[index].dataset.direction = direction;
+                                cells[index].dataset.position = i;
+                                cells[index].dataset.reverse = reverse;
+                            }
+                        }
+                        placed = true;
+                    }
+                }
+            });
+
+            // Isi sel yang kosong dengan huruf acak
+            cells.forEach(cell => {
+                if (!cell.textContent) {
+                    cell.textContent = letters[Math.floor(Math.random() * letters.length)];
+                }
+            });
+
+            // Buat garis seleksi
+            selectionLine = document.createElement("div");
+            selectionLine.className = "selection-line";
+            selectionLine.style.display = "none";
+            grid.appendChild(selectionLine);
+
+            // Mulai timer
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimeDisplay();
+                
+                if (timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+
+            // Reset state game
+            selectedCells = [];
+            foundWords = [];
+            isDragging = false;
+            
+            // Update pesan
+            message.textContent = `Temukan: ${currentWords.join(', ')}`;
+        }
+
+        function showTutorial() {
+            tutorial.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideTutorial() {
+            tutorial.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Fungsi untuk touch devices
+        function handleTouchStart(e) {
+            if (foundWords.length === currentWords.length || timeLeft <= 0) return;
+            
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
+            const cell = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (cell && cell.classList.contains("cell")) {
+                isDragging = true;
+                startCell = cell;
+                selectedCells = [cell];
+                cell.classList.add("selected");
+                
+                // Mainkan suara
+                const selectSound = document.getElementById("selectSound");
+                selectSound.currentTime = 0;
+                selectSound.play();
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (!isDragging) return;
+            
+            e.preventDefault();
+            const touch = e.touches[0];
+            const cell = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (cell && cell.classList.contains("cell") && !selectedCells.includes(cell)) {
+                // Hapus seleksi sebelumnya
+                selectedCells.forEach(c => c.classList.remove("selected"));
+                selectedCells = [startCell];
+                
+                // Dapatkan arah dari sel awal ke sel saat ini
+                const startIndex = parseInt(startCell.dataset.index);
+                const currentIndex = parseInt(cell.dataset.index);
+                
+                const startRow = Math.floor(startIndex / size);
+                const startCol = startIndex % size;
+                const currentRow = Math.floor(currentIndex / size);
+                const currentCol = currentIndex % size;
+                
+                const rowDiff = currentRow - startRow;
+                const colDiff = currentCol - startCol;
+                
+                // Tentukan arah (horizontal, vertikal, atau diagonal)
+                let direction;
+                if (rowDiff === 0) {
+                    direction = 0; // Horizontal
+                } else if (colDiff === 0) {
+                    direction = 1; // Vertikal
+                } else if (Math.abs(rowDiff) === Math.abs(colDiff)) {
+                    direction = 2; // Diagonal
+                } else {
+                    return; // Bukan garis lurus
+                }
+                
+                // Hitung semua sel dalam arah ini
+                const distance = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+                const rowStep = rowDiff === 0 ? 0 : rowDiff / Math.abs(rowDiff);
+                const colStep = colDiff === 0 ? 0 : colDiff / Math.abs(colDiff);
+                
+                for (let i = 0; i <= distance; i++) {
+                    const row = startRow + i * rowStep;
+                    const col = startCol + i * colStep;
+                    
+                    if (row >= 0 && row < size && col >= 0 && col < size) {
+                        const index = row * size + col;
+                        const cell = grid.children[index];
+                        selectedCells.push(cell);
+                        cell.classList.add("selected");
+                    }
+                }
+                
+                // Update garis seleksi
+                updateSelectionLine();
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // Cek apakah sel yang dipilih membentuk kata
+            checkForWord();
+            
+            // Hapus seleksi
+            selectedCells.forEach(cell => cell.classList.remove("selected"));
+            selectedCells = [];
+            selectionLine.style.display = "none";
+        }
+
+        // Fungsi untuk mouse
+        function handleMouseDown(e) {
+            if (foundWords.length === currentWords.length || timeLeft <= 0) return;
+            
+            const cell = e.target;
+            if (cell.classList.contains("cell")) {
+                isDragging = true;
+                startCell = cell;
+                selectedCells = [cell];
+                cell.classList.add("selected");
+                
+                // Mainkan suara
+                const selectSound = document.getElementById("selectSound");
+                selectSound.currentTime = 0;
+                selectSound.play();
+            }
+        }
+
+        function handleMouseEnter(e) {
+            if (!isDragging) return;
+            
+            const cell = e.target;
+            if (cell.classList.contains("cell") && !selectedCells.includes(cell)) {
+                // Hapus seleksi sebelumnya
+                selectedCells.forEach(c => c.classList.remove("selected"));
+                selectedCells = [startCell];
+                
+                // Dapatkan arah dari sel awal ke sel saat ini
+                const startIndex = parseInt(startCell.dataset.index);
+                const currentIndex = parseInt(cell.dataset.index);
+                
+                const startRow = Math.floor(startIndex / size);
+                const startCol = startIndex % size;
+                const currentRow = Math.floor(currentIndex / size);
+                const currentCol = currentIndex % size;
+                
+                const rowDiff = currentRow - startRow;
+                const colDiff = currentCol - startCol;
+                
+                // Tentukan arah (horizontal, vertikal, atau diagonal)
+                let direction;
+                if (rowDiff === 0) {
+                    direction = 0; // Horizontal
+                } else if (colDiff === 0) {
+                    direction = 1; // Vertikal
+                } else if (Math.abs(rowDiff) === Math.abs(colDiff)) {
+                    direction = 2; // Diagonal
+                } else {
+                    return; // Bukan garis lurus
+                }
+                
+                // Hitung semua sel dalam arah ini
+                const distance = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+                const rowStep = rowDiff === 0 ? 0 : rowDiff / Math.abs(rowDiff);
+                const colStep = colDiff === 0 ? 0 : colDiff / Math.abs(colDiff);
+                
+                for (let i = 0; i <= distance; i++) {
+                    const row = startRow + i * rowStep;
+                    const col = startCol + i * colStep;
+                    
+                    if (row >= 0 && row < size && col >= 0 && col < size) {
+                        const index = row * size + col;
+                        const cell = grid.children[index];
+                        selectedCells.push(cell);
+                        cell.classList.add("selected");
+                    }
+                }
+                
+                // Update garis seleksi
+                updateSelectionLine();
+            }
+        }
+
+        function handleMouseUp() {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // Cek apakah sel yang dipilih membentuk kata
+            checkForWord();
+            
+            // Hapus seleksi
+            selectedCells.forEach(cell => cell.classList.remove("selected"));
+            selectedCells = [];
+            selectionLine.style.display = "none";
+        }
+
+        function updateSelectionLine() {
+            if (selectedCells.length < 2) {
+                selectionLine.style.display = "none";
+                return;
+            }
+            
+            const firstCell = selectedCells[0];
+            const lastCell = selectedCells[selectedCells.length - 1];
+            
+            const firstRect = firstCell.getBoundingClientRect();
+            const lastRect = lastCell.getBoundingClientRect();
+            const gridRect = grid.getBoundingClientRect();
+            
+            const x1 = firstRect.left + firstRect.width / 2 - gridRect.left;
+            const y1 = firstRect.top + firstRect.height / 2 - gridRect.top;
+            const x2 = lastRect.left + lastRect.width / 2 - gridRect.left;
+            const y2 = lastRect.top + lastRect.height / 2 - gridRect.top;
+            
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            
+            selectionLine.style.width = `${length}px`;
+            selectionLine.style.height = "3px";
+            selectionLine.style.left = `${x1}px`;
+            selectionLine.style.top = `${y1}px`;
+            selectionLine.style.transformOrigin = "0 0";
+            selectionLine.style.transform = `rotate(${angle}deg)`;
+            selectionLine.style.display = "block";
+        }
+
+        function checkForWord() {
+            const selectedWord = selectedCells.map(cell => cell.textContent).join('');
+            const reversedWord = selectedWord.split('').reverse().join('');
+            
+            // Cek kedua versi kata (asli dan terbalik)
+            for (const word of currentWords) {
+                if (!foundWords.includes(word) && 
+                    (selectedWord.includes(word) || reversedWord.includes(word))) {
+                    
+                    // Verifikasi semua sel termasuk dalam kata yang sama
+                    const wordCells = Array.from(grid.children).filter(
+                        cell => cell.dataset.word === word
+                    );
+                    
+                    const allInWord = selectedCells.every(cell => 
+                        wordCells.includes(cell)
+                    );
+                    
+                    if (allInWord) {
+                        foundWords.push(word);
+                        
+                        // Tandai sel dan kata sebagai ditemukan
+                        wordCells.forEach(cell => cell.classList.add("found"));
+                        document.querySelector(`.word-item[data-word="${word}"]`).classList.add("found");
+                        
+                        // Mainkan suara
+                        const foundSound = document.getElementById("foundSound");
+                        foundSound.currentTime = 0;
+                        foundSound.play();
+                        
+                        // Cek apakah semua kata ditemukan
+                        if (foundWords.length === currentWords.length) {
+                            endGame(true);
+                        } else {
+                            message.textContent = `Ditemukan: ${word}!`;
+                            setTimeout(() => {
+                                if (foundWords.length < currentWords.length) {
+                                    message.textContent = `Cari: ${currentWords.filter(w => !foundWords.includes(w)).join(', ')}`;
+                                }
+                            }, 1500);
+                        }
+                    }
+                }
+            }
+        }
+
+        function giveHint() {
+            if (foundWords.length === currentWords.length || timeLeft <= 0) return;
+            
+            const remainingWords = currentWords.filter(word => !foundWords.includes(word));
+            const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+            
+            // Temukan semua sel untuk kata ini
+            const wordCells = Array.from(grid.children).filter(
+                cell => cell.dataset.word === randomWord
+            );
+            
+            // Animasi flash pada sel
+            wordCells.forEach(cell => {
+                cell.style.transition = "none";
+                cell.style.backgroundColor = "gold";
+                cell.style.color = "#000";
+                setTimeout(() => {
+                    cell.style.transition = "all 0.2s";
+                    cell.style.backgroundColor = "";
+                    cell.style.color = "";
+                }, 1000);
+            });
+            
+            // Mainkan suara
+            const hintSound = document.getElementById("hintSound");
+            hintSound.currentTime = 0;
+            hintSound.play();
+            
+            message.textContent = `Petunjuk: ${randomWord}`;
+            setTimeout(() => {
+                if (foundWords.length < currentWords.length) {
+                    message.textContent = `Cari: ${currentWords.filter(w => !foundWords.includes(w)).join(', ')}`;
+                }
+            }, 2000);
+        }
+
+        function updateTimeDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const remainingSeconds = timeLeft % 60;
+            timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            
+            // Ubah warna ketika waktu hampir habis
+            if (timeLeft <= 60) {
+                timeDisplay.style.color = "#FF5722";
+            } else {
+                timeDisplay.style.color = "";
+            }
+        }
+
+        function endGame(isWin) {
+            clearInterval(timer);
+            
+            if (isWin) {
+                message.textContent = "🎉 Selamat! Kamu menemukan semua kata!";
+                const winSound = document.getElementById("winSound");
+                winSound.currentTime = 0;
+                winSound.play();
+            } else {
+                const remainingWords = currentWords.filter(word => !foundWords.includes(word));
+                message.textContent = `Waktu habis! Kata yang belum ditemukan: ${remainingWords.join(', ')}`;
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            newGameBtn.addEventListener('click', initGame);
+            hintBtn.addEventListener('click', giveHint);
+            helpBtn.addEventListener('click', showTutorial);
+            backBtn.addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            tutorialClose.addEventListener('click', function() {
+                hideTutorial();
+                initGame();
+            });
+            document.addEventListener('mouseup', handleMouseUp);
+        });
+    </script>
+    
+    <footer>
+        <p> ❤️ | Pencarian Kata </p>
+    </footer>
+</body>
+</html>

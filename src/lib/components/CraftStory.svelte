@@ -2,7 +2,18 @@
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { gsap, REDUCED_MOTION_QUERY, registerGsap, ScrollTrigger } from '#lib/gsap.js';
 	import { getLenisInstance } from '#lib/lenis.js';
-	import { Activity, Check, Eye, Layers, Pause, Play, Zap } from '@lucide/svelte';
+	import {
+		Check,
+		Code2,
+		Database,
+		Kanban,
+		Palette,
+		Pause,
+		Play,
+		Server,
+		Zap
+	} from '@lucide/svelte';
+	import { currentLang, t } from '#lib/i18n.js';
 	import { cubicOut } from 'svelte/easing';
 	import { fade, fly } from 'svelte/transition';
 
@@ -14,68 +25,129 @@
 		tags: string[];
 		icon: typeof Zap;
 		accent: string;
-		visual: 'performance' | 'a11y' | 'motion' | 'system';
+		visual: 'architecture' | 'uiux' | 'performance' | 'management';
 	};
 
-	const PRINCIPLES: Principle[] = [
+	const PRINCIPLES = $derived<Principle[]>([
 		{
 			no: '01',
-			kicker: 'Performance',
-			title: 'Fast is a feature.',
-			caption: 'Every millisecond is part of the design.',
-			tags: ['Core Web Vitals', 'Code-splitting', 'Lazy assets'],
-			icon: Zap,
+			kicker: t[$currentLang].craft.p1.kicker,
+			title: t[$currentLang].craft.p1.title,
+			caption: t[$currentLang].craft.p1.caption,
+			tags: t[$currentLang].craft.p1.tags,
+			icon: Server,
 			accent: 'var(--retro-green-text)',
-			visual: 'performance'
+			visual: 'architecture'
 		},
 		{
 			no: '02',
-			kicker: 'Accessibility',
-			title: 'Built for everyone.',
-			caption: 'If it isn\u2019t usable by all, it isn\u2019t done.',
-			tags: ['Semantic HTML', 'Keyboard-first', 'Contrast AA'],
-			icon: Eye,
+			kicker: t[$currentLang].craft.p2.kicker,
+			title: t[$currentLang].craft.p2.title,
+			caption: t[$currentLang].craft.p2.caption,
+			tags: t[$currentLang].craft.p2.tags,
+			icon: Palette,
 			accent: 'var(--retro-tangerine-text)',
-			visual: 'a11y'
+			visual: 'uiux'
 		},
 		{
 			no: '03',
-			kicker: 'Motion',
-			title: 'Motion with meaning.',
-			caption: 'Animation that guides \u2014 never decorates.',
-			tags: ['60fps', 'Spring physics', 'Interruptible'],
-			icon: Activity,
+			kicker: t[$currentLang].craft.p3.kicker,
+			title: t[$currentLang].craft.p3.title,
+			caption: t[$currentLang].craft.p3.caption,
+			tags: t[$currentLang].craft.p3.tags,
+			icon: Zap,
 			accent: 'var(--retro-tangerine-text)',
-			visual: 'motion'
+			visual: 'performance'
 		},
 		{
 			no: '04',
-			kicker: 'Design systems',
-			title: 'Consistency that scales.',
-			caption: 'Tokens and components that grow with you.',
-			tags: ['Design tokens', 'Reusable UI', 'Documented'],
-			icon: Layers,
+			kicker: t[$currentLang].craft.p4.kicker,
+			title: t[$currentLang].craft.p4.title,
+			caption: t[$currentLang].craft.p4.caption,
+			tags: t[$currentLang].craft.p4.tags,
+			icon: Kanban,
 			accent: 'var(--retro-green-text)',
-			visual: 'system'
+			visual: 'management'
+		}
+	]);
+
+	// Visual 01: Arsitektur Web (Full Stack Pipeline)
+	const ARCH_PIPELINE = [
+		{
+			step: '01',
+			label: 'Frontend UI',
+			desc: 'SvelteKit / Nuxt / Tailwind',
+			icon: Code2,
+			badge: 'Reactive'
+		},
+		{
+			step: '02',
+			label: 'RESTful API',
+			desc: 'Laravel / Node.js Endpoint',
+			icon: Server,
+			badge: 'Protected'
+		},
+		{
+			step: '03',
+			label: 'Database',
+			desc: 'PostgreSQL / MySQL Schema',
+			icon: Database,
+			badge: 'Normalized'
 		}
 	];
 
+	// Visual 02: Desain UI/UX (Design Process Stages)
+	const UIUX_STAGES = [
+		{
+			no: '01',
+			name: 'Wireframe & Flow',
+			desc: 'Memetakan alur interaksi dan struktur informasi pengguna.',
+			tag: 'Figma'
+		},
+		{
+			no: '02',
+			name: 'Design System',
+			desc: 'Komponen modular, typography scale, dan palet warna konsisten.',
+			tag: 'Tokens'
+		},
+		{
+			no: '03',
+			name: 'Interactive Prototype',
+			desc: 'Uji simulasi usability sebelum masuk tahap implementasi kode.',
+			tag: 'Usability'
+		}
+	];
+
+	// Visual 03: Performa & Interaksi
 	const PERF_METRICS = [
 		{ label: 'LCP', value: '1.1s' },
 		{ label: 'CLS', value: '0.00' },
-		{ label: 'TTI', value: '1.6s' }
+		{ label: 'FID / INP', value: '< 50ms' }
 	];
 
-	const A11Y_ITEMS = [
-		'Semantic HTML structure',
-		'Full keyboard navigation',
-		'Color contrast \u2265 AA',
-		'Screen-reader labels'
+	// Visual 04: Manajemen Proyek (Sprint & Milestones)
+	const SPRINT_ITEMS = [
+		{
+			task: 'Sprint Planning & Task Breakdown',
+			status: 'Completed',
+			owner: 'Lead / PM'
+		},
+		{
+			task: 'Feature Development & Code Review',
+			status: 'Completed',
+			owner: 'Dev Team'
+		},
+		{
+			task: 'Quality Assurance & User Testing',
+			status: 'Completed',
+			owner: 'QA & Client'
+		},
+		{
+			task: 'Production Release & Deployment',
+			status: 'On Schedule',
+			owner: 'DevOps / Lead'
+		}
 	];
-
-	const MOTION_DOTS = [0, 1, 2, 3, 4];
-	const TOKEN_SWATCHES = ['#fe7a25', '#e9e8ca', '#006732', '#f4f3df', '#0f2116'];
-	const TOKEN_SPACES = [40, 70, 110, 150];
 
 	let sectionEl: HTMLElement | undefined = $state();
 	let canvasEl: HTMLElement | undefined = $state();
@@ -201,11 +273,37 @@
 
 		registerGsap();
 		const ctx = gsap.context(() => {
+			// Animasi baris visual arsitektur
+			const archRows = container.querySelectorAll('[data-craft-arch-row]');
+			if (archRows.length) {
+				gsap.from(archRows, {
+					x: -18,
+					opacity: 0,
+					duration: 0.42,
+					stagger: 0.1,
+					ease: 'power2.out',
+					clearProps: 'transform'
+				});
+			}
+
+			// Animasi kartu visual UI/UX
+			const uiuxCards = container.querySelectorAll('[data-craft-uiux-card]');
+			if (uiuxCards.length) {
+				gsap.from(uiuxCards, {
+					y: 16,
+					opacity: 0,
+					duration: 0.45,
+					stagger: 0.08,
+					ease: 'power3.out',
+					clearProps: 'transform'
+				});
+			}
+
 			const scoreEl = container.querySelector('[data-craft-score]');
 			if (scoreEl) {
 				const counter = { value: 0 };
 				gsap.to(counter, {
-					value: 98,
+					value: 99,
 					duration: 0.9,
 					ease: 'power3.out',
 					onUpdate: () => {
@@ -226,18 +324,6 @@
 				});
 			}
 
-			const a11yItems = container.querySelectorAll('[data-craft-a11y-item]');
-			if (a11yItems.length) {
-				gsap.from(a11yItems, {
-					x: -18,
-					opacity: 0,
-					duration: 0.38,
-					stagger: 0.08,
-					ease: 'power2.out',
-					clearProps: 'transform'
-				});
-			}
-
 			const motionMeta = container.querySelector('[data-craft-motion-meta]');
 			if (motionMeta) {
 				gsap.from(motionMeta, {
@@ -250,27 +336,14 @@
 				});
 			}
 
-			const swatches = container.querySelectorAll('[data-craft-swatch]');
-			if (swatches.length) {
-				gsap.from(swatches, {
-					scale: 0.72,
-					y: 12,
+			// Animasi baris visual task manajemen proyek
+			const sprintRows = container.querySelectorAll('[data-craft-sprint-row]');
+			if (sprintRows.length) {
+				gsap.from(sprintRows, {
+					x: 16,
 					opacity: 0,
-					duration: 0.42,
-					stagger: 0.05,
-					ease: 'back.out(1.6)',
-					clearProps: 'transform'
-				});
-			}
-
-			const tokenRows = container.querySelectorAll('[data-craft-token-row]');
-			if (tokenRows.length) {
-				gsap.from(tokenRows, {
-					x: -14,
-					opacity: 0,
-					duration: 0.36,
-					stagger: 0.07,
-					delay: 0.12,
+					duration: 0.4,
+					stagger: 0.08,
 					ease: 'power2.out',
 					clearProps: 'transform'
 				});
@@ -289,9 +362,9 @@
 	<div class="sticky top-16 flex min-h-[calc(100svh-4rem)] items-center py-8 sm:py-12">
 		<div class="mx-auto w-full max-w-7xl px-6 sm:px-8">
 			<div data-craft-header class="mb-5 flex flex-wrap items-center justify-between gap-4">
-				<Badge variant="lime">How I Build &bull; The Craft</Badge>
+				<Badge variant="lime">{t[$currentLang].craft.badge}</Badge>
 				<span data-craft-hint class="font-mono text-xs font-bold text-muted-foreground uppercase">
-					keep scrolling to flip stories &darr;
+					{t[$currentLang].craft.scrollHint}
 				</span>
 			</div>
 
@@ -335,7 +408,7 @@
 						<span
 							class="px-2 font-mono text-[0.6875rem] font-bold tracking-wider text-muted-foreground uppercase"
 						>
-							Stories
+							{t[$currentLang].craft.storiesLabel}
 						</span>
 						<div class="mt-3 space-y-1.5">
 							{#each PRINCIPLES as item, i (item.no)}
@@ -389,10 +462,68 @@
 									out:fade={{ duration: reducedMotion ? 0 : 150 }}
 									class="flex w-full justify-center"
 								>
-									{#if activePrinciple.visual === 'performance'}
-										<!-- 01 Performance Gauge -->
-										<div class="flex w-full max-w-sm flex-wrap items-center justify-center gap-6">
-											<div class="relative size-32 shrink-0">
+									{#if activePrinciple.visual === 'architecture'}
+										<!-- 01 Arsitektur Web: Full Stack Pipeline -->
+										<div class="w-full max-w-md space-y-3">
+											{#each ARCH_PIPELINE as item (item.step)}
+												<div
+													data-craft-arch-row
+													class="flex items-center gap-3.5 border-2 border-border bg-card p-3 shadow-neo-sm sm:gap-4 sm:p-3.5"
+												>
+													<span
+														class="flex size-10 shrink-0 items-center justify-center border-2 border-border bg-secondary text-secondary-foreground"
+													>
+														<item.icon class="size-5 stroke-[2.2]" aria-hidden="true" />
+													</span>
+													<div class="min-w-0 flex-1">
+														<div class="flex items-center gap-2">
+															<span class="font-mono text-xs font-bold text-muted-foreground">
+																#{item.step}
+															</span>
+															<span class="font-display text-sm font-bold uppercase sm:text-base">
+																{item.label}
+															</span>
+														</div>
+														<p class="truncate font-mono text-xs text-muted-foreground">
+															{item.desc}
+														</p>
+													</div>
+													<Badge variant="outline" class="hidden sm:inline-flex">{item.badge}</Badge
+													>
+												</div>
+											{/each}
+										</div>
+									{:else if activePrinciple.visual === 'uiux'}
+										<!-- 02 Desain UI/UX: Workflow Stages -->
+										<div class="grid w-full max-w-md gap-3 sm:grid-cols-3">
+											{#each UIUX_STAGES as stage (stage.no)}
+												<div
+													data-craft-uiux-card
+													class="flex flex-col justify-between border-2 border-border bg-card p-3.5 shadow-neo-sm"
+												>
+													<div>
+														<div class="flex items-center justify-between">
+															<span class="font-mono text-xs font-bold text-accent">
+																STAGE {stage.no}
+															</span>
+															<Badge variant="outline" class="text-[0.6875rem]">{stage.tag}</Badge>
+														</div>
+														<h3 class="mt-2 font-display text-sm leading-snug font-bold uppercase">
+															{stage.name}
+														</h3>
+														<p
+															class="mt-1 font-mono text-[0.6875rem] leading-relaxed text-muted-foreground"
+														>
+															{stage.desc}
+														</p>
+													</div>
+												</div>
+											{/each}
+										</div>
+									{:else if activePrinciple.visual === 'performance'}
+										<!-- 03 Performa & Interaksi: Gauge + Motion Demo -->
+										<div class="flex w-full max-w-md flex-col gap-6 sm:flex-row sm:items-center">
+											<div class="relative mx-auto size-28 shrink-0 sm:size-32">
 												<svg viewBox="0 0 130 130" class="size-full" aria-hidden="true">
 													<circle
 														cx="65"
@@ -417,9 +548,9 @@
 												<div class="absolute inset-0 flex flex-col items-center justify-center">
 													<span
 														data-craft-score
-														class="font-display text-4xl leading-none font-black text-foreground"
+														class="font-display text-3xl leading-none font-black text-foreground sm:text-4xl"
 													>
-														98
+														99
 													</span>
 													<span
 														class="mt-0.5 font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
@@ -428,7 +559,7 @@
 													</span>
 												</div>
 											</div>
-											<div class="min-w-[140px] flex-1 space-y-2.5">
+											<div class="min-w-0 flex-1 space-y-2">
 												{#each PERF_METRICS as metric (metric.label)}
 													<div
 														data-craft-perf-row
@@ -437,96 +568,74 @@
 														<span class="font-mono text-xs font-bold text-muted-foreground">
 															{metric.label}
 														</span>
-														<span class="font-display text-xl font-black text-foreground">
+														<span
+															class="font-display text-base font-black text-foreground sm:text-lg"
+														>
 															{metric.value}
 														</span>
 													</div>
 												{/each}
-											</div>
-										</div>
-									{:else if activePrinciple.visual === 'a11y'}
-										<!-- 02 Accessibility Checklist -->
-										<ul class="w-full max-w-sm space-y-3">
-											{#each A11Y_ITEMS as label (label)}
-												<li data-craft-a11y-item class="flex items-center gap-3">
+												<div
+													data-craft-motion-meta
+													class="flex items-center justify-between gap-2 border-t border-dashed border-border pt-2"
+												>
 													<span
-														class="flex size-7 shrink-0 items-center justify-center border-2 border-border bg-secondary text-secondary-foreground shadow-neo-sm"
+														class="font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
 													>
-														<Check class="size-4 stroke-[2.5]" aria-hidden="true" />
+														Motion Easing
 													</span>
-													<span class="font-display text-base font-bold text-foreground sm:text-lg">
-														{label}
-													</span>
-												</li>
-											{/each}
-										</ul>
-									{:else if activePrinciple.visual === 'motion'}
-										<!-- 03 Motion Demo -->
-										<div class="flex w-full max-w-sm flex-col items-center">
-											<div
-												class="craft-motion-dots flex h-24 items-end justify-center gap-2.5 sm:gap-3"
-												data-paused={motionDemoPaused}
-											>
-												{#each MOTION_DOTS as dotIndex (dotIndex)}
-													<span
-														class="craft-motion-dot size-9 border-2 border-border bg-accent shadow-neo-sm sm:size-10"
-														style:--delay={`${dotIndex * 110}ms`}
-													></span>
-												{/each}
-											</div>
-											<div
-												data-craft-motion-meta
-												class="mt-6 flex flex-wrap items-center justify-center gap-2.5"
-											>
-												<span class="font-mono text-xs font-bold text-muted-foreground uppercase">
-													easing
-												</span>
-												<span
-													class="border-2 border-border bg-foreground px-3 py-1 font-mono text-xs font-bold text-background shadow-neo-sm"
-												>
-													spring(200, 18)
-												</span>
-												<button
-													type="button"
-													onclick={toggleMotionDemo}
-													aria-label={motionDemoPaused ? 'Play motion demo' : 'Pause motion demo'}
-													class="inline-flex size-8 items-center justify-center border-2 border-border bg-card text-foreground shadow-neo-sm transition-colors hover:bg-neo-surface-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-												>
-													{#if motionDemoPaused}
-														<Play class="size-3.5" aria-hidden="true" />
-													{:else}
-														<Pause class="size-3.5" aria-hidden="true" />
-													{/if}
-												</button>
+													<button
+														type="button"
+														onclick={toggleMotionDemo}
+														aria-label={motionDemoPaused ? 'Play motion demo' : 'Pause motion demo'}
+														class="inline-flex items-center gap-1.5 border-2 border-border bg-card px-2 py-0.5 font-mono text-xs font-bold text-foreground shadow-neo-sm hover:bg-neo-surface-subtle"
+													>
+														{#if motionDemoPaused}
+															<Play class="size-3" aria-hidden="true" />
+															Play
+														{:else}
+															<Pause class="size-3" aria-hidden="true" />
+															60fps
+														{/if}
+													</button>
+												</div>
 											</div>
 										</div>
 									{:else}
-										<!-- 04 Design System Tokens -->
-										<div class="w-full max-w-sm">
-											<div class="flex gap-2">
-												{#each TOKEN_SWATCHES as swatchColor (swatchColor)}
-													<span
-														data-craft-swatch
-														aria-hidden="true"
-														class="h-9 flex-1 border-2 border-border shadow-neo-sm"
-														style:background-color={swatchColor}
-													></span>
-												{/each}
-											</div>
-											<div class="mt-5 space-y-2.5">
-												{#each TOKEN_SPACES as widthPx, idx (widthPx)}
-													<div data-craft-token-row class="flex items-center gap-3">
+										<!-- 04 Manajemen Proyek: Sprint & Milestones -->
+										<div class="w-full max-w-md space-y-2.5">
+											{#each SPRINT_ITEMS as item (item.task)}
+												<div
+													data-craft-sprint-row
+													class="flex items-center justify-between gap-3 border-2 border-border bg-card px-3.5 py-2.5 shadow-neo-sm"
+												>
+													<div class="flex min-w-0 items-center gap-2.5">
 														<span
-															class="craft-token-bar h-3 origin-left border-2 border-border bg-primary"
-															style:width={`${widthPx}px`}
-															style:--delay={`${idx * 85}ms`}
-														></span>
-														<span class="font-mono text-xs font-bold text-muted-foreground">
-															{widthPx}px
+															class="flex size-6 shrink-0 items-center justify-center border-2 border-border bg-primary text-primary-foreground"
+														>
+															<Check class="size-3.5 stroke-[3]" aria-hidden="true" />
+														</span>
+														<span
+															class="truncate font-display text-xs font-bold uppercase sm:text-sm"
+														>
+															{item.task}
 														</span>
 													</div>
-												{/each}
-											</div>
+													<div class="flex shrink-0 items-center gap-2">
+														<span
+															class="hidden font-mono text-[0.6875rem] text-muted-foreground sm:inline"
+														>
+															{item.owner}
+														</span>
+														<Badge
+															variant={item.status === 'Completed' ? 'lime' : 'outline'}
+															class="text-[0.6875rem]"
+														>
+															{item.status}
+														</Badge>
+													</div>
+												</div>
+											{/each}
 										</div>
 									{/if}
 								</div>
@@ -615,38 +724,6 @@
 			stroke-dasharray: 327;
 			stroke-dashoffset: 6.5;
 			animation: craft-ring-draw 950ms cubic-bezier(0.22, 1, 0.36, 1) both;
-		}
-
-		@keyframes craft-bar-grow {
-			from {
-				transform: scaleX(0);
-			}
-			to {
-				transform: scaleX(1);
-			}
-		}
-
-		.craft-token-bar {
-			animation: craft-bar-grow 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-			animation-delay: var(--delay, 0ms);
-		}
-
-		@keyframes craft-dot-bounce {
-			from {
-				transform: translateY(0);
-			}
-			to {
-				transform: translateY(-16px);
-			}
-		}
-
-		.craft-motion-dot {
-			animation: craft-dot-bounce 0.7s ease-in-out infinite alternate;
-			animation-delay: var(--delay, 0ms);
-		}
-
-		.craft-motion-dots[data-paused='true'] .craft-motion-dot {
-			animation-play-state: paused;
 		}
 	}
 

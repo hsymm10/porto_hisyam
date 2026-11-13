@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Produk - 93 Printing</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        .detail-hero {
+            min-height: 80vh !important; /* Slightly shorter than home but same style */
+        }
+        .product-info-section {
+            padding: 60px 0;
+            background: #f4f7fa;
+        }
+        .sub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .sub-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .sub-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .card-img-wrapper {
+            width: 100%;
+            height: 200px;
+            background: #eee;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-content h4 {
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+        .card-content p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .price-tag {
+            font-weight: 800;
+            color: var(--primary-cyan);
+            font-size: 1.1rem;
+            margin-top: auto;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+        }
+        .btn-buy {
+            margin-top: 15px;
+            width: 100%;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        body.menu-open {
+            overflow: hidden !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Persistent Navbar -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand">
+                <img src="asset/bahan/logo-baru.png" alt="93 Printing Logo">
+                <span>93 PRINTING</span>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <div class="nav-toggle" id="nav-toggle">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <ul class="nav-links" id="nav-menu">
+                <li class="mobile-menu-header">
+                    <div class="menu-user-profile">
+                        <div class="menu-avatar">
+                            <img src="asset/bahan/logo-baru.png" alt="93 Printing Logo">
+                        </div>
+                        <div class="menu-user-info">
+                            <span class="greeting">Halo, Selamat Datang!</span>
+                            <span class="brand-status">93 Printing Siap Cetak</span>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="index.html#home">Beranda</a></li>
+                <li><a href="index.html#about">Tentang Kami</a></li>
+                <li><a href="index.html#products">Produk</a></li>
+                <li><a href="index.html#contact">Kontak</a></li>
+                <li class="mobile-menu-footer">
+                    <div class="menu-social">
+                        <a href="https://instagram.com/93.printing" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://tiktok.com/@93_printing" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://wa.me/6282111159144" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <section class="detail-hero hero">
+        <div class="container hero-content" data-aos="fade-up">
+            <div class="hero-logo-wrapper" data-aos="fade-down" data-aos-duration="1000">
+                <div class="logo-interactive-glow" id="logo-glow"></div>
+                <a href="index.html"><img src="asset/bahan/logo-baru.png" alt="93 Printing Logo" class="hero-main-logo"></a>
+            </div>
+            
+            <h1 id="cat-title" class="text-gradient"></h1>
+        </div>
+    </section>
+
+    <section class="product-info-section">
+        <div class="container">
+            <div id="sub-listing" class="sub-grid">
+                <!-- Items with images -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Image Zoom -->
+    <div id="imageModal" class="image-zoom-modal">
+        <span class="close-zoom">&times;</span>
+        <div class="modal-zoom-container" data-aos="zoom-in">
+            <div id="zoom-img-wrapper" class="zoom-img-wrapper">
+                <img id="modalImg" src="" alt="Zoomed Product">
+                <div id="magnifier" class="magnifier"></div>
+            </div>
+            <div class="zoom-info">
+                <h3 id="zoom-title">Nama Produk</h3>
+                <p id="zoom-desc">Detail deskripsi produk.</p>
+            </div>
+            <div class="zoom-hint">GERAKAN KURSOR UNTUK ZOOM DETAIL</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="asset/bahan/logo-baru.png" alt="93 Printing Mini Logo" style="height: 40px; filter: brightness(0) invert(1);">
+                </div>
+                <p class="footer-tagline">Solusi Cetak Tanpa Batas - Berkualitas & Terpercaya</p>
+                <div class="footer-social">
+                    <a href="https://instagram.com/93.printing" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://tiktok.com/@93_printing" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/6282111159144" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="footer-divider"></div>
+                <p class="footer-credits">Printed by <strong>93 PRINTING</strong> | Design by <strong>@hszamm__</strong></p>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init();
+
+const productData = {
+    "digital-printing": {
+        "title": "Digital Printing A3+",
+        "desc": "Cetak dokumen, menu, dan brosur kualitas laser.",
+        "categoryFolder": "digital_printing",
+        "items": [
+            {
+                "name": "Print A0",
+                "file": "Print A0.png",
+                "detail": "Cetak Print A0 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Print A1",
+                "file": "Print A1.png",
+                "detail": "Cetak Print A1 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Print A2",
+                "file": "Print A2.png",
+                "detail": "Cetak Print A2 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Print A3",
+                "file": "Print A3.png",
+                "detail": "Cetak Print A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Print A3 Special Color",
+                "file": "Print A3 Special Color.png",
+                "detail": "Cetak Print A3 Special Color berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Print A3 Spot UV & Foil",
+                "file": "Print A3 Spot UV & Foil.png",
+                "detail": "Cetak Print A3 Spot UV & Foil berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hand Banner",
+                "file": "Hand Banner.png",
+                "detail": "Cetak Hand Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Menu Board FNB",
+                "file": "Menu Board FNB.png",
+                "detail": "Cetak Menu Board FNB berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Angpao Imlek",
+                "file": "Angpao Imlek.png",
+                "detail": "Cetak Angpao Imlek berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Background Photo",
+                "file": "Background Photo.png",
+                "detail": "Cetak Background Photo berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Buku Menu B2 FNB",
+                "file": "Buku Menu B2 FNB.png",
+                "detail": "Cetak Buku Menu B2 FNB berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Print BW (Black & White)",
+                "file": "Print BW (Black & White).png",
+                "detail": "Cetak Print BW (Black & White) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "sticker": {
+        "title": "Sticker & Label",
+        "desc": "Label kemasan produk dan stiker custom berbagai bahan.",
+        "categoryFolder": "stiker",
+        "items": [
+            {
+                "name": "Promo Sticker Vinyl A3",
+                "file": "Promo Sticker Vinyl A3.png",
+                "detail": "Cetak Promo Sticker Vinyl A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Corolla",
+                "file": "Sticker Corolla.png",
+                "detail": "Cetak Sticker Corolla berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Destructive  Pecah Telor  Security",
+                "file": "Sticker Destructive  Pecah Telor  Security.png",
+                "detail": "Cetak Sticker Destructive  Pecah Telor  Security berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Epson SureColor",
+                "file": "Sticker Epson SureColor.png",
+                "detail": "Cetak Sticker Epson SureColor berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker HVS A3",
+                "file": "Sticker HVS A3.png",
+                "detail": "Cetak Sticker HVS A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Hologram A3",
+                "file": "Sticker Hologram A3.png",
+                "detail": "Cetak Sticker Hologram A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Hologram Meteran",
+                "file": "Sticker Hologram Meteran.png",
+                "detail": "Cetak Sticker Hologram Meteran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Kraft",
+                "file": "Sticker Kraft.png",
+                "detail": "Cetak Sticker Kraft berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Kromo A3",
+                "file": "Sticker Kromo A3.png",
+                "detail": "Cetak Sticker Kromo A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Kromo B2",
+                "file": "Sticker Kromo B2.png",
+                "detail": "Cetak Sticker Kromo B2 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Bulat",
+                "file": "Sticker Label Bulat.png",
+                "detail": "Cetak Sticker Label Bulat berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Bumbu 30pcs",
+                "file": "Sticker Label Bumbu 30pcs.png",
+                "detail": "Cetak Sticker Label Bumbu 30pcs berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Industrial Hologram",
+                "file": "Sticker Label Industrial Hologram.png",
+                "detail": "Cetak Sticker Label Industrial Hologram berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Industrial Kertas",
+                "file": "Sticker Label Industrial Kertas.png",
+                "detail": "Cetak Sticker Label Industrial Kertas berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Industrial",
+                "file": "Sticker Label Industrial.png",
+                "detail": "Cetak Sticker Label Industrial berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Kirim Custom",
+                "file": "Sticker Label Kirim Custom.png",
+                "detail": "Cetak Sticker Label Kirim Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Kotak",
+                "file": "Sticker Label Kotak.png",
+                "detail": "Cetak Sticker Label Kotak berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Ulang Tahun",
+                "file": "Sticker Label Ulang Tahun.png",
+                "detail": "Cetak Sticker Label Ulang Tahun berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Label Unboxing",
+                "file": "Sticker Label Unboxing.png",
+                "detail": "Cetak Sticker Label Unboxing berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Lantai",
+                "file": "Sticker Lantai.png",
+                "detail": "Cetak Sticker Lantai berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Metalize A3",
+                "file": "Sticker Metalize A3.png",
+                "detail": "Cetak Sticker Metalize A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Nama",
+                "file": "Sticker Nama.png",
+                "detail": "Cetak Sticker Nama berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker OneWay Vision Meteran",
+                "file": "Sticker OneWay Vision Meteran.png",
+                "detail": "Cetak Sticker OneWay Vision Meteran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Pack Glitter",
+                "file": "Sticker Pack Glitter.png",
+                "detail": "Cetak Sticker Pack Glitter berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Sandblast",
+                "file": "Sticker Sandblast.png",
+                "detail": "Cetak Sticker Sandblast berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Segel Botol Custom",
+                "file": "Sticker Segel Botol Custom.png",
+                "detail": "Cetak Sticker Segel Botol Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Segel Box",
+                "file": "Sticker Segel Box.png",
+                "detail": "Cetak Sticker Segel Box berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Stabilo Fluorescent A3",
+                "file": "Sticker Stabilo Fluorescent A3.png",
+                "detail": "Cetak Sticker Stabilo Fluorescent A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Tintoretto",
+                "file": "Sticker Tintoretto.png",
+                "detail": "Cetak Sticker Tintoretto berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Transparant A3",
+                "file": "Sticker Transparant A3.png",
+                "detail": "Cetak Sticker Transparant A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Transparant Meteran",
+                "file": "Sticker Transparant Meteran.png",
+                "detail": "Cetak Sticker Transparant Meteran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Vinyl Blockout",
+                "file": "Sticker Vinyl Blockout.png",
+                "detail": "Cetak Sticker Vinyl Blockout berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Vinyl Eco Solvent",
+                "file": "Sticker Vinyl Eco Solvent.png",
+                "detail": "Cetak Sticker Vinyl Eco Solvent berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sticker Vinyl Meteran (Latex Ink)",
+                "file": "Sticker Vinyl Meteran (Latex Ink).png",
+                "detail": "Cetak Sticker Vinyl Meteran (Latex Ink) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "namecard": {
+        "title": "NameCard & Invitation",
+        "desc": "Kartu nama premium dan undangan acara spesial.",
+        "categoryFolder": "namecard&invitation",
+        "items": [
+            {
+                "name": "Kartu Nama Foil",
+                "file": "Kartu Nama Foil.png",
+                "detail": "Cetak Kartu Nama Foil berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Nama Plastik",
+                "file": "Kartu Nama Plastik.png",
+                "detail": "Cetak Kartu Nama Plastik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Nama Spot UV",
+                "file": "Kartu Nama Spot UV.png",
+                "detail": "Cetak Kartu Nama Spot UV berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Nama Transparan",
+                "file": "Kartu Nama Transparan.png",
+                "detail": "Cetak Kartu Nama Transparan berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Nama Unik",
+                "file": "Kartu Nama Unik.png",
+                "detail": "Cetak Kartu Nama Unik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Nama",
+                "file": "Kartu Nama.png",
+                "detail": "Cetak Kartu Nama berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Ucapan Imlek lebaran",
+                "file": "Kartu Ucapan Imlek_lebaran.png",
+                "detail": "Cetak Kartu Ucapan Imlek lebaran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Ucapan Lebaran",
+                "file": "Kartu Ucapan Lebaran.png",
+                "detail": "Cetak Kartu Ucapan Lebaran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kartu Undangan",
+                "file": "Kartu Undangan.png",
+                "detail": "Cetak Kartu Undangan berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "display": {
+        "title": "Display Promotion",
+        "desc": "Media promosi berdiri untuk pameran dan toko.",
+        "categoryFolder": "display_promotion",
+        "items": [
+            {
+                "name": "Backwall",
+                "file": "Backwall.png",
+                "detail": "Cetak Backwall berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Board Standee",
+                "file": "Board Standee.png",
+                "detail": "Cetak Board Standee berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Brosur (Paket 100Lbr)",
+                "file": "Brosur (Paket 100Lbr).png",
+                "detail": "Cetak Brosur (Paket 100Lbr) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Brosur (Per Rim)",
+                "file": "Brosur (Per Rim).png",
+                "detail": "Cetak Brosur (Per Rim) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Buku Menu Kulit FNB",
+                "file": "Buku Menu Kulit FNB.png",
+                "detail": "Cetak Buku Menu Kulit FNB berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "DoorFrame",
+                "file": "DoorFrame.png",
+                "detail": "Cetak DoorFrame berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Event Desk",
+                "file": "Event Desk.png",
+                "detail": "Cetak Event Desk berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Flag Banner",
+                "file": "Flag Banner.png",
+                "detail": "Cetak Flag Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Giant Banner",
+                "file": "Giant Banner.png",
+                "detail": "Cetak Giant Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hanging Wobbler",
+                "file": "Hanging Wobbler.png",
+                "detail": "Cetak Hanging Wobbler berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Mini Standee Board",
+                "file": "Mini Standee Board.png",
+                "detail": "Cetak Mini Standee Board berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paket UKM A",
+                "file": "Paket UKM A.png",
+                "detail": "Cetak Paket UKM A berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paket UKM B",
+                "file": "Paket UKM B.png",
+                "detail": "Cetak Paket UKM B berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paket UKM C",
+                "file": "Paket UKM C.png",
+                "detail": "Cetak Paket UKM C berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paket UKM D",
+                "file": "Paket UKM D.png",
+                "detail": "Cetak Paket UKM D berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paket UKM E",
+                "file": "Paket UKM E.png",
+                "detail": "Cetak Paket UKM E berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paper Sleeve Cup",
+                "file": "Paper Sleeve Cup.png",
+                "detail": "Cetak Paper Sleeve Cup berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Promo Human Stand",
+                "file": "Promo Human Stand.png",
+                "detail": "Cetak Promo Human Stand berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Promotion Table",
+                "file": "Promotion Table.png",
+                "detail": "Cetak Promotion Table berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Refill X  Y Rollup Banner",
+                "file": "Refill X  Y Rollup Banner.png",
+                "detail": "Cetak Refill X  Y Rollup Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Roll Up Banner",
+                "file": "Roll Up Banner.png",
+                "detail": "Cetak Roll Up Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Slim Light Box",
+                "file": "Slim Light Box.png",
+                "detail": "Cetak Slim Light Box berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spin Wheel Board",
+                "file": "Spin Wheel Board.png",
+                "detail": "Cetak Spin Wheel Board berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tripod Board",
+                "file": "Tripod Board.png",
+                "detail": "Cetak Tripod Board berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "X Banner Mini",
+                "file": "X Banner Mini.png",
+                "detail": "Cetak X Banner Mini berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "X Banner",
+                "file": "X Banner.png",
+                "detail": "Cetak X Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Y Banner",
+                "file": "Y Banner.png",
+                "detail": "Cetak Y Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "large-format": {
+        "title": "Large Format",
+        "desc": "Cetak spanduk dan banner ukuran jumbo.",
+        "categoryFolder": "large_format",
+        "items": [
+            {
+                "name": "Albatros",
+                "file": "Albatros.png",
+                "detail": "Cetak Albatros berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Banner Tanpa Sambung 4 & 5 meter",
+                "file": "Banner Tanpa Sambung 4 & 5 meter.png",
+                "detail": "Cetak Banner Tanpa Sambung 4 & 5 meter berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Canvas meteran",
+                "file": "Canvas meteran.png",
+                "detail": "Cetak Canvas meteran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Duratrans",
+                "file": "Duratrans.png",
+                "detail": "Cetak Duratrans berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Flexi Backlite",
+                "file": "Flexi Backlite.png",
+                "detail": "Cetak Flexi Backlite berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kertas Meteran",
+                "file": "Kertas Meteran.png",
+                "detail": "Cetak Kertas Meteran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spanduk  Banner Rumah Dijual",
+                "file": "Spanduk  Banner Rumah Dijual.png",
+                "detail": "Cetak Spanduk  Banner Rumah Dijual berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spanduk Kemerdekaan",
+                "file": "Spanduk Kemerdekaan.png",
+                "detail": "Cetak Spanduk Kemerdekaan berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spanduk Penerimaan Siswa Baru",
+                "file": "Spanduk Penerimaan Siswa Baru.png",
+                "detail": "Cetak Spanduk Penerimaan Siswa Baru berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spanduk  Banner",
+                "file": "Spanduk_ Banner.png",
+                "detail": "Cetak Spanduk  Banner berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "garment": {
+        "title": "Garment & Textile",
+        "desc": "Sablon kaos, jersey, dan produk tekstil kustom.",
+        "categoryFolder": "garment&textile",
+        "items": [
+            {
+                "name": "Apron Kustom",
+                "file": "Apron Kustom.png",
+                "detail": "Cetak Apron Kustom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Bendera Merah Putih",
+                "file": "Bendera Merah Putih.png",
+                "detail": "Cetak Bendera Merah Putih berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Bendera",
+                "file": "Bendera.png",
+                "detail": "Cetak Bendera berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "DTF Meteran",
+                "file": "DTF Meteran.png",
+                "detail": "Cetak DTF Meteran berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hijab Custom",
+                "file": "Hijab Custom.png",
+                "detail": "Cetak Hijab Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Jersey Fullprint Lengan Panjang",
+                "file": "Jersey Fullprint Lengan Panjang.png",
+                "detail": "Cetak Jersey Fullprint Lengan Panjang berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Jersey Fullprint",
+                "file": "Jersey Fullprint.png",
+                "detail": "Cetak Jersey Fullprint berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kaos DTF",
+                "file": "Kaos DTF.png",
+                "detail": "Cetak Kaos DTF berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Keychain Lanyard Custom",
+                "file": "Keychain Lanyard Custom.png",
+                "detail": "Cetak Keychain Lanyard Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Lanyard 2 Kait Gantungan Masker Custom",
+                "file": "Lanyard 2 Kait Gantungan Masker Custom.png",
+                "detail": "Cetak Lanyard 2 Kait Gantungan Masker Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Payung Promosi",
+                "file": "Payung Promosi.png",
+                "detail": "Cetak Payung Promosi berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Pouch Serut Blacu",
+                "file": "Pouch Serut Blacu.png",
+                "detail": "Cetak Pouch Serut Blacu berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Pouch Zipper Flat Kanvas",
+                "file": "Pouch Zipper Flat Kanvas.png",
+                "detail": "Cetak Pouch Zipper Flat Kanvas berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sajadah Anak Traveler Custom",
+                "file": "Sajadah Anak Traveler Custom.png",
+                "detail": "Cetak Sajadah Anak Traveler Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sajadah Canvas Custom",
+                "file": "Sajadah Canvas Custom.png",
+                "detail": "Cetak Sajadah Canvas Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sajadah Satin Custom",
+                "file": "Sajadah Satin Custom.png",
+                "detail": "Cetak Sajadah Satin Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Seragam Jersey Full Print",
+                "file": "Seragam Jersey Full Print.png",
+                "detail": "Cetak Seragam Jersey Full Print berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spanduk  Banner kain",
+                "file": "Spanduk  Banner kain.png",
+                "detail": "Cetak Spanduk  Banner kain berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tas Bekal Kanvas",
+                "file": "Tas Bekal Kanvas.png",
+                "detail": "Cetak Tas Bekal Kanvas berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tas Serut Blacu",
+                "file": "Tas Serut Blacu.png",
+                "detail": "Cetak Tas Serut Blacu berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tas Serut Taslan",
+                "file": "Tas Serut Taslan.png",
+                "detail": "Cetak Tas Serut Taslan berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Topi DTF",
+                "file": "Topi DTF.png",
+                "detail": "Cetak Topi DTF berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Alas Kanvas Natural",
+                "file": "Totebag Alas Kanvas Natural.png",
+                "detail": "Cetak Totebag Alas Kanvas Natural berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Alas Kanvas Premium",
+                "file": "Totebag Alas Kanvas Premium.png",
+                "detail": "Cetak Totebag Alas Kanvas Premium berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Flat Drill",
+                "file": "Totebag Flat Drill.png",
+                "detail": "Cetak Totebag Flat Drill berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Flat Kanvas Portrait",
+                "file": "Totebag Flat Kanvas Portrait.png",
+                "detail": "Cetak Totebag Flat Kanvas Portrait berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Kanvas Polyester Premium",
+                "file": "Totebag Kanvas Polyester Premium.png",
+                "detail": "Cetak Totebag Kanvas Polyester Premium berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Umbul-Umbul",
+                "file": "Umbul-Umbul.png",
+                "detail": "Cetak Umbul-Umbul berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "stationary": {
+        "title": "Stationary & Office",
+        "desc": "Perlengkapan administrasi kantor dan branding.",
+        "categoryFolder": "stationory",
+        "items": [
+            {
+                "name": "Amplop Coklat Folio (Per 100 Pcs)",
+                "file": "Amplop Coklat Folio (Per 100 Pcs).png",
+                "detail": "Cetak Amplop Coklat Folio (Per 100 Pcs) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Amplop Putih 11 x 23 cm (Per 100 Pcs)",
+                "file": "Amplop Putih 11 x 23 cm (Per 100 Pcs).png",
+                "detail": "Cetak Amplop Putih 11 x 23 cm (Per 100 Pcs) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Gelang Tiket Lanyard",
+                "file": "Gelang Tiket Lanyard.png",
+                "detail": "Cetak Gelang Tiket Lanyard berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Gelang Tiket",
+                "file": "Gelang Tiket.png",
+                "detail": "Cetak Gelang Tiket berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hang Tag Imlek",
+                "file": "Hang Tag Imlek.png",
+                "detail": "Cetak Hang Tag Imlek berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Id Card Grosir",
+                "file": "Id Card Grosir.png",
+                "detail": "Cetak Id Card Grosir berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Id Card Satuan",
+                "file": "Id Card Satuan.png",
+                "detail": "Cetak Id Card Satuan berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender Board",
+                "file": "Kalender Board.png",
+                "detail": "Cetak Kalender Board berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender Dinding A3",
+                "file": "Kalender Dinding A3.png",
+                "detail": "Cetak Kalender Dinding A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender Dinding B2 JUMBO",
+                "file": "Kalender Dinding B2 JUMBO.png",
+                "detail": "Cetak Kalender Dinding B2 JUMBO berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender Meja A5",
+                "file": "Kalender Meja A5.png",
+                "detail": "Cetak Kalender Meja A5 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender Meja A6",
+                "file": "Kalender Meja A6.png",
+                "detail": "Cetak Kalender Meja A6 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kop Surat",
+                "file": "Kop Surat.png",
+                "detail": "Cetak Kop Surat berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Lanyard Premium",
+                "file": "Lanyard Premium.png",
+                "detail": "Cetak Lanyard Premium berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Lanyard Standar",
+                "file": "Lanyard Standar.png",
+                "detail": "Cetak Lanyard Standar berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Lanyard Vape",
+                "file": "Lanyard Vape.png",
+                "detail": "Cetak Lanyard Vape berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Map Kuping (Per 10pcs)",
+                "file": "Map Kuping (Per 10pcs).png",
+                "detail": "Cetak Map Kuping (Per 10pcs) berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Medali Akrilik",
+                "file": "Medali Akrilik.png",
+                "detail": "Cetak Medali Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Medali Plat Lanyard",
+                "file": "Medali Plat Lanyard.png",
+                "detail": "Cetak Medali Plat Lanyard berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Monthly Planner Schedule A3",
+                "file": "Monthly Planner Schedule A3.png",
+                "detail": "Cetak Monthly Planner Schedule A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Name Tag Magnet",
+                "file": "Name Tag Magnet.png",
+                "detail": "Cetak Name Tag Magnet berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Pulpen Promosi",
+                "file": "Pulpen Promosi.png",
+                "detail": "Cetak Pulpen Promosi berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sertifikat",
+                "file": "Sertifikat.png",
+                "detail": "Cetak Sertifikat berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Stempel",
+                "file": "Stempel.png",
+                "detail": "Cetak Stempel berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tag ID Card Koper UV Satuan",
+                "file": "Tag ID Card Koper UV Satuan.png",
+                "detail": "Cetak Tag ID Card Koper UV Satuan berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tag ID Card Koper",
+                "file": "Tag ID Card Koper.png",
+                "detail": "Cetak Tag ID Card Koper berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tent Card",
+                "file": "Tent Card.png",
+                "detail": "Cetak Tent Card berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Topi Ultah",
+                "file": "Topi Ultah.png",
+                "detail": "Cetak Topi Ultah berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Weekly Planner Schedule A3",
+                "file": "Weekly Planner Schedule A3.png",
+                "detail": "Cetak Weekly Planner Schedule A3 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "merchandise": {
+        "title": "Merchandise & Souvenir",
+        "desc": "Produk kreatif untuk souvenir dan promosi.",
+        "categoryFolder": "merchandes",
+        "items": [
+            {
+                "name": "Card Holder Akrilik",
+                "file": "Card Holder Akrilik.png",
+                "detail": "Cetak Card Holder Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "E Money",
+                "file": "E Money.png",
+                "detail": "Cetak E Money berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Flashdisk Card",
+                "file": "Flashdisk Card.png",
+                "detail": "Cetak Flashdisk Card berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Gantungan Kunci Akrilik",
+                "file": "Gantungan Kunci Akrilik.png",
+                "detail": "Cetak Gantungan Kunci Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Gantungan Kunci PIN",
+                "file": "Gantungan Kunci PIN.png",
+                "detail": "Cetak Gantungan Kunci PIN berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hampers Corporate",
+                "file": "Hampers Corporate.png",
+                "detail": "Cetak Hampers Corporate berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hand Bouquet Flower",
+                "file": "Hand Bouquet Flower.png",
+                "detail": "Cetak Hand Bouquet Flower berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Hang Tag",
+                "file": "Hang Tag.png",
+                "detail": "Cetak Hang Tag berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender LED Akrilik",
+                "file": "Kalender LED Akrilik.png",
+                "detail": "Cetak Kalender LED Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kipas Kerang Custom",
+                "file": "Kipas Kerang Custom.png",
+                "detail": "Cetak Kipas Kerang Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kipas Plastik 2 sisi",
+                "file": "Kipas Plastik 2 sisi.png",
+                "detail": "Cetak Kipas Plastik 2 sisi berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kipas Promosi 3pc",
+                "file": "Kipas Promosi 3pc.png",
+                "detail": "Cetak Kipas Promosi 3pc berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kipas Promosi Mini",
+                "file": "Kipas Promosi Mini.png",
+                "detail": "Cetak Kipas Promosi Mini berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Korek Api UV",
+                "file": "Korek Api UV.png",
+                "detail": "Cetak Korek Api UV berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Lampu LED Akrilik",
+                "file": "Lampu LED Akrilik.png",
+                "detail": "Cetak Lampu LED Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Mini Akrilik Standee",
+                "file": "Mini Akrilik Standee.png",
+                "detail": "Cetak Mini Akrilik Standee berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Mouse Pad",
+                "file": "Mouse Pad.png",
+                "detail": "Cetak Mouse Pad berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Mug Custom",
+                "file": "Mug Custom.png",
+                "detail": "Cetak Mug Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Notebook A5 & A6",
+                "file": "Notebook A5 & A6.png",
+                "detail": "Cetak Notebook A5 & A6 berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Ongkos Print Tumbler Bentuk",
+                "file": "Ongkos Print Tumbler Bentuk.png",
+                "detail": "Cetak Ongkos Print Tumbler Bentuk berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Pembatas Buku",
+                "file": "Pembatas Buku.png",
+                "detail": "Cetak Pembatas Buku berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Pin",
+                "file": "Pin .png",
+                "detail": "Cetak Pin berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Pin Akrilik",
+                "file": "Pin Akrilik.png",
+                "detail": "Cetak Pin Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Plakat Akrilik 20mm",
+                "file": "Plakat Akrilik 20mm.png",
+                "detail": "Cetak Plakat Akrilik 20mm berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Plakat Akrilik Custom",
+                "file": "Plakat Akrilik Custom.png",
+                "detail": "Cetak Plakat Akrilik Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Puzzle Akrilik",
+                "file": "Puzzle Akrilik.png",
+                "detail": "Cetak Puzzle Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Spotify LED Akrilik",
+                "file": "Spotify LED Akrilik.png",
+                "detail": "Cetak Spotify LED Akrilik berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tatakan Gelas Custom",
+                "file": "Tatakan Gelas Custom.png",
+                "detail": "Cetak Tatakan Gelas Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "ToteBag Spunbond Custom",
+                "file": "ToteBag Spunbond Custom.png",
+                "detail": "Cetak ToteBag Spunbond Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Blacu Print",
+                "file": "Totebag Blacu Print.png",
+                "detail": "Cetak Totebag Blacu Print berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Totebag Spunbond Sablon",
+                "file": "Totebag Spunbond Sablon.png",
+                "detail": "Cetak Totebag Spunbond Sablon berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tuding Ngaji Custom",
+                "file": "Tuding Ngaji Custom.png",
+                "detail": "Cetak Tuding Ngaji Custom berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tumbler Grafir",
+                "file": "Tumbler Grafir.png",
+                "detail": "Cetak Tumbler Grafir berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Tumbler UV Print",
+                "file": "Tumbler UV Print.png",
+                "detail": "Cetak Tumbler UV Print berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "packaging": {
+        "title": "Packaging",
+        "desc": "Kemasan produk eksklusif dan tas kertas.",
+        "categoryFolder": "packaging",
+        "items": [
+            {
+                "name": "Gift Box Kecil",
+                "file": "Gift Box Kecil.png",
+                "detail": "Cetak Gift Box Kecil berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Gift Box",
+                "file": "Gift Box.png",
+                "detail": "Cetak Gift Box berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kertas Kado",
+                "file": "Kertas Kado.png",
+                "detail": "Cetak Kertas Kado berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Label Bento",
+                "file": "Label Bento.png",
+                "detail": "Cetak Label Bento berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paper Bag Kraft",
+                "file": "Paper Bag Kraft.png",
+                "detail": "Cetak Paper Bag Kraft berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Paper Bag",
+                "file": "Paper Bag.png",
+                "detail": "Cetak Paper Bag berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Selongsong",
+                "file": "Selongsong.png",
+                "detail": "Cetak Selongsong berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    },
+    "home-decor": {
+        "title": "Home Decor & Photo",
+        "desc": "Abadikan momen spesial dalam dekorasi rumah.",
+        "categoryFolder": "home decor & photo",
+        "items": [
+            {
+                "name": "Bantal",
+                "file": "Bantal.png",
+                "detail": "Cetak Bantal berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Canvas Spanram Persegi",
+                "file": "Canvas Spanram Persegi.png",
+                "detail": "Cetak Canvas Spanram Persegi berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Canvas Spanram Square",
+                "file": "Canvas Spanram Square.png",
+                "detail": "Cetak Canvas Spanram Square berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Kalender Karakter",
+                "file": "Kalender Karakter.png",
+                "detail": "Cetak Kalender Karakter berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Photo Card",
+                "file": "Photo Card.png",
+                "detail": "Cetak Photo Card berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Photo Paper",
+                "file": "Photo Paper.png",
+                "detail": "Cetak Photo Paper berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Photo Polaroid",
+                "file": "Photo Polaroid.png",
+                "detail": "Cetak Photo Polaroid berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "PhotoBook",
+                "file": "PhotoBook.png",
+                "detail": "Cetak PhotoBook berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Sarung Bantal Katun",
+                "file": "Sarung Bantal Katun.png",
+                "detail": "Cetak Sarung Bantal Katun berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Table Matte FNB",
+                "file": "Table Matte FNB.png",
+                "detail": "Cetak Table Matte FNB berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            },
+            {
+                "name": "Wallpaper",
+                "file": "Wallpaper.png",
+                "detail": "Cetak Wallpaper berkualitas tinggi di 93 Printing.",
+                "price": "Hubungi Kami"
+            }
+        ]
+    }
+};
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const cat = urlParams.get('cat');
+            const data = productData[cat] || productData["digital-printing"];
+
+            document.getElementById('cat-title').innerText = data.title;
+
+            const listing = document.getElementById('sub-listing');
+            listing.innerHTML = data.items.map((item, index) => `
+                <div class="sub-card" data-aos="fade-up" data-aos-delay="${(index % 6) * 50}">
+
+                    <div class="card-img-wrapper">
+                        <img src="asset/${data.categoryFolder}/${item.file}" alt="${item.name}">
+                    </div>
+                    <div class="card-content">
+                        <h4>${item.name}</h4>
+                        <p>${item.detail}</p>
+                        <div class="price-tag">${item.price}</div>
+                        <a href="https://api.whatsapp.com/send?phone=6282111159144&text=Halo 93 Printing, saya mau pesan ${item.name}" target="_blank" class="btn btn-primary btn-buy">Pesan Sekarang</a>
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+    <script src="./script.js"></script>
+</body>
+</html>
+```

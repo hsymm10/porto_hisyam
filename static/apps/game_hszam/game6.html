@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Shooter Deluxe</title>
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --dark-color: #292F36;
+            --light-color: #F7FFF7;
+            --bubble-colors: #FF6B6B, #4ECDC4, #FFE66D, #6B5B95, #88B04B, #FFA500;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #292F36, #1A1A2E);
+            font-family: 'Luckiest Guy', cursive;
+            color: var(--light-color);
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--accent-color);
+            text-shadow: 3px 3px 0 var(--dark-color),
+                         -1px -1px 0 var(--dark-color),  
+                         1px -1px 0 var(--dark-color),
+                         -1px 1px 0 var(--dark-color),
+                         1px 1px 0 var(--dark-color);
+            letter-spacing: 2px;
+        }
+        
+        #gameContainer {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        #gameCanvas {
+            border: 5px solid var(--accent-color);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 230, 109, 0.3),
+                       0 0 60px rgba(255, 230, 109, 0.2);
+            background: linear-gradient(to bottom, #1A1A2E, #16213E);
+            display: block;
+        }
+        
+        #gameUI {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 15px;
+        }
+        
+        #scoreBoard {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 0 var(--dark-color);
+            background-color: rgba(41, 47, 54, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--accent-color);
+        }
+        
+        #levelDisplay {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            text-shadow: 2px 2px 0 var(--dark-color);
+            background-color: rgba(41, 47, 54, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--secondary-color);
+        }
+        
+        #livesContainer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(41, 47, 54, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .heart {
+            width: 25px;
+            height: 25px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="red" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+            background-size: contain;
+            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
+        }
+        
+        #arrowSelector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .arrowOption {
+            width: 40px;
+            height: 40px;
+            background-color: var(--dark-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .arrowOption:hover {
+            transform: scale(1.1);
+        }
+        
+        .arrowOption.selected {
+            border-color: var(--accent-color);
+            transform: scale(1.1);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+        
+        .arrowOption img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            width: 100%;
+            padding: 15px 0;
+            background-color: rgba(41, 47, 54, 0.7);
+            border-top: 2px solid var(--accent-color);
+        }
+        
+        footer p {
+            margin: 5px 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        #bonusIndicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(41, 47, 54, 0.8);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid var(--accent-color);
+            font-size: 1rem;
+            color: var(--accent-color);
+            display: none;
+        }
+        
+        #levelComplete {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(41, 47, 54, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid var(--accent-color);
+            text-align: center;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 0 30px rgba(255, 230, 109, 0.5);
+        }
+        
+        #levelComplete h2 {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin-top: 0;
+        }
+        
+        #levelComplete p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        #levelComplete button {
+            background: linear-gradient(to bottom, var(--primary-color), #FF5252);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Luckiest Guy', cursive;
+        }
+        
+        #levelComplete button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+        
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            #gameUI {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            #scoreBoard, #levelDisplay, #livesContainer {
+                width: 80%;
+                text-align: center;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>BUBBLE SHOOTER DELUXE</h1>
+    </header>
+    
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="bonusIndicator"></div>
+        <div id="levelComplete">
+            <h2>LEVEL COMPLETE!</h2>
+            <p id="levelRewardText"></p>
+            <button id="nextLevelBtn">NEXT LEVEL</button>
+        </div>
+    </div>
+    
+    <div id="gameUI">
+        <div id="scoreBoard">SCORE: 0</div>
+        <div id="levelDisplay">LEVEL: 1</div>
+        <div id="livesContainer">
+            <span>LIVES:</span>
+            <div id="lives"></div>
+        </div>
+    </div>
+    
+    <div id="arrowSelector">
+        <div class="arrowOption selected" data-arrow="classic">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xOSwxM0g3LjgxbDMuNjItMy42MkwxMCw4bC02LDZsNiw2bDEuNDEtMS40MUw3LjgxLDE1SDE5VjEzWiIvPjwvc3ZnPg==" alt="Classic Arrow">
+        </div>
+        <div class="arrowOption" data-arrow="laser">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik05LDExSDE1VjEzSDlNMTIsMkExMCwxMCAwIDAsMCAyLDEyQTEwLDEwIDAgMCwwIDEyLDIyQTEwLDEwIDAgMCwwIDIyLDEyQTEwLDEwIDAgMCwwIDEyLDJNMTIsMjBBOCw4IDAgMCwxIDQsMTJBOCw4IDAgMCwxIDEyLDRBOCw4IDAgMCwxIDIwLDEyQTgsOCAwIDAsMSAxMiwyMFoiLz48L3N2Zz4=" alt="Laser Pointer">
+        </div>
+        <div class="arrowOption" data-arrow="rainbow">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMS4yLDFMMjAsMTJMMTEuMiwyM0gxMi45TDIxLDEyTDEyLjksMUgxMS4yTTguOCwxTDEwLjUsMUwyLDEyTDEwLjUsMjNIOC44TDAsMTJMOC44LDFNMTUuMSwxTDE2LjksMUwxMy41LDZMMTYuOSwxMUgxNS4xTDEyLDYuNUwxNS4xLDFNMTEuMSw3TDEyLjksN0wxMC4xLDExTDEyLjksMTVIMTEuMUw5LDExTDExLjEsN1oiLz48L3N2Zz4=" alt="Rainbow Arrow">
+        </div>
+        <div class="arrowOption" data-arrow="pirate">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiwyQTEwLDEwIDAgMCwwIDIsMTJBMTAsMTAgMCAwLDAgMTIsMjJBMTAsMTAgMCAwLDAgMjIsMTJBMTAsMTAgMCAwLDAgMTIsMk0xMiw0QTgsOCAwIDAsMSAyMCwxMkE4LDggMCAwLDEgMTIsMjBBOCw4IDAgMCwxIDQsMTJBOCw4IDAgMCwxIDEyLDRNMTIsMTBBMSwxIDAgMCwwIDExLDExQTEsMSAwIDAsMCAxMiwxMkExLDEgMCAwLDAgMTMsMTFBMSwxIDAgMCwwIDEyLDEwTTcsMTBBMSwxIDAgMCwwIDYsMTFBMSwxIDAgMCwwIDcsMTJBMSwxIDAgMCwwIDgsMTFBMSwxIDAgMCwwIDcsMTBNMTcsMTBBMSwxIDAgMCwwIDE2LDExQTEsMSAwIDAsMCAxNywxMkExLDEgIDAgMCwwIDE4LDExQTEsMSAwIDAsMCAxNywxME0xMiwxN0MxMC4zLDE3IDksMTYuNSA5LDE2SDE1QzE1LDE2LjUgMTMuNywxNyAxMiwxN1oiLz48L3N2Zz4=" alt="Pirate Sword">
+        </div>
+    </div>
+    
+
+    <footer>
+        <p> ❤️ |  Bubble Shooter Deluxe  </p>
+    </footer>
+
+    <script>
+        // Game configuration
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreBoard = document.getElementById("scoreBoard");
+        const levelDisplay = document.getElementById("levelDisplay");
+        const livesContainer = document.getElementById("lives");
+        const bonusIndicator = document.getElementById("bonusIndicator");
+        const levelCompleteDiv = document.getElementById("levelComplete");
+        const levelRewardText = document.getElementById("levelRewardText");
+        const nextLevelBtn = document.getElementById("nextLevelBtn");
+        const arrowOptions = document.querySelectorAll(".arrowOption");
+        
+        // Game constants
+        const BUBBLE_RADIUS = 20;
+        const COLORS = ["#FF6B6B", "#4ECDC4", "#FFE66D", "#6B5B95", "#88B04B", "#FFA500"];
+        const BONUS_TYPES = ["extra-life", "double-points", "slow-motion", "rapid-fire", "color-blast", "shield"];
+        const LEVEL_CONFIG = [
+            { rows: 5, colors: 3, speed: 1 },  // Level 1
+            { rows: 6, colors: 4, speed: 1.2 }, // Level 2
+            { rows: 7, colors: 4, speed: 1.4 }, // Level 3
+            { rows: 8, colors: 5, speed: 1.6 }, // Level 4
+            { rows: 9, colors: 5, speed: 1.8 }  // Level 5
+        ];
+        
+        // Arrow designs
+        const ARROW_DESIGNS = {
+            classic: {
+                color: "#FFFFFF",
+                width: 3,
+                headSize: 10
+            },
+            laser: {
+                color: "#FF5252",
+                width: 2,
+                headSize: 8,
+                glow: true
+            },
+            rainbow: {
+                color: "rainbow",
+                width: 4,
+                headSize: 12
+            },
+            pirate: {
+                color: "#FFD700",
+                width: 5,
+                headSize: 15,
+                pattern: true
+            }
+        };
+        
+        // Game state
+        let score = 0;
+        let lives = 3;
+        let level = 0;
+        let gameOver = false;
+        let bonusActive = null;
+        let bonusEndTime = 0;
+        let lastShotTime = 0;
+        let currentArrow = "classic";
+        let bubbleSpeed = 1;
+        let selectedColors = [];
+        
+        // Game objects
+        let shooter = {
+            x: canvas.width / 2,
+            y: canvas.height - BUBBLE_RADIUS - 20,
+            angle: -Math.PI/2,
+            color: getRandomColor(),
+            shooting: false,
+            shotX: 0,
+            shotY: 0,
+            dx: 0,
+            dy: 0,
+            nextColor: getRandomColor()
+        };
+        
+        let bubbles = [];
+        let bonuses = [];
+        let explosions = [];
+        let particles = [];
+        
+        // Initialize game
+        initGame();
+        
+        function initGame() {
+            // Reset game state
+            score = 0;
+            lives = 3;
+            gameOver = false;
+            bubbles = [];
+            bonuses = [];
+            explosions = [];
+            particles = [];
+            
+            // Set up level
+            setupLevel(level);
+            
+            // Update UI
+            updateScore();
+            updateLives();
+            updateLevelDisplay();
+            
+            // Set shooter colors
+            shooter.color = getRandomColor();
+            shooter.nextColor = getRandomColor();
+        }
+        
+        function setupLevel(levelIndex) {
+            const config = LEVEL_CONFIG[levelIndex];
+            bubbleSpeed = config.speed;
+            selectedColors = COLORS.slice(0, config.colors);
+            createBubbleGrid(config.rows, Math.floor(canvas.width / (BUBBLE_RADIUS * 2)) - 1);
+        }
+        
+        function createBubbleGrid(rows, cols) {
+            const offsetX = (canvas.width - (cols * BUBBLE_RADIUS * 2)) / 2 + BUBBLE_RADIUS;
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    // Offset every other row for honeycomb pattern
+                    const xOffset = row % 2 === 0 ? 0 : BUBBLE_RADIUS;
+                    
+                    // Random chance to create a special bubble
+                    const isSpecial = Math.random() < 0.1;
+                    const isBonus = Math.random() < 0.05;
+                    
+                    if (isBonus) {
+                        bubbles.push({
+                            x: offsetX + col * BUBBLE_RADIUS * 2 + xOffset,
+                            y: 50 + row * BUBBLE_RADIUS * 1.8,
+                            color: "#FFD700",
+                            type: "bonus",
+                            bonusType: getRandomBonusType()
+                        });
+                    } else {
+                        bubbles.push({
+                            x: offsetX + col * BUBBLE_RADIUS * 2 + xOffset,
+                            y: 50 + row * BUBBLE_RADIUS * 1.8,
+                            color: getRandomColor(),
+                            type: isSpecial ? "special" : "normal"
+                        });
+                    }
+                }
+            }
+        }
+        
+        function getRandomColor() {
+            return selectedColors[Math.floor(Math.random() * selectedColors.length)];
+        }
+        
+        function getRandomBonusType() {
+            return BONUS_TYPES[Math.floor(Math.random() * BONUS_TYPES.length)];
+        }
+        
+        function drawShooter() {
+            // Draw shooter base
+            ctx.beginPath();
+            ctx.arc(shooter.x, shooter.y, BUBBLE_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = shooter.color;
+            ctx.fill();
+            ctx.closePath();
+            
+            // Draw shooter face (emoji)
+            ctx.font = `${BUBBLE_RADIUS}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("😎", shooter.x, shooter.y);
+            
+            // Draw next bubble preview
+            ctx.beginPath();
+            ctx.arc(canvas.width - 30, canvas.height - 30, BUBBLE_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = shooter.nextColor;
+            ctx.fill();
+            ctx.closePath();
+            
+            // Draw arrow indicator when not shooting
+            if (!shooter.shooting) {
+                drawArrow();
+            }
+        }
+        
+        function drawArrow() {
+            const arrowConfig = ARROW_DESIGNS[currentArrow];
+            const arrowLength = BUBBLE_RADIUS * 2.5;
+            const endX = shooter.x + Math.cos(shooter.angle) * arrowLength;
+            const endY = shooter.y + Math.sin(shooter.angle) * arrowLength;
+            
+            // Draw arrow line
+            ctx.beginPath();
+            ctx.moveTo(shooter.x, shooter.y);
+            ctx.lineTo(endX, endY);
+            
+            if (arrowConfig.color === "rainbow") {
+                // Create rainbow gradient
+                const gradient = ctx.createLinearGradient(shooter.x, shooter.y, endX, endY);
+                gradient.addColorStop(0, "#FF0000");
+                gradient.addColorStop(0.2, "#FF7F00");
+                gradient.addColorStop(0.4, "#FFFF00");
+                gradient.addColorStop(0.6, "#00FF00");
+                gradient.addColorStop(0.8, "#0000FF");
+                gradient.addColorStop(1, "#4B0082");
+                ctx.strokeStyle = gradient;
+            } else {
+                ctx.strokeStyle = arrowConfig.color;
+            }
+            
+            ctx.lineWidth = arrowConfig.width;
+            
+            if (arrowConfig.glow) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = arrowConfig.color;
+            }
+            
+            if (arrowConfig.pattern) {
+                ctx.setLineDash([5, 3]);
+            }
+            
+            ctx.stroke();
+            ctx.closePath();
+            
+            // Reset styles
+            ctx.shadowBlur = 0;
+            ctx.setLineDash([]);
+            
+            // Draw arrow head
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(
+                endX - Math.cos(shooter.angle - Math.PI/6) * arrowConfig.headSize,
+                endY - Math.sin(shooter.angle - Math.PI/6) * arrowConfig.headSize
+            );
+            ctx.lineTo(
+                endX - Math.cos(shooter.angle + Math.PI/6) * arrowConfig.headSize,
+                endY - Math.sin(shooter.angle + Math.PI/6) * arrowConfig.headSize
+            );
+            ctx.closePath();
+            ctx.fillStyle = arrowConfig.color;
+            ctx.fill();
+        }
+        
+        function drawBubbles() {
+            for (let b of bubbles) {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, BUBBLE_RADIUS, 0, Math.PI * 2);
+                
+                if (b.type === "bonus") {
+                    // Gold gradient for bonus bubbles
+                    const gradient = ctx.createRadialGradient(
+                        b.x - BUBBLE_RADIUS/2, b.y - BUBBLE_RADIUS/2, 5,
+                        b.x, b.y, BUBBLE_RADIUS
+                    );
+                    gradient.addColorStop(0, "#FFD700");
+                    gradient.addColorStop(1, "#FFA500");
+                    ctx.fillStyle = gradient;
+                } else if (b.type === "special") {
+                    // Special bubbles have a glow effect
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = b.color;
+                    ctx.fillStyle = b.color;
+                } else {
+                    ctx.fillStyle = b.color;
+                }
+                
+                ctx.fill();
+                ctx.closePath();
+                
+                // Reset shadow
+                ctx.shadowBlur = 0;
+                
+                // Draw bubble highlight
+                ctx.beginPath();
+                ctx.arc(b.x - BUBBLE_RADIUS/3, b.y - BUBBLE_RADIUS/3, BUBBLE_RADIUS/3, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+                ctx.fill();
+                ctx.closePath();
+                
+                // Draw symbol inside bubble
+                ctx.font = `${BUBBLE_RADIUS}px Arial`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                
+                if (b.type === "bonus") {
+                    ctx.fillStyle = "#000";
+                    ctx.fillText("✨", b.x, b.y);
+                } else if (b.type === "special") {
+                    ctx.fillStyle = "#FFF";
+                    ctx.fillText("★", b.x, b.y);
+                } else {
+                    ctx.fillStyle = "#FFF";
+                    ctx.fillText("●", b.x, b.y);
+                }
+            }
+        }
+        
+        function drawBonuses() {
+            for (let bonus of bonuses) {
+                // Draw bonus container
+                ctx.beginPath();
+                ctx.arc(bonus.x, bonus.y, BUBBLE_RADIUS, 0, Math.PI * 2);
+                
+                // Gradient fill
+                const gradient = ctx.createRadialGradient(
+                    bonus.x, bonus.y, 0,
+                    bonus.x, bonus.y, BUBBLE_RADIUS
+                );
+                gradient.addColorStop(0, "#FFD700");
+                gradient.addColorStop(1, "#FFA500");
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.closePath();
+                
+                // Draw bonus symbol
+                ctx.font = `${BUBBLE_RADIUS}px Arial`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "#000";
+                
+                switch(bonus.type) {
+                    case "extra-life":
+                        ctx.fillText("❤️", bonus.x, bonus.y);
+                        break;
+                    case "double-points":
+                        ctx.fillText("2X", bonus.x, bonus.y);
+                        break;
+                    case "slow-motion":
+                        ctx.fillText("🐢", bonus.x, bonus.y);
+                        break;
+                    case "rapid-fire":
+                        ctx.fillText("⚡", bonus.x, bonus.y);
+                        break;
+                    case "color-blast":
+                        ctx.fillText("🌈", bonus.x, bonus.y);
+                        break;
+                    case "shield":
+                        ctx.fillText("🛡️", bonus.x, bonus.y);
+                        break;
+                    default:
+                        ctx.fillText("✨", bonus.x, bonus.y);
+                }
+            }
+        }
+        
+        function drawExplosions() {
+            for (let exp of explosions) {
+                // Draw explosion
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
+                
+                // Explosion gradient
+                const gradient = ctx.createRadialGradient(
+                    exp.x, exp.y, 0,
+                    exp.x, exp.y, exp.radius
+                );
+                gradient.addColorStop(0, `rgba(255, 215, 0, ${exp.opacity})`);
+                gradient.addColorStop(1, `rgba(255, 100, 0, ${exp.opacity * 0.5})`);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.closePath();
+                
+                // Draw explosion emoji
+                ctx.font = `${exp.radius}px Arial`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("💥", exp.x, exp.y);
+            }
+        }
+        
+        function drawParticles() {
+            for (let p of particles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+        
+        function updateBonusIndicator() {
+            if (bonusActive) {
+                const timeLeft = Math.max(0, (bonusEndTime - Date.now()) / 1000).toFixed(1);
+                let bonusText = "";
+                
+                switch(bonusActive) {
+                    case "extra-life":
+                        bonusText = `EXTRA LIFE (${timeLeft}s)`;
+                        break;
+                    case "double-points":
+                        bonusText = `2X POINTS (${timeLeft}s)`;
+                        break;
+                    case "slow-motion":
+                        bonusText = `SLOW MOTION (${timeLeft}s)`;
+                        break;
+                    case "rapid-fire":
+                        bonusText = `RAPID FIRE (${timeLeft}s)`;
+                        break;
+                    case "color-blast":
+                        bonusText = `COLOR BLAST (${timeLeft}s)`;
+                        break;
+                    case "shield":
+                        bonusText = `SHIELD (${timeLeft}s)`;
+                        break;
+                }
+                
+                bonusIndicator.textContent = bonusText;
+                bonusIndicator.style.display = "block";
+            } else {
+                bonusIndicator.style.display = "none";
+            }
+        }
+        
+        function shootBubble() {
+            if (!shooter.shooting) return;
+            
+            // Apply slow motion if bonus is active
+            const speedMultiplier = bonusActive === "slow-motion" ? 0.5 : 1;
+            
+            shooter.shotX += shooter.dx * speedMultiplier;
+            shooter.shotY += shooter.dy * speedMultiplier;
+            
+            // Wall collision
+            if (shooter.shotX <= BUBBLE_RADIUS || shooter.shotX >= canvas.width - BUBBLE_RADIUS) {
+                shooter.dx *= -1;
+            }
+            
+            // Ceiling collision
+            if (shooter.shotY <= BUBBLE_RADIUS) {
+                stopAndAttachBubble();
+                return;
+            }
+            
+            // Bubble collision
+            for (let b of bubbles) {
+                const dist = Math.hypot(shooter.shotX - b.x, shooter.shotY - b.y);
+                if (dist < BUBBLE_RADIUS * 2) {
+                    stopAndAttachBubble();
+                    return;
+                }
+            }
+            
+            // Bonus collision
+            for (let i = bonuses.length - 1; i >= 0; i--) {
+                const bonus = bonuses[i];
+                const dist = Math.hypot(shooter.shotX - bonus.x, shooter.shotY - bonus.y);
+                if (dist < BUBBLE_RADIUS * 2) {
+                    activateBonus(bonus.type);
+                    bonuses.splice(i, 1);
+                    createParticles(bonus.x, bonus.y, 15, "#FFD700");
+                    break;
+                }
+            }
+            
+            // Draw the shot bubble
+            ctx.beginPath();
+            ctx.arc(shooter.shotX, shooter.shotY, BUBBLE_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = shooter.color;
+            ctx.fill();
+            ctx.closePath();
+            
+            // Draw face on shot bubble
+            ctx.font = `${BUBBLE_RADIUS}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("😲", shooter.shotX, shooter.shotY);
+        }
+        
+        function stopAndAttachBubble() {
+            // Find the best position to attach the new bubble
+            let closestBubble = null;
+            let minDist = Infinity;
+            
+            for (const b of bubbles) {
+                const dist = Math.hypot(shooter.shotX - b.x, shooter.shotY - b.y);
+                if (dist < BUBBLE_RADIUS * 2.5 && dist < minDist) {
+                    minDist = dist;
+                    closestBubble = b;
+                }
+            }
+            
+            // Calculate final position
+            let finalX = shooter.shotX;
+            let finalY = shooter.shotY;
+            
+            if (closestBubble) {
+                const angle = Math.atan2(shooter.shotY - closestBubble.y, shooter.shotX - closestBubble.x);
+                finalX = closestBubble.x + Math.cos(angle) * BUBBLE_RADIUS * 2;
+                finalY = closestBubble.y + Math.sin(angle) * BUBBLE_RADIUS * 2;
+            }
+            
+            // Create new bubble
+            const newBubble = {
+                x: finalX,
+                y: finalY,
+                color: shooter.color,
+                type: "normal"
+            };
+            
+            bubbles.push(newBubble);
+            shooter.shooting = false;
+            
+            // Check for matches
+            const matches = findMatches(newBubble);
+            if (matches.length >= 3) {
+                // Create explosion effect
+                createExplosion(newBubble.x, newBubble.y);
+                createParticles(newBubble.x, newBubble.y, 20, newBubble.color);
+                
+                // Remove matched bubbles
+                for (const b of matches) {
+                    const index = bubbles.indexOf(b);
+                    if (index !== -1) {
+                        bubbles.splice(index, 1);
+                        createExplosion(b.x, b.y);
+                        createParticles(b.x, b.y, 20, b.color);
+                        
+                        // Chance to drop a bonus when a bubble is popped
+                        if (b.type === "special" || Math.random() < 0.1) {
+                            bonuses.push({
+                                x: b.x,
+                                y: b.y,
+                                dy: 2 * bubbleSpeed,
+                                type: getRandomBonusType()
+                            });
+                        }
+                    }
+                }
+                
+                // Update score (with potential bonus)
+                const basePoints = matches.length * 10;
+                const specialBonus = matches.filter(b => b.type === "special").length * 20;
+                const points = (basePoints + specialBonus) * (bonusActive === "double-points" ? 2 : 1);
+                score += points;
+                updateScore();
+                
+                // Play pop sound
+                playSound("pop");
+            }
+            
+            // Check if any bubbles are too low
+            checkBubblePosition();
+            
+            // Check if all bubbles are cleared
+            if (bubbles.length === 0) {
+                completeLevel();
+            }
+            
+            // Rotate colors
+            shooter.color = shooter.nextColor;
+            shooter.nextColor = getRandomColor();
+        }
+        
+        function findMatches(bubble, checked = []) {
+            if (checked.includes(bubble)) return [];
+            checked.push(bubble);
+            
+            let matches = [bubble];
+            
+            // Find adjacent bubbles of the same color
+            for (const b of bubbles) {
+                if (b === bubble) continue;
+                
+                const dist = Math.hypot(bubble.x - b.x, bubble.y - b.y);
+                if (dist < BUBBLE_RADIUS * 2.1 && b.color === bubble.color) {
+                    matches = matches.concat(findMatches(b, checked));
+                }
+            }
+            
+            return matches;
+        }
+        
+        function createExplosion(x, y) {
+            explosions.push({
+                x: x,
+                y: y,
+                radius: BUBBLE_RADIUS,
+                opacity: 1,
+                growth: 2
+            });
+        }
+        
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    radius: Math.random() * 3 + 1,
+                    color: color,
+                    dx: (Math.random() - 0.5) * 5,
+                    dy: (Math.random() - 0.5) * 5,
+                    life: 100
+                });
+            }
+        }
+        
+        function updateExplosions() {
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                const exp = explosions[i];
+                exp.radius += exp.growth;
+                exp.opacity -= 0.05;
+                
+                if (exp.opacity <= 0) {
+                    explosions.splice(i, 1);
+                }
+            }
+        }
+        
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.dx;
+                p.y += p.dy;
+                p.life--;
+                p.radius *= 0.97;
+                if (p.life <= 0 || p.radius < 0.5) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function activateBonus(type) {
+            bonusActive = type;
+            bonusEndTime = Date.now() + 7000; // Bonus lasts 7 seconds
+            playSound("bonus");
+        }
+
+        function updateBonuses() {
+            for (let i = bonuses.length - 1; i >= 0; i--) {
+                const bonus = bonuses[i];
+                bonus.y += bonus.dy || 2;
+                // Remove if out of bounds
+                if (bonus.y > canvas.height + BUBBLE_RADIUS) {
+                    bonuses.splice(i, 1);
+                }
+            }
+            // Deactivate bonus if expired
+            if (bonusActive && Date.now() > bonusEndTime) {
+                bonusActive = null;
+            }
+        }
+
+        function updateScore() {
+            scoreBoard.textContent = `SCORE: ${score}`;
+        }
+
+        function updateLives() {
+            livesContainer.innerHTML = "";
+            for (let i = 0; i < lives; i++) {
+                const heart = document.createElement("div");
+                heart.className = "heart";
+                livesContainer.appendChild(heart);
+            }
+        }
+
+        function updateLevelDisplay() {
+            levelDisplay.textContent = `LEVEL: ${level + 1}`;
+        }
+
+        function playSound(type) {
+            // Placeholder for sound effect logic
+            // You can add audio elements and play them here
+        }
+
+        function checkBubblePosition() {
+            for (const b of bubbles) {
+                if (b.y > canvas.height - BUBBLE_RADIUS * 2) {
+                    loseLife();
+                    break;
+                }
+            }
+        }
+
+        function loseLife() {
+            lives--;
+            updateLives();
+            if (lives <= 0) {
+                endGame();
+            } else {
+                // Reset shooter position and color
+                shooter.x = canvas.width / 2;
+                shooter.y = canvas.height - BUBBLE_RADIUS - 20;
+                shooter.angle = -Math.PI / 2;
+                shooter.color = getRandomColor();
+                shooter.nextColor = getRandomColor();
+                shooter.shooting = false;
+            }
+        }
+
+        function endGame() {
+            gameOver = true;
+            levelCompleteDiv.style.display = "block";
+            levelRewardText.textContent = `Game Over! Your score: ${score}`;
+            nextLevelBtn.textContent = "RESTART";
+        }
+
+        function completeLevel() {
+            gameOver = true;
+            levelCompleteDiv.style.display = "block";
+            levelRewardText.textContent = `Level ${level + 1} Complete! Score: ${score}`;
+            nextLevelBtn.textContent = level + 1 < LEVEL_CONFIG.length ? "NEXT LEVEL" : "RESTART";
+        }
+
+        nextLevelBtn.addEventListener("click", function () {
+            levelCompleteDiv.style.display = "none";
+            if (gameOver && level + 1 < LEVEL_CONFIG.length) {
+                level++;
+                initGame();
+            } else {
+                level = 0;
+                initGame();
+            }
+        });
+
+        // Arrow selector
+        arrowOptions.forEach(option => {
+            option.addEventListener("click", function () {
+                arrowOptions.forEach(opt => opt.classList.remove("selected"));
+                option.classList.add("selected");
+                currentArrow = option.getAttribute("data-arrow");
+            });
+        });
+
+        // Mouse controls
+        canvas.addEventListener("mousemove", function (e) {
+            if (gameOver) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            shooter.angle = Math.atan2(my - shooter.y, mx - shooter.x);
+        });
+
+        canvas.addEventListener("click", function () {
+            if (gameOver) return;
+            if (!shooter.shooting) {
+                shooter.shooting = true;
+                shooter.shotX = shooter.x;
+                shooter.shotY = shooter.y;
+                shooter.dx = Math.cos(shooter.angle) * 8 * (bonusActive === "rapid-fire" ? 1.5 : 1);
+                shooter.dy = Math.sin(shooter.angle) * 8 * (bonusActive === "rapid-fire" ? 1.5 : 1);
+            }
+        });
+
+        // Main game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBubbles();
+            drawBonuses();
+            drawExplosions();
+            drawParticles();
+            drawShooter();
+            updateBonusIndicator();
+
+            if (shooter.shooting && !gameOver) {
+                shootBubble();
+            }
+
+            updateExplosions();
+            updateParticles();
+            updateBonuses();
+
+            if (!gameOver) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Start the game loop
+        gameLoop();
+    </script>
+    <a href="index.html" id="backToMenuBtn" style="
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        z-index: 999;
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        color: var(--dark-color);
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-family: 'Luckiest Guy', cursive;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 2px 8px #292F3680;
+        border: 2px solid var(--accent-color);
+        transition: background 0.2s, color 0.2s, transform 0.2s;
+    "
+    onmouseover="this.style.background='var(--accent-color)';this.style.color='var(--dark-color)';this.style.transform='scale(1.05)'"
+    onmouseout="this.style.background='linear-gradient(to right, var(--primary-color), var(--secondary-color))';this.style.color='var(--dark-color)';this.style.transform='scale(1)'"
+    >← Back to Menu</a>
+</body>
+</html>
