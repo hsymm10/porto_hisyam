@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { tick } from 'svelte';
+	import { tick, onMount } from 'svelte';
 	import { currentLang } from '#lib/i18n.js';
 
 	interface ChatMessage {
@@ -9,17 +9,20 @@
 		time?: string;
 	}
 
+	const STORAGE_KEY = 'hisyam_ai_history';
+
 	let isOpen = $state(false);
 	let inputMessage = $state('');
 	let isLoading = $state(false);
+	let isCooldown = $state(false);
 	let messagesContainerEl: HTMLDivElement | undefined = $state();
 	let inputEl: HTMLInputElement | undefined = $state();
 
 	const initialGreetingId =
-		'Halo! Saya **Hisyam\'AI**, asisten AI resmi portofolio Hisyam Sayyid Alzam. Anda bisa bertanya tentang proyek, keahlian teknis (tech stack), pengalaman organisasi, atau cara menghubungi Hisyam. Ada yang ingin Anda ketahui?';
+		'Halo! Saya **Hisyam\'AI**, asisten resmi Hisyam Sayyid Alzam. Silakan tanya seputar proyek, keahlian teknis, atau pengalaman Hisyam!';
 
 	const initialGreetingEn =
-		'Hello! I am **Hisyam\'AI**, the official portfolio AI assistant for Hisyam Sayyid Alzam. You can ask me about his projects, technical skills, experience, or how to contact him. How can I help you today?';
+		'Hello! I am **Hisyam\'AI**, official assistant for Hisyam Sayyid Alzam. Ask me about his projects, skills, or experience!';
 
 	let messages = $state<ChatMessage[]>([
 		{
@@ -28,6 +31,25 @@
 			time: getTimestamp()
 		}
 	]);
+
+	onMount(() => {
+		try {
+			const saved = localStorage.getItem(STORAGE_KEY);
+			if (saved) {
+				const parsed = JSON.parse(saved);
+				if (Array.isArray(parsed) && parsed.length > 0) {
+					messages = parsed;
+				}
+			}
+		} catch {}
+	});
+
+	function saveMessages(msgs: ChatMessage[]) {
+		if (typeof window === 'undefined') return;
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
+		} catch {}
+	}
 
 	// Update initial greeting if user switches language and hasn't started chatting
 	$effect(() => {
@@ -40,14 +62,14 @@
 		'🚀 Proyek Unggulan',
 		'🛠️ Tech Stack & Keahlian',
 		'🏆 Prestasi & Sertifikasi',
-		'📞 Cara Menghubungi Hisyam'
+		'📞 Kontak Hisyam'
 	];
 
 	const quickPromptsEn = [
 		'🚀 Featured Projects',
 		'🛠️ Tech Stack & Skills',
-		'🏆 Awards & Certifications',
-		'📞 How to Contact Hisyam'
+		'🏆 Awards & Certs',
+		'📞 Contact Hisyam'
 	];
 
 	const quickPrompts = $derived($currentLang === 'id' ? quickPromptsId : quickPromptsEn);
@@ -87,6 +109,11 @@
 	}
 
 	function resetChat() {
+		if (typeof window !== 'undefined') {
+			try {
+				localStorage.removeItem(STORAGE_KEY);
+			} catch {}
+		}
 		messages = [
 			{
 				role: 'model',
@@ -98,7 +125,7 @@
 
 	async function sendMessage(textToSend?: string) {
 		const text = (textToSend ?? inputMessage).trim();
-		if (!text || isLoading) return;
+		if (!text || isLoading || isCooldown) return;
 
 		inputMessage = '';
 		messages.push({
@@ -106,6 +133,7 @@
 			text,
 			time: getTimestamp()
 		});
+		saveMessages(messages);
 
 		isLoading = true;
 		await scrollToBottom();
@@ -117,7 +145,8 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					messages: messages.map((m) => ({ role: m.role, text: m.text }))
+					messages: messages.map((m) => ({ role: m.role, text: m.text })),
+					lang: $currentLang
 				})
 			});
 
@@ -125,7 +154,7 @@
 			const replyText =
 				data.reply ||
 				($currentLang === 'id'
-					? 'Maaf, terjadi kesalahan saat menerima respon.'
+					? 'Maaf, terjadi kendala saat menerima respon.'
 					: 'Sorry, an error occurred while receiving the response.');
 
 			messages.push({
@@ -133,18 +162,24 @@
 				text: replyText,
 				time: getTimestamp()
 			});
+			saveMessages(messages);
 		} catch (err) {
 			console.error('Chat error:', err);
 			messages.push({
 				role: 'model',
 				text:
 					$currentLang === 'id'
-						? 'Maaf, jaringan bermasalah. Pastikan koneksi internet Anda aktif dan coba lagi.'
-						: 'Network error. Please check your internet connection and try again.',
+						? 'Maaf, jaringan bermasalah. Coba sesaat lagi.'
+						: 'Network error. Please try again shortly.',
 				time: getTimestamp()
 			});
+			saveMessages(messages);
 		} finally {
 			isLoading = false;
+			isCooldown = true;
+			setTimeout(() => {
+				isCooldown = false;
+			}, 1500); // 1.5s cooldown anti-spam
 			await scrollToBottom();
 		}
 	}
@@ -164,7 +199,7 @@
 	<button
 		type="button"
 		onclick={toggleChat}
-		aria-label={isOpen ? 'Tutup Hisyam AI' : 'Buka Hisyam AI'}
+		aria-label={isOpen ? ($currentLang === 'id' ? 'Tutup Hisyam AI' : 'Close Hisyam AI') : ($currentLang === 'id' ? 'Buka Hisyam AI' : 'Open Hisyam AI')}
 		class="group relative flex items-center gap-2.5 rounded-xs border-2 border-border bg-accent px-3.5 py-2.5 font-mono text-xs font-bold text-accent-foreground shadow-neo transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-none active:translate-x-0.5 active:translate-y-0.5 sm:px-4 sm:py-3 sm:text-sm"
 	>
 		<!-- Sparkle / Robot Icon -->
@@ -187,7 +222,7 @@
 		data-lenis-prevent
 		role="dialog"
 		aria-label="Hisyam AI Chatbot"
-		class="fixed right-3 bottom-18 z-50 flex h-[500px] max-h-[80vh] w-[calc(100vw-1.5rem)] max-w-[390px] flex-col rounded-xs border-2 border-border bg-background shadow-neo animate-in fade-in zoom-in-95 duration-150 sm:right-6 sm:bottom-22 sm:h-[540px] sm:max-h-[85vh] sm:w-[410px]"
+		class="fixed right-3 bottom-18 z-50 flex h-[490px] max-h-[80vh] w-[calc(100vw-1.5rem)] max-w-[390px] flex-col rounded-xs border-2 border-border bg-background shadow-neo animate-in fade-in zoom-in-95 duration-150 sm:right-6 sm:bottom-22 sm:h-[530px] sm:max-h-[85vh] sm:w-[410px]"
 	>
 		<!-- Chat Header (Neobrutalism Orange) -->
 		<div class="flex items-center justify-between border-b-2 border-border bg-accent px-4 py-3 text-accent-foreground">
@@ -200,7 +235,9 @@
 						<span class="font-mono text-sm font-black tracking-wider uppercase">Hisyam'AI</span>
 						<span class="inline-block size-2 rounded-full bg-emerald-500"></span>
 					</div>
-					<span class="font-mono text-[10px] opacity-90">Gemini Powered • Free Tier</span>
+					<span class="font-mono text-[10px] opacity-90">
+						{$currentLang === 'id' ? 'Online • Cepat & Ringkas' : 'Online • Fast & Concise'}
+					</span>
 				</div>
 			</div>
 
@@ -209,8 +246,8 @@
 				<button
 					type="button"
 					onclick={resetChat}
-					title="Reset Obrolan"
-					aria-label="Reset Obrolan"
+					title={$currentLang === 'id' ? 'Reset Obrolan' : 'Reset Chat'}
+					aria-label={$currentLang === 'id' ? 'Reset Obrolan' : 'Reset Chat'}
 					class="flex size-7 items-center justify-center rounded-xs border-2 border-border bg-background/80 text-foreground transition-all hover:bg-background active:translate-x-0.5 active:translate-y-0.5"
 				>
 					<Icon icon="mdi:refresh" class="size-4" />
@@ -220,8 +257,8 @@
 				<button
 					type="button"
 					onclick={toggleChat}
-					title="Tutup Chat"
-					aria-label="Tutup Chat"
+					title={$currentLang === 'id' ? 'Tutup Chat' : 'Close Chat'}
+					aria-label={$currentLang === 'id' ? 'Tutup Chat' : 'Close Chat'}
 					class="flex size-7 items-center justify-center rounded-xs border-2 border-border bg-background/80 text-foreground transition-all hover:bg-background active:translate-x-0.5 active:translate-y-0.5"
 				>
 					<Icon icon="mdi:close" class="size-4" />
@@ -234,8 +271,9 @@
 			{#each quickPrompts as prompt}
 				<button
 					type="button"
+					disabled={isLoading || isCooldown}
 					onclick={() => sendMessage(prompt)}
-					class="shrink-0 rounded-xs border border-border bg-card px-2.5 py-1 font-mono text-[11px] font-medium transition-all hover:bg-accent/20 hover:border-accent active:translate-y-0.5"
+					class="shrink-0 rounded-xs border border-border bg-card px-2.5 py-1 font-mono text-[11px] font-medium transition-all hover:bg-accent/20 hover:border-accent active:translate-y-0.5 disabled:opacity-50"
 				>
 					{prompt}
 				</button>
@@ -316,14 +354,15 @@
 				bind:value={inputMessage}
 				onkeydown={handleKeydown}
 				type="text"
+				maxlength="250"
 				placeholder={$currentLang === 'id' ? 'Tanya seputar Hisyam...' : 'Ask about Hisyam...'}
-				disabled={isLoading}
+				disabled={isLoading || isCooldown}
 				class="flex-1 rounded-xs border-2 border-border bg-background px-3 py-2 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none disabled:opacity-50 sm:text-sm"
 			/>
 			<button
 				type="submit"
-				disabled={!inputMessage.trim() || isLoading}
-				aria-label="Kirim Pesan"
+				disabled={!inputMessage.trim() || isLoading || isCooldown}
+				aria-label={$currentLang === 'id' ? 'Kirim Pesan' : 'Send Message'}
 				class="flex size-9 sm:size-10 shrink-0 items-center justify-center rounded-xs border-2 border-border bg-secondary text-secondary-foreground shadow-xs transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0"
 			>
 				<Icon icon="mdi:send" class="size-4" />

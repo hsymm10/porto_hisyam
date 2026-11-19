@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { HISYAM_AI_SYSTEM_INSTRUCTION } from '#lib/server/hisyamKnowledge.js';
+import { getHisyamAiSystemInstruction } from '#lib/server/hisyamKnowledge.js';
 
 interface IncomingMessage {
 	role: 'user' | 'model';
@@ -10,15 +10,25 @@ interface IncomingMessage {
 // In-memory rate limiting map: ip -> array of request timestamps (last 60s)
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 12;
+const MAX_REQUESTS_PER_WINDOW = 8;
+const MIN_INTERVAL_MS = 1500; // Minimum 1.5 seconds between messages
 
-function isRateLimited(ip: string): boolean {
+function checkRateLimit(ip: string): { limited: boolean; reason?: 'spam' | 'quota' } {
 	const now = Date.now();
 	const windowStart = now - RATE_LIMIT_WINDOW_MS;
 	const timestamps = (rateLimitMap.get(ip) || []).filter((t) => t > windowStart);
 
+	// Check if user is clicking too fast (< 1.5s interval)
+	if (timestamps.length > 0) {
+		const lastRequestTime = timestamps[timestamps.length - 1];
+		if (now - lastRequestTime < MIN_INTERVAL_MS) {
+			return { limited: true, reason: 'spam' };
+		}
+	}
+
+	// Check if user exceeded 8 requests per minute
 	if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-		return true;
+		return { limited: true, reason: 'quota' };
 	}
 
 	timestamps.push(now);
@@ -33,34 +43,48 @@ function isRateLimited(ip: string): boolean {
 		}
 	}
 
-	return false;
+	return { limited: false };
 }
 
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	try {
 		const clientIp = getClientAddress ? getClientAddress() : 'unknown';
-		if (isRateLimited(clientIp)) {
+
+		const body = (await request.json().catch(() => null)) as {
+			messages?: IncomingMessage[];
+			lang?: 'id' | 'en';
+		} | null;
+
+		const lang = body?.lang === 'en' ? 'en' : 'id';
+
+		const rateCheck = checkRateLimit(clientIp);
+		if (rateCheck.limited) {
+			const reply =
+				rateCheck.reason === 'spam'
+					? lang === 'en'
+						? 'Please wait a moment before sending another message.'
+						: 'Mohon tunggu sebentar sebelum mengirim pesan lagi ya.'
+					: lang === 'en'
+						? 'Rate limit exceeded (max 8 messages/min). Please try again in a minute.'
+						: 'Batas pesan tercapai (maks 8 pesan/menit). Silakan tunggu 1 menit.';
+
 			return json(
 				{
-					error: 'Terlalu banyak permintaan dalam waktu singkat. Silakan tunggu beberapa saat.',
-					reply: 'Mohon tunggu sebentar ya, Anda mengirim terlalu banyak pesan dalam satu menit.'
+					error: 'Rate limit exceeded',
+					reply
 				},
 				{ status: 429 }
 			);
 		}
 
-		const body = (await request.json().catch(() => null)) as {
-			messages?: IncomingMessage[];
-		} | null;
-
 		if (!body || !Array.isArray(body.messages) || body.messages.length === 0) {
 			return json({ error: 'Format pesan tidak valid' }, { status: 400 });
 		}
 
-		// Keep only the last 6 messages to keep context concise and within tokens
-		const recentMessages = body.messages.slice(-6).map((msg) => ({
+		// Keep only the last 4 messages to keep context concise, fast, and token-efficient
+		const recentMessages = body.messages.slice(-4).map((msg) => ({
 			role: msg.role === 'user' ? 'user' : 'model',
-			parts: [{ text: String(msg.text || '').trim().slice(0, 1000) }]
+			parts: [{ text: String(msg.text || '').trim().slice(0, 250) }]
 		}));
 
 		const lastMsg = recentMessages[recentMessages.length - 1];
@@ -80,7 +104,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		if (!apiKey || apiKey.trim() === '' || apiKey.includes('your_gemini_api_key_here')) {
 			return json({
 				reply:
-					"Halo! Saya Hisyam'AI. Asisten ini sudah siap beroperasi, namun GEMINI_API_KEY belum dikonfigurasi di file .env server. Silakan masukkan API key Anda di .env untuk mulai berbincang dengan AI!",
+					lang === 'en'
+						? "Hello! I am Hisyam'AI. The assistant is ready, but GEMINI_API_KEY is not configured on the server yet."
+						: "Halo! Saya Hisyam'AI. Asisten ini sudah siap beroperasi, namun GEMINI_API_KEY belum dikonfigurasi di file .env server.",
 				configured: false
 			});
 		}
@@ -92,14 +118,17 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 		const payload = {
 			system_instruction: {
-				parts: [{ text: HISYAM_AI_SYSTEM_INSTRUCTION }]
+				parts: [{ text: getHisyamAiSystemInstruction(lang) }]
 			},
 			contents: recentMessages,
 			generationConfig: {
-				temperature: 0.4,
-				topK: 40,
-				topP: 0.95,
-				maxOutputTokens: 600
+				temperature: 0.2, // Low temperature for high speed and direct factual answers
+				topK: 20,
+				topP: 0.8,
+				maxOutputTokens: 350, // Concise responses for fast speed and saving token quota
+				thinkingConfig: {
+					thinkingBudget: 0 // Disable thinking mode for sub-second latency and zero wasted tokens
+				}
 			}
 		};
 
@@ -110,14 +139,33 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		for (const currentModel of candidateModels) {
 			const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey.trim()}`;
 			try {
-				const res = await fetch(endpoint, {
+				let res = await fetch(endpoint, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					signal: AbortSignal.timeout(8000),
+					signal: AbortSignal.timeout(12000),
 					body: JSON.stringify(payload)
 				});
+
+				// If 400 due to thinkingConfig unsupported on older model schemas, retry without thinkingConfig
+				if (res.status === 400 && payload.generationConfig?.thinkingConfig) {
+					const simplifiedPayload = {
+						...payload,
+						generationConfig: {
+							temperature: payload.generationConfig.temperature,
+							maxOutputTokens: payload.generationConfig.maxOutputTokens
+						}
+					};
+					res = await fetch(endpoint, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						signal: AbortSignal.timeout(12000),
+						body: JSON.stringify(simplifiedPayload)
+					});
+				}
 
 				if (res.ok) {
 					const data = await res.json();
@@ -128,7 +176,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 				} else {
 					lastErrorStatus = res.status;
 					lastErrorText = await res.text();
-					console.warn(`Model ${currentModel} failed with status ${res.status}`);
+					console.warn(`Model ${currentModel} failed with status ${res.status}: ${lastErrorText.slice(0, 100)}`);
 				}
 			} catch (e) {
 				console.warn(`Fetch to ${currentModel} failed:`, e);
@@ -136,11 +184,21 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		}
 
 		if (!candidate?.content?.parts?.[0]?.text) {
-			let userFacingError = 'Maaf, terjadi kendala saat menghubungi layanan AI. Coba sesaat lagi.';
+			let userFacingError =
+				lang === 'en'
+					? 'Sorry, unable to contact AI service right now. Please try again later.'
+					: 'Maaf, terjadi kendala saat menghubungi layanan AI. Coba sesaat lagi.';
+
 			if (lastErrorStatus === 429) {
-				userFacingError = 'Kuota gratis API sedang padat. Silakan tunggu beberapa detik dan coba lagi.';
+				userFacingError =
+					lang === 'en'
+						? 'AI quota is currently busy. Please wait a few seconds and try again.'
+						: 'Kuota gratis API sedang padat. Silakan tunggu beberapa detik dan coba lagi.';
 			} else if (lastErrorStatus === 400 || lastErrorStatus === 403) {
-				userFacingError = 'API key Gemini tidak valid atau izin belum diaktifkan di Google AI Studio.';
+				userFacingError =
+					lang === 'en'
+						? 'Gemini API key is invalid or not enabled in Google AI Studio.'
+						: 'API key Gemini tidak valid atau izin belum diaktifkan di Google AI Studio.';
 			}
 
 			return json(
@@ -154,7 +212,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 		const aiReply =
 			candidate.content.parts[0].text.trim() ||
-			'Maaf, saya tidak dapat merumuskan respon saat ini.';
+			(lang === 'en'
+				? 'Sorry, I could not generate a response right now.'
+				: 'Maaf, saya tidak dapat merumuskan respon saat ini.');
 
 		return json({
 			reply: aiReply,
