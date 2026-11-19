@@ -118,7 +118,7 @@
 	<meta property="og:image" content="https://hisyamsayyid.my.id/images/og-image.png" />
 	<meta property="og:image:secure_url" content="https://hisyamsayyid.my.id/images/og-image.png" />
 	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="901" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:alt" content="Hisyam Sayyid Alzam Logo" />
 
