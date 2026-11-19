@@ -1222,17 +1222,17 @@
 	<!-- Full-Screen Sticky Header with max-w-7xl centered content -->
 	<header class="sticky top-0 z-40 w-full border-b-2 border-border bg-card">
 		<div
-			class="mx-auto flex w-full max-w-7xl items-center justify-between gap-2.5 px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3.5 md:px-8"
+			class="mx-auto flex w-full max-w-7xl items-center justify-between gap-2 px-4 py-2 sm:gap-3 sm:px-5 sm:py-2.5 md:gap-4 md:px-6 lg:gap-6 lg:px-8 lg:py-3.5"
 		>
 			<a
 				href="#top"
 				class="inline-flex shrink-0 items-center transition-transform hover:-translate-y-0.5 active:translate-y-0"
 			>
-				<Badge variant="lime" class="gap-2 px-2 py-1 text-xs sm:px-2.5 sm:py-1.5">
+				<Badge variant="lime" class="gap-1.5 px-2 py-1 text-xs sm:gap-2 sm:px-2.5 sm:py-1.5">
 					<img
 						src={logoHisyam}
 						alt="Logo Hisyam"
-						class="size-5 rounded-none border border-border object-cover sm:size-6"
+						class="size-5 rounded-none border border-border object-cover sm:size-5.5 lg:size-6"
 					/>
 					<span class="font-mono font-bold tracking-wider">hszamm__</span>
 				</Badge>
@@ -1240,12 +1240,12 @@
 
 			<nav
 				aria-label="Primary"
-				class="hidden items-center gap-7 font-mono text-xs font-bold tracking-wider uppercase md:flex"
+				class="hidden items-center font-mono font-bold tracking-wider uppercase md:flex md:gap-3 md:text-[0.6875rem] lg:gap-5 lg:text-xs xl:gap-7"
 			>
 				{#each NAV_LINKS as item (item.id)}
 					<a
 						href={`#${item.id}`}
-						class="underline-offset-4 transition-colors hover:underline {activeSection === item.id
+						class="whitespace-nowrap underline-offset-4 transition-colors hover:underline {activeSection === item.id
 							? 'text-[var(--retro-green-text)] underline decoration-[var(--retro-tangerine)] decoration-2'
 							: ''}"
 					>
@@ -1254,7 +1254,7 @@
 				{/each}
 			</nav>
 
-			<div class="flex items-center gap-1.5 sm:gap-2.5">
+			<div class="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-2.5">
 				<!-- Language Switcher Toggle -->
 				<button
 					type="button"
@@ -1309,7 +1309,16 @@
 				>
 					<Mail class="size-4" />
 				</Button>
-				<Button href="#contact" variant="secondary" class="hidden sm:inline-flex">
+				<Button
+					href="#contact"
+					variant="secondary"
+					size="icon"
+					class="hidden sm:inline-flex lg:hidden"
+					aria-label={t[$currentLang].nav.contactMe}
+				>
+					<Mail class="size-4" />
+				</Button>
+				<Button href="#contact" variant="secondary" class="hidden lg:inline-flex">
 					{t[$currentLang].nav.contactMe}
 					<ArrowRight class="size-3.5" />
 				</Button>
