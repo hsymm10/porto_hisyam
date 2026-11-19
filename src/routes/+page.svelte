@@ -21,6 +21,7 @@
 	import imgKedaiMieMamaw from '#lib/assets/tampilan_web/Website Kedai Mie Mamaw.png';
 	import imgUicPress from '#lib/assets/tampilan_web/Website UIC Press Universitas Ibnu Chaldun.png';
 	import CraftStory from '#lib/components/CraftStory.svelte';
+	import HisyamAI from '#lib/components/HisyamAI.svelte';
 	import Lanyard from '#lib/components/Lanyard.svelte';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
@@ -2555,6 +2556,8 @@
 		</div>
 	{/if}
 </dialog>
+
+<HisyamAI />
 
 <style>
 	dialog:modal {
