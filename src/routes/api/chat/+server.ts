@@ -111,9 +111,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 			});
 		}
 
-		const preferredModel = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+		const preferredModel = (process.env.GEMINI_MODEL || 'gemini-flash-lite-latest').replace(/['"]/g, '').trim();
 		const candidateModels = Array.from(
-			new Set([preferredModel, 'gemini-flash-latest', 'gemini-3.5-flash', 'gemini-flash-lite-latest'])
+			new Set([preferredModel, 'gemini-flash-lite-latest', 'gemini-3.1-flash-lite', 'gemini-3.5-flash-lite'])
 		);
 
 		const payload = {
@@ -125,10 +125,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 				temperature: 0.2, // Low temperature for high speed and direct factual answers
 				topK: 20,
 				topP: 0.8,
-				maxOutputTokens: 350, // Concise responses for fast speed and saving token quota
-				thinkingConfig: {
-					thinkingBudget: 0 // Disable thinking mode for sub-second latency and zero wasted tokens
-				}
+				maxOutputTokens: 200 // Concise responses for sub-second speed and saving token quota
 			}
 		};
 
@@ -139,33 +136,14 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		for (const currentModel of candidateModels) {
 			const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey.trim()}`;
 			try {
-				let res = await fetch(endpoint, {
+				const res = await fetch(endpoint, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					signal: AbortSignal.timeout(12000),
+					signal: AbortSignal.timeout(8000),
 					body: JSON.stringify(payload)
 				});
-
-				// If 400 due to thinkingConfig unsupported on older model schemas, retry without thinkingConfig
-				if (res.status === 400 && payload.generationConfig?.thinkingConfig) {
-					const simplifiedPayload = {
-						...payload,
-						generationConfig: {
-							temperature: payload.generationConfig.temperature,
-							maxOutputTokens: payload.generationConfig.maxOutputTokens
-						}
-					};
-					res = await fetch(endpoint, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						signal: AbortSignal.timeout(12000),
-						body: JSON.stringify(simplifiedPayload)
-					});
-				}
 
 				if (res.ok) {
 					const data = await res.json();
