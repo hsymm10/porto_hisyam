@@ -14,8 +14,6 @@
 		Zap
 	} from '@lucide/svelte';
 	import { currentLang, t } from '#lib/i18n.js';
-	import { cubicOut } from 'svelte/easing';
-	import { fade, fly } from 'svelte/transition';
 
 	type Principle = {
 		no: string;
@@ -110,29 +108,30 @@
 	const SPRINT_ITEMS = $derived(t[$currentLang].craft.p4.sprint);
 
 	let sectionEl: HTMLElement | undefined = $state();
+	let trackEl: HTMLElement | undefined = $state();
+	let frameEl: HTMLElement | undefined = $state();
 	let canvasEl: HTMLElement | undefined = $state();
+
 	let active = $state(0);
 	let scrollProgress = $state(0);
-	let supportsScrollTimeline = $state(false);
 	let reducedMotion = $state(false);
 	let motionDemoPaused = $state(false);
+	let st: ScrollTrigger | null = null;
 
 	const activePrinciple = $derived(PRINCIPLES[active]);
-	const ActiveIcon = $derived(activePrinciple.icon);
 
-	function jumpToStory(index: number) {
-		if (!sectionEl) {
-			active = index;
-			return;
-		}
-		const rect = sectionEl.getBoundingClientRect();
-		const sectionTop = window.scrollY + rect.top;
-		const maxScroll = Math.max(1, rect.height - window.innerHeight);
-		const sliceRatio = (index + 0.15) / PRINCIPLES.length;
-		const targetY = sectionTop + maxScroll * Math.min(0.99, Math.max(0, sliceRatio));
+	function jumpToStory(i: number) {
+		active = i;
+		if (!st) return;
+		const N = PRINCIPLES.length;
+		const targetY = st.start + (st.end - st.start) * ((i + 0.5) / N);
 		const lenis = getLenisInstance();
 		if (lenis) {
-			lenis.scrollTo(targetY, { immediate: reducedMotion });
+			lenis.scrollTo(targetY, {
+				duration: 1.1,
+				easing: (t: number) => 1 - Math.pow(1 - t, 3),
+				immediate: reducedMotion
+			});
 		} else {
 			window.scrollTo({
 				top: targetY,
@@ -145,8 +144,18 @@
 		motionDemoPaused = !motionDemoPaused;
 	}
 
+	// Re-sync ScrollTrigger when language changes
 	$effect(() => {
-		if (!sectionEl) return;
+		void $currentLang;
+		if (typeof window !== 'undefined') {
+			requestAnimationFrame(() => {
+				ScrollTrigger.refresh();
+			});
+		}
+	});
+
+	$effect(() => {
+		if (!trackEl || !frameEl) return;
 		registerGsap();
 
 		const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -156,26 +165,64 @@
 		};
 		motionQuery.addEventListener('change', handleMotionChange);
 
-		supportsScrollTimeline = CSS.supports(
-			'(animation-timeline: scroll()) and (animation-range: 0% 100%)'
-		);
+		// Accurately track header height via ResizeObserver
+		let headerObserver: ResizeObserver | null = null;
+		const headerEl = document.querySelector('header');
+		if (headerEl) {
+			headerObserver = new ResizeObserver((entries) => {
+				for (const entry of entries) {
+					const h = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
+					if (h > 0) {
+						document.documentElement.style.setProperty('--nav-h', `${Math.round(h)}px`);
+					}
+				}
+				ScrollTrigger.refresh();
+			});
+			headerObserver.observe(headerEl);
+		}
+
+		const handleRefresh = () => {
+			ScrollTrigger.refresh();
+		};
+
+		window.addEventListener('resize', handleRefresh);
+		window.addEventListener('orientationchange', handleRefresh);
+		document.fonts?.ready.then(handleRefresh);
+
+		const currentTrack = trackEl;
+		const currentFrame = frameEl;
 
 		const ctx = gsap.context(() => {
-			ScrollTrigger.create({
-				trigger: sectionEl,
-				start: 'top top',
-				end: 'bottom bottom',
+			st = ScrollTrigger.create({
+				trigger: currentTrack,
+				start: () => `top top+=${parseFloat(getComputedStyle(currentFrame).top) || 68}`,
+				end: () => `+=${currentTrack.offsetHeight - currentFrame.offsetHeight}`,
+				invalidateOnRefresh: true,
 				onUpdate: (self) => {
 					scrollProgress = self.progress;
-					const nextActive = Math.min(
-						PRINCIPLES.length - 1,
-						Math.max(0, Math.floor(self.progress * PRINCIPLES.length))
-					);
-					if (nextActive !== active) {
-						active = nextActive;
+					const N = PRINCIPLES.length;
+					const clamped = Math.max(0, Math.min(0.9999, self.progress));
+					const raw = clamped * N;
+					const base = Math.floor(raw);
+					const frac = raw - base;
+
+					// 2.5% hysteresis prevents flickering at story boundaries
+					const h = 0.025;
+					if (base > active && frac >= h) {
+						active = Math.min(N - 1, base);
+					} else if (base < active && 1 - frac >= h) {
+						active = Math.max(0, base);
 					}
 				}
 			});
+
+			if (st) {
+				scrollProgress = st.progress;
+				active = Math.min(
+					PRINCIPLES.length - 1,
+					Math.max(0, Math.floor(st.progress * PRINCIPLES.length))
+				);
+			}
 		}, sectionEl);
 
 		const mm = gsap.matchMedia(sectionEl);
@@ -211,7 +258,7 @@
 				x: -14,
 				ease: 'none',
 				scrollTrigger: {
-					trigger: sectionEl,
+					trigger: currentTrack,
 					start: 'top bottom',
 					end: 'bottom top',
 					scrub: true
@@ -221,44 +268,23 @@
 
 		return () => {
 			motionQuery.removeEventListener('change', handleMotionChange);
+			headerObserver?.disconnect();
+			window.removeEventListener('resize', handleRefresh);
+			window.removeEventListener('orientationchange', handleRefresh);
 			mm.revert();
 			ctx.revert();
+			st = null;
 		};
 	});
 
+	// Trigger counter when Performance story becomes active
 	$effect(() => {
 		const currentActive = active;
 		const container = canvasEl;
-		if (reducedMotion || !container || currentActive < 0) return;
+		if (reducedMotion || !container || currentActive !== 2) return;
 
 		registerGsap();
 		const ctx = gsap.context(() => {
-			// Animasi baris visual arsitektur
-			const archRows = container.querySelectorAll('[data-craft-arch-row]');
-			if (archRows.length) {
-				gsap.from(archRows, {
-					x: -18,
-					opacity: 0,
-					duration: 0.42,
-					stagger: 0.1,
-					ease: 'power2.out',
-					clearProps: 'transform'
-				});
-			}
-
-			// Animasi kartu visual UI/UX
-			const uiuxCards = container.querySelectorAll('[data-craft-uiux-card]');
-			if (uiuxCards.length) {
-				gsap.from(uiuxCards, {
-					y: 16,
-					opacity: 0,
-					duration: 0.45,
-					stagger: 0.08,
-					ease: 'power3.out',
-					clearProps: 'transform'
-				});
-			}
-
 			const scoreEl = container.querySelector('[data-craft-score]');
 			if (scoreEl) {
 				const counter = { value: 0 };
@@ -271,386 +297,418 @@
 					}
 				});
 			}
-
-			const perfRows = container.querySelectorAll('[data-craft-perf-row]');
-			if (perfRows.length) {
-				gsap.from(perfRows, {
-					x: 18,
-					opacity: 0,
-					duration: 0.4,
-					stagger: 0.08,
-					ease: 'power2.out',
-					clearProps: 'transform'
-				});
-			}
-
-			const motionMeta = container.querySelector('[data-craft-motion-meta]');
-			if (motionMeta) {
-				gsap.from(motionMeta, {
-					y: 12,
-					opacity: 0,
-					duration: 0.42,
-					delay: 0.15,
-					ease: 'power2.out',
-					clearProps: 'transform'
-				});
-			}
-
-			// Animasi baris visual task manajemen proyek
-			const sprintRows = container.querySelectorAll('[data-craft-sprint-row]');
-			if (sprintRows.length) {
-				gsap.from(sprintRows, {
-					x: 16,
-					opacity: 0,
-					duration: 0.4,
-					stagger: 0.08,
-					ease: 'power2.out',
-					clearProps: 'transform'
-				});
-			}
 		}, container);
 
 		return () => ctx.revert();
 	});
 </script>
 
+<!-- Section Container with standard vertical spacing matching #projects, #experience, #gallery -->
 <section
 	id="craft"
 	bind:this={sectionEl}
-	class="craft-section relative h-[440vh] w-full border-b-2 border-border bg-background"
+	class="relative w-full border-b-2 border-border bg-background py-10 sm:py-16 md:py-20"
 >
-	<div class="sticky top-16 flex min-h-[calc(100svh-4rem)] items-center py-8 sm:py-12">
-		<div class="mx-auto w-full max-w-7xl px-6 sm:px-8">
-			<div data-craft-header class="mb-5 flex flex-wrap items-center justify-between gap-4">
-				<Badge variant="lime">{t[$currentLang].craft.badge}</Badge>
-				<span data-craft-hint class="font-mono text-xs font-bold text-muted-foreground uppercase">
-					{t[$currentLang].craft.scrollHint}
-				</span>
-			</div>
-
-			<!-- Storybook Window (full max-w-7xl width + shadow-neo matching all sections) -->
-			<div
-				data-craft-window
-				class="w-full overflow-hidden border-2 border-border bg-card shadow-neo"
-			>
-				<!-- Toolbar -->
+	<!-- Scroll Track with CSS-driven height -->
+	<div bind:this={trackEl} class="craft-track relative w-full" style="--n: {PRINCIPLES.length};">
+		<!-- Sticky Frame: positioned below sticky navbar with dedicated gap -->
+		<div
+			bind:this={frameEl}
+			class="craft-frame sticky z-20 w-full"
+			style="top: calc(var(--nav-h) + var(--nav-gap));"
+		>
+			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8">
+				<!-- Header (Badge + Hint): left-aligned, flex-wrap -->
 				<div
-					class="flex items-center gap-3 border-b-2 border-border bg-neo-surface-subtle px-5 py-3.5 sm:px-6"
+					data-craft-header
+					class="mb-2.5 flex flex-wrap items-center justify-between gap-2 sm:mb-4 sm:gap-4"
 				>
-					<span class="flex gap-1.5" aria-hidden="true">
-						<span class="size-3 rounded-full border-2 border-border bg-[#fe7a25]"></span>
-						<span class="size-3 rounded-full border-2 border-border bg-[#e9e8ca]"></span>
-						<span class="size-3 rounded-full border-2 border-border bg-[#006732]"></span>
-					</span>
+					<Badge variant="lime" class="text-[0.6875rem] sm:text-xs">
+						{t[$currentLang].craft.badge}
+					</Badge>
 					<span
-						class="hidden truncate font-mono text-xs font-medium text-muted-foreground md:block"
+						data-craft-hint
+						class="font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase sm:text-xs"
 					>
-						{$currentLang === 'id' ? 'proses' : 'craft'} / {activePrinciple.kicker} &rsaquo; {$currentLang ===
-						'id'
-							? 'Standar'
-							: 'Default'}
-					</span>
-					<span class="ml-auto font-mono text-xs font-bold text-muted-foreground">
-						{activePrinciple.no}/0{PRINCIPLES.length}
+						{t[$currentLang].craft.scrollHint}
 					</span>
 				</div>
 
-				<!-- Scroll Progress Track -->
-				<div aria-hidden="true" class="h-1.5 w-full border-b-2 border-border bg-neo-surface-subtle">
+				<!-- Storybook Window (constant height across all stories, fits inside viewport) -->
+				<div
+					data-craft-window
+					class="w-full overflow-hidden border-2 border-border bg-card shadow-neo"
+				>
+					<!-- Toolbar -->
 					<div
-						class="craft-progress h-full w-full origin-left bg-secondary"
-						style:transform={!supportsScrollTimeline || reducedMotion
-							? `scaleX(${scrollProgress})`
-							: undefined}
-					></div>
-				</div>
-
-				<div class="grid md:grid-cols-[220px_1fr] lg:grid-cols-[260px_1fr]">
-					<!-- Sidebar (Tablet & Desktop) -->
-					<aside class="hidden border-r-2 border-border bg-neo-surface-subtle p-4 sm:p-5 md:block">
-						<span
-							class="px-2 font-mono text-[0.6875rem] font-bold tracking-wider text-muted-foreground uppercase"
-						>
-							{t[$currentLang].craft.storiesLabel}
+						class="flex items-center gap-2 border-b-2 border-border bg-neo-surface-subtle px-3 py-2 sm:gap-2.5 sm:px-6 sm:py-3"
+					>
+						<span class="flex gap-1.5" aria-hidden="true">
+							<span class="size-2.5 rounded-full border-2 border-border bg-[#fe7a25] sm:size-3"
+							></span>
+							<span class="size-2.5 rounded-full border-2 border-border bg-[#e9e8ca] sm:size-3"
+							></span>
+							<span class="size-2.5 rounded-full border-2 border-border bg-[#006732] sm:size-3"
+							></span>
 						</span>
-						<div class="mt-3 space-y-1.5">
+						<span
+							class="hidden truncate font-mono text-xs font-medium text-muted-foreground md:block"
+						>
+							{$currentLang === 'id' ? 'proses' : 'craft'} / {activePrinciple.kicker} &rsaquo; {$currentLang ===
+							'id'
+								? 'Standar'
+								: 'Default'}
+						</span>
+						<span class="ml-auto font-mono text-xs font-bold text-muted-foreground">
+							{activePrinciple.no}/0{PRINCIPLES.length}
+						</span>
+					</div>
+
+					<!-- Scroll Progress Track: purely controlled by GSAP scrollProgress with smooth transition -->
+					<div
+						aria-hidden="true"
+						class="h-1.5 w-full border-b-2 border-border bg-neo-surface-subtle"
+					>
+						<div
+							class="h-full w-full origin-left bg-secondary transition-transform duration-[120ms] ease-linear will-change-transform"
+							style:transform={`scaleX(${scrollProgress})`}
+						></div>
+					</div>
+
+					<div class="grid md:grid-cols-[220px_1fr] lg:grid-cols-[260px_1fr]">
+						<!-- Sidebar (Tablet & Desktop) -->
+						<aside
+							class="hidden border-r-2 border-border bg-neo-surface-subtle p-4 sm:p-5 md:block"
+						>
+							<span
+								class="px-2 font-mono text-[0.6875rem] font-bold tracking-wider text-muted-foreground uppercase"
+							>
+								{t[$currentLang].craft.storiesLabel}
+							</span>
+							<div class="mt-3 space-y-1.5">
+								{#each PRINCIPLES as item, i (item.no)}
+									{@const isCurrent = i === active}
+									<button
+										type="button"
+										onclick={() => jumpToStory(i)}
+										aria-current={isCurrent ? 'step' : undefined}
+										class="flex w-full items-center gap-2.5 border-2 px-3 py-2 text-left transition-colors sm:py-2.5 {isCurrent
+											? 'border-border bg-card font-bold text-foreground shadow-neo-sm'
+											: 'border-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground'}"
+									>
+										<span
+											aria-hidden="true"
+											class="size-2.5 shrink-0 rounded-full border border-border"
+											style:background-color={item.accent}
+										></span>
+										<span class="font-mono text-xs uppercase">{item.kicker}</span>
+									</button>
+								{/each}
+							</div>
+						</aside>
+
+						<!-- Mobile Story Selector Tabs (2x2 Grid on Mobile, uniform min-h-9, wrapping safely) -->
+						<div
+							class="grid grid-cols-2 gap-1.5 border-b-2 border-border p-2 sm:gap-2 sm:p-2.5 md:hidden"
+						>
 							{#each PRINCIPLES as item, i (item.no)}
 								{@const isCurrent = i === active}
 								<button
 									type="button"
 									onclick={() => jumpToStory(i)}
 									aria-current={isCurrent ? 'step' : undefined}
-									class="flex w-full items-center gap-2.5 border-2 px-3 py-2.5 text-left transition-colors {isCurrent
-										? 'border-border bg-card font-bold text-foreground shadow-neo-sm'
-										: 'border-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground'}"
+									class="flex min-h-9 items-center justify-center border-2 px-2 py-1 text-center font-mono text-[0.6875rem] leading-tight font-bold uppercase transition-colors sm:text-xs {isCurrent
+										? 'border-border bg-foreground text-background shadow-neo-sm'
+										: 'border-border bg-card text-muted-foreground'}"
 								>
-									<span
-										aria-hidden="true"
-										class="size-2.5 shrink-0 rounded-full border border-border"
-										style:background-color={item.accent}
-									></span>
-									<span class="font-mono text-xs uppercase">{item.kicker}</span>
+									<span class="max-w-full text-center break-words">{item.kicker}</span>
 								</button>
 							{/each}
 						</div>
-					</aside>
 
-					<!-- Mobile Tabs -->
-					<div class="flex gap-2 overflow-x-auto border-b-2 border-border p-3 md:hidden">
-						{#each PRINCIPLES as item, i (item.no)}
-							{@const isCurrent = i === active}
-							<button
-								type="button"
-								onclick={() => jumpToStory(i)}
-								aria-current={isCurrent ? 'step' : undefined}
-								class="shrink-0 border-2 px-3 py-1.5 font-mono text-xs font-bold uppercase transition-colors {isCurrent
-									? 'border-border bg-foreground text-background shadow-neo-sm'
-									: 'border-border bg-card text-muted-foreground'}"
+						<!-- Main Column: Canvas + Meta -->
+						<div class="min-w-0">
+							<!-- Story Canvas: single grid cell where all 4 visual stories are stacked -->
+							<div
+								bind:this={canvasEl}
+								class="neo-grid-bg grid min-h-[200px] place-items-center p-3 sm:min-h-[260px] sm:p-5 md:min-h-[280px] md:p-6 [&>*]:col-start-1 [&>*]:row-start-1"
 							>
-								{item.kicker}
-							</button>
-						{/each}
-					</div>
-
-					<!-- Main Column: Canvas + Meta -->
-					<div class="min-w-0">
-						<!-- Story Canvas -->
-						<div
-							bind:this={canvasEl}
-							class="neo-grid-bg grid min-h-[280px] items-center justify-items-center p-6 sm:min-h-[340px] sm:p-10 [&>*]:col-start-1 [&>*]:row-start-1"
-						>
-							{#key active}
+								<!-- Story 0: Architecture (Uniform CSS grid card pattern) -->
 								<div
-									in:fly={{ y: 14, duration: reducedMotion ? 0 : 320, easing: cubicOut }}
-									out:fade={{ duration: reducedMotion ? 0 : 150 }}
-									class="flex w-full justify-center"
+									class="craft-slide flex h-auto w-full justify-center self-center {active === 0
+										? 'active'
+										: ''}"
+									aria-hidden={active !== 0}
+									inert={active !== 0 ? true : undefined}
 								>
-									{#if activePrinciple.visual === 'architecture'}
-										<!-- 01 Arsitektur Web: Full Stack Pipeline -->
-										<div class="w-full max-w-md space-y-3">
-											{#each ARCH_PIPELINE as item (item.step)}
-												<div
-													data-craft-arch-row
-													class="flex items-center gap-3.5 border-2 border-border bg-card p-3 shadow-neo-sm sm:gap-4 sm:p-3.5"
+									<div class="flex w-full max-w-[28rem] flex-col gap-2.5 sm:max-w-[32rem] sm:gap-3">
+										{#each ARCH_PIPELINE as item (item.step)}
+											<div
+												data-craft-arch-row
+												class="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border-2 border-border bg-card p-2.5 shadow-neo-sm sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:p-3"
+											>
+												<span
+													class="grid size-8 shrink-0 place-items-center border-2 border-border bg-secondary text-secondary-foreground sm:size-10"
 												>
-													<span
-														class="flex size-10 shrink-0 items-center justify-center border-2 border-border bg-secondary text-secondary-foreground"
+													<item.icon class="size-4 stroke-[2.2] sm:size-5" aria-hidden="true" />
+												</span>
+												<div class="min-w-0">
+													<p
+														class="font-display text-sm font-black break-words uppercase sm:text-base"
 													>
-														<item.icon class="size-5 stroke-[2.2]" aria-hidden="true" />
-													</span>
-													<div class="min-w-0 flex-1">
-														<div class="flex items-center gap-2">
-															<span class="font-mono text-xs font-bold text-muted-foreground">
-																#{item.step}
-															</span>
-															<span class="font-display text-sm font-bold uppercase sm:text-base">
-																{item.label}
-															</span>
-														</div>
-														<p class="truncate font-mono text-xs text-muted-foreground">
-															{item.desc}
-														</p>
-													</div>
-													<Badge variant="outline" class="hidden sm:inline-flex">{item.badge}</Badge
-													>
-												</div>
-											{/each}
-										</div>
-									{:else if activePrinciple.visual === 'uiux'}
-										<!-- 02 Desain UI/UX: Workflow Stages -->
-										<div class="grid w-full max-w-md gap-3 sm:grid-cols-3">
-											{#each UIUX_STAGES as stage (stage.no)}
-												<div
-													data-craft-uiux-card
-													class="flex flex-col justify-between border-2 border-border bg-card p-3.5 shadow-neo-sm"
-												>
-													<div>
-														<div class="flex items-center justify-between">
-															<span class="font-mono text-xs font-bold text-accent">
-																{t[$currentLang].craft.stageLabel}
-																{stage.no}
-															</span>
-															<Badge variant="outline" class="text-[0.6875rem]">{stage.tag}</Badge>
-														</div>
-														<h3 class="mt-2 font-display text-sm leading-snug font-bold uppercase">
-															{stage.name}
-														</h3>
-														<p
-															class="mt-1 font-mono text-[0.6875rem] leading-relaxed text-muted-foreground"
+														<span
+															class="font-mono text-xs font-bold text-muted-foreground sm:text-sm"
+															>#{item.step}</span
 														>
-															{stage.desc}
-														</p>
-													</div>
-												</div>
-											{/each}
-										</div>
-									{:else if activePrinciple.visual === 'performance'}
-										<!-- 03 Performa & Interaksi: Gauge + Motion Demo -->
-										<div class="flex w-full max-w-md flex-col gap-6 sm:flex-row sm:items-center">
-											<div class="relative mx-auto size-28 shrink-0 sm:size-32">
-												<svg viewBox="0 0 130 130" class="size-full" aria-hidden="true">
-													<circle
-														cx="65"
-														cy="65"
-														r="52"
-														fill="none"
-														stroke="var(--neo-surface-muted)"
-														stroke-width="11"
-													/>
-													<circle
-														cx="65"
-														cy="65"
-														r="52"
-														fill="none"
-														stroke="var(--retro-green-text)"
-														stroke-width="11"
-														stroke-linecap="square"
-														transform="rotate(-90 65 65)"
-														class="craft-ring-fill"
-													/>
-												</svg>
-												<div class="absolute inset-0 flex flex-col items-center justify-center">
-													<span
-														data-craft-score
-														class="font-display text-3xl leading-none font-black text-foreground sm:text-4xl"
+														{item.label}
+													</p>
+													<p
+														class="mt-0.5 font-mono text-[0.6875rem] break-words text-muted-foreground sm:text-xs"
 													>
-														99
-													</span>
-													<span
-														class="mt-0.5 font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
-													>
-														{t[$currentLang].craft.scoreLabel}
-													</span>
+														{item.desc}
+													</p>
 												</div>
+												<Badge
+													variant="outline"
+													class="col-start-2 max-w-full justify-self-start text-[0.625rem] whitespace-normal sm:col-start-3 sm:justify-self-end sm:text-[0.6875rem]"
+												>
+													{item.badge}
+												</Badge>
 											</div>
-											<div class="min-w-0 flex-1 space-y-2">
-												{#each PERF_METRICS as metric (metric.label)}
-													<div
-														data-craft-perf-row
-														class="flex items-center justify-between border-b-2 border-border pb-1"
-													>
-														<span class="font-mono text-xs font-bold text-muted-foreground">
-															{metric.label}
-														</span>
-														<span
-															class="font-display text-base font-black text-foreground sm:text-lg"
-														>
-															{metric.value}
-														</span>
-													</div>
-												{/each}
-												<div
-													data-craft-motion-meta
-													class="flex items-center justify-between gap-2 border-t border-dashed border-border pt-2"
-												>
-													<span
-														class="font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
-													>
-														{t[$currentLang].craft.motionEasing}
-													</span>
-													<button
-														type="button"
-														onclick={toggleMotionDemo}
-														aria-label={motionDemoPaused
-															? $currentLang === 'id'
-																? 'Jalankan demonstrasi gerak'
-																: 'Play motion demo'
-															: $currentLang === 'id'
-																? 'Jeda demonstrasi gerak'
-																: 'Pause motion demo'}
-														class="inline-flex items-center gap-1.5 border-2 border-border bg-card px-2 py-0.5 font-mono text-xs font-bold text-foreground shadow-neo-sm hover:bg-neo-surface-subtle"
-													>
-														{#if motionDemoPaused}
-															<Play class="size-3" aria-hidden="true" />
-															{t[$currentLang].craft.motionPlay}
-														{:else}
-															<Pause class="size-3" aria-hidden="true" />
-															60fps
-														{/if}
-													</button>
-												</div>
-											</div>
-										</div>
-									{:else}
-										<!-- 04 Manajemen Proyek: Sprint & Milestones -->
-										<div class="w-full max-w-md space-y-2.5">
-											{#each SPRINT_ITEMS as item (item.task)}
-												<div
-													data-craft-sprint-row
-													class="flex items-center justify-between gap-3 border-2 border-border bg-card px-3.5 py-2.5 shadow-neo-sm"
-												>
-													<div class="flex min-w-0 items-center gap-2.5">
-														<span
-															class="flex size-6 shrink-0 items-center justify-center border-2 border-border bg-primary text-primary-foreground"
-														>
-															<Check class="size-3.5 stroke-[3]" aria-hidden="true" />
-														</span>
-														<span
-															class="truncate font-display text-xs font-bold uppercase sm:text-sm"
-														>
-															{item.task}
-														</span>
-													</div>
-													<div class="flex shrink-0 items-center gap-2">
-														<span
-															class="hidden font-mono text-[0.6875rem] text-muted-foreground sm:inline"
-														>
-															{item.owner}
-														</span>
-														<Badge
-															variant={item.status === 'Completed' || item.status === 'Selesai'
-																? 'lime'
-																: 'outline'}
-															class="text-[0.6875rem]"
-														>
-															{item.status}
-														</Badge>
-													</div>
-												</div>
-											{/each}
-										</div>
-									{/if}
-								</div>
-							{/key}
-						</div>
-
-						<!-- Meta & Tags -->
-						<div
-							class="grid border-t-2 border-border bg-card p-6 sm:p-8 [&>*]:col-start-1 [&>*]:row-start-1"
-						>
-							{#key active}
-								<div
-									in:fly={{ y: 10, duration: reducedMotion ? 0 : 280, easing: cubicOut }}
-									out:fade={{ duration: reducedMotion ? 0 : 120 }}
-								>
-									<div class="flex items-center gap-2">
-										<ActiveIcon
-											class="size-4 shrink-0"
-											style={`color: ${activePrinciple.accent}`}
-											aria-hidden="true"
-										/>
-										<span
-											class="font-mono text-xs font-bold tracking-wider uppercase"
-											style:color={activePrinciple.accent}
-										>
-											{activePrinciple.kicker}
-										</span>
-									</div>
-									<h2
-										class="mt-1.5 font-display text-2xl leading-tight font-black uppercase sm:text-3xl"
-									>
-										{activePrinciple.title}
-									</h2>
-									<p class="mt-1.5 font-mono text-xs text-muted-foreground sm:text-sm">
-										{activePrinciple.caption}
-									</p>
-									<div class="mt-4 flex flex-wrap gap-2">
-										{#each activePrinciple.tags as tag (tag)}
-											<Badge variant="outline">{tag}</Badge>
 										{/each}
 									</div>
 								</div>
-							{/key}
+
+								<!-- Story 1: UI/UX (Uniform CSS grid on mobile, 3-card on desktop) -->
+								<div
+									class="craft-slide flex h-auto w-full justify-center self-center {active === 1
+										? 'active'
+										: ''}"
+									aria-hidden={active !== 1}
+									inert={active !== 1 ? true : undefined}
+								>
+									<div
+										class="grid w-full max-w-[28rem] gap-2.5 sm:max-w-[32rem] sm:grid-cols-3 sm:gap-3"
+									>
+										{#each UIUX_STAGES as stage (stage.no)}
+											<div
+												data-craft-uiux-card
+												class="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border-2 border-border bg-card p-2.5 shadow-neo-sm sm:flex sm:flex-col sm:justify-between sm:gap-3 sm:p-3"
+											>
+												<span
+													class="grid size-8 shrink-0 place-items-center border-2 border-border bg-accent font-mono text-xs font-bold text-accent-foreground sm:size-9"
+												>
+													#{stage.no}
+												</span>
+												<div class="min-w-0 sm:w-full">
+													<h3
+														class="font-display text-xs font-black break-words uppercase sm:text-sm"
+													>
+														{stage.name}
+													</h3>
+													<p
+														class="mt-0.5 font-mono text-[0.6875rem] break-words text-muted-foreground sm:mt-1 sm:text-[0.6875rem]"
+													>
+														{stage.desc}
+													</p>
+												</div>
+												<Badge
+													variant="outline"
+													class="col-start-2 max-w-full justify-self-start text-[0.625rem] whitespace-normal sm:col-start-auto sm:self-start sm:text-[0.6875rem]"
+												>
+													{stage.tag}
+												</Badge>
+											</div>
+										{/each}
+									</div>
+								</div>
+
+								<!-- Story 2: Performance (Gauge + Metrics) -->
+								<div
+									class="craft-slide flex h-auto w-full justify-center self-center {active === 2
+										? 'active'
+										: ''}"
+									aria-hidden={active !== 2}
+									inert={active !== 2 ? true : undefined}
+								>
+									<div
+										class="flex w-full max-w-[28rem] flex-col gap-4 sm:max-w-[32rem] sm:flex-row sm:items-center sm:gap-6"
+									>
+										<div class="relative mx-auto size-24 shrink-0 sm:size-28 md:size-32">
+											<svg viewBox="0 0 130 130" class="size-full" aria-hidden="true">
+												<circle
+													cx="65"
+													cy="65"
+													r="52"
+													fill="none"
+													stroke="var(--neo-surface-muted)"
+													stroke-width="11"
+												/>
+												<circle
+													cx="65"
+													cy="65"
+													r="52"
+													fill="none"
+													stroke="var(--retro-green-text)"
+													stroke-width="11"
+													stroke-linecap="square"
+													transform="rotate(-90 65 65)"
+													class="craft-ring-fill"
+												/>
+											</svg>
+											<div class="absolute inset-0 flex flex-col items-center justify-center">
+												<span
+													data-craft-score
+													class="font-display text-3xl leading-none font-black text-foreground sm:text-4xl"
+												>
+													99
+												</span>
+												<span
+													class="mt-0.5 font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
+												>
+													{t[$currentLang].craft.scoreLabel}
+												</span>
+											</div>
+										</div>
+										<div class="min-w-0 flex-1 space-y-2">
+											{#each PERF_METRICS as metric (metric.label)}
+												<div
+													data-craft-perf-row
+													class="flex items-center justify-between border-b-2 border-border pb-1"
+												>
+													<span class="font-mono text-xs font-bold text-muted-foreground">
+														{metric.label}
+													</span>
+													<span
+														class="font-display text-base font-black text-foreground sm:text-lg"
+													>
+														{metric.value}
+													</span>
+												</div>
+											{/each}
+											<div
+												data-craft-motion-meta
+												class="flex items-center justify-between gap-2 border-t border-dashed border-border pt-2"
+											>
+												<span
+													class="font-mono text-[0.6875rem] font-bold text-muted-foreground uppercase"
+												>
+													{t[$currentLang].craft.motionEasing}
+												</span>
+												<button
+													type="button"
+													onclick={toggleMotionDemo}
+													aria-label={motionDemoPaused
+														? $currentLang === 'id'
+															? 'Jalankan demonstrasi gerak'
+															: 'Play motion demo'
+														: $currentLang === 'id'
+															? 'Jeda demonstrasi gerak'
+															: 'Pause motion demo'}
+													class="inline-flex items-center gap-1.5 border-2 border-border bg-card px-2 py-0.5 font-mono text-xs font-bold text-foreground shadow-neo-sm hover:bg-neo-surface-subtle"
+												>
+													{#if motionDemoPaused}
+														<Play class="size-3" aria-hidden="true" />
+														{t[$currentLang].craft.motionPlay}
+													{:else}
+														<Pause class="size-3" aria-hidden="true" />
+														60fps
+													{/if}
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Story 3: Management (Uniform CSS grid card pattern matching Story 01) -->
+								<div
+									class="craft-slide flex h-auto w-full justify-center self-center {active === 3
+										? 'active'
+										: ''}"
+									aria-hidden={active !== 3}
+									inert={active !== 3 ? true : undefined}
+								>
+									<div class="flex w-full max-w-[28rem] flex-col gap-2.5 sm:max-w-[32rem] sm:gap-3">
+										{#each SPRINT_ITEMS as item (item.task)}
+											<div
+												data-craft-sprint-row
+												class="grid w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border-2 border-border bg-card p-2.5 shadow-neo-sm sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:p-3"
+											>
+												<span
+													class="grid size-8 shrink-0 place-items-center border-2 border-border bg-primary text-primary-foreground sm:size-10"
+												>
+													<Check class="size-4 stroke-[3] sm:size-5" aria-hidden="true" />
+												</span>
+												<div class="min-w-0">
+													<p
+														class="font-display text-sm font-bold break-words uppercase sm:text-base"
+													>
+														{item.task}
+													</p>
+													<p
+														class="mt-0.5 font-mono text-[0.6875rem] break-words text-muted-foreground sm:text-xs"
+													>
+														{item.owner}
+													</p>
+												</div>
+												<Badge
+													variant={item.status === 'Completed' || item.status === 'Selesai'
+														? 'lime'
+														: 'outline'}
+													class="col-start-2 max-w-full justify-self-start text-[0.625rem] whitespace-normal sm:col-start-3 sm:justify-self-end sm:text-[0.6875rem]"
+												>
+													{item.status}
+												</Badge>
+											</div>
+										{/each}
+									</div>
+								</div>
+							</div>
+
+							<!-- Meta & Tags: All 4 principle descriptions stacked in one grid cell -->
+							<div
+								class="grid border-t-2 border-border bg-card p-3 sm:p-5 md:p-6 [&>*]:col-start-1 [&>*]:row-start-1"
+							>
+								{#each PRINCIPLES as p, i (p.no)}
+									{@const Icon = p.icon}
+									<div
+										class="craft-slide h-auto self-center {active === i ? 'active' : ''}"
+										aria-hidden={active !== i}
+										inert={active !== i ? true : undefined}
+									>
+										<div class="flex items-center gap-2">
+											<Icon
+												class="size-4 shrink-0"
+												style={`color: ${p.accent}`}
+												aria-hidden="true"
+											/>
+											<span
+												class="font-mono text-xs font-bold tracking-wider uppercase"
+												style:color={p.accent}
+											>
+												{p.kicker}
+											</span>
+										</div>
+										<h2
+											class="mt-1.5 font-display text-xl leading-tight font-black break-words uppercase sm:text-2xl md:text-3xl"
+										>
+											{p.title}
+										</h2>
+										<p
+											class="mt-1.5 font-mono text-xs break-words text-muted-foreground sm:text-sm"
+										>
+											{p.caption}
+										</p>
+										<div class="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
+											{#each p.tags as tag (tag)}
+												<Badge variant="outline" class="max-w-full text-xs break-words">
+													{tag}
+												</Badge>
+											{/each}
+										</div>
+									</div>
+								{/each}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -660,29 +718,56 @@
 </section>
 
 <style>
-	/* Scroll-driven progress bar using CSS view-timeline when supported */
-	.craft-section {
-		view-timeline: --craft-scroll block;
+	:root {
+		--nav-gap: 1.5rem;
+		--craft-step: 55svh;
+	}
+
+	@media (max-width: 639px) {
+		:root {
+			--nav-gap: 0.75rem;
+			--craft-step: 45svh;
+		}
+	}
+
+	.craft-track {
+		height: calc(100svh + var(--n) * var(--craft-step));
+	}
+
+	.craft-frame {
+		max-height: calc(100svh - var(--nav-h) - var(--nav-gap) * 2);
+	}
+
+	/* Smooth CSS transitions for slides (interruptible, constant container height) */
+	.craft-slide {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateY(0.5rem);
+		transition:
+			opacity 350ms cubic-bezier(0.22, 1, 0.36, 1),
+			transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+			visibility 350ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.craft-slide.active {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transform: translateY(0);
+	}
+
+	@media (max-height: 700px) {
+		[data-craft-header] {
+			margin-bottom: 0.375rem !important;
+		}
+		.neo-grid-bg {
+			padding: 0.75rem !important;
+			min-height: 180px !important;
+		}
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
-		@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
-			@keyframes craft-progress-grow {
-				from {
-					transform: scaleX(0);
-				}
-				to {
-					transform: scaleX(1);
-				}
-			}
-
-			.craft-progress {
-				animation: craft-progress-grow auto linear both;
-				animation-timeline: --craft-scroll;
-				animation-range: contain 0% contain 100%;
-			}
-		}
-
 		@keyframes craft-ring-draw {
 			from {
 				stroke-dashoffset: 327;
@@ -700,6 +785,14 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.craft-slide {
+			transition-duration: 0ms !important;
+			transform: none !important;
+		}
+		.craft-slide.active {
+			transform: none !important;
+		}
+
 		.craft-ring-fill {
 			stroke-dasharray: 327;
 			stroke-dashoffset: 6.5;

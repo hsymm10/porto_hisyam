@@ -1221,11 +1221,11 @@
 	<!-- Full-Screen Sticky Header with max-w-7xl centered content -->
 	<header class="sticky top-0 z-40 w-full border-b-2 border-border bg-card">
 		<div
-			class="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-3.5 sm:px-8"
+			class="mx-auto flex w-full max-w-7xl items-center justify-between gap-2.5 px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3.5 md:px-8"
 		>
-			<a href="#top" class="inline-flex items-center">
-				<Badge variant="lime" class="px-3 py-1.5 text-xs">
-					<Code2 class="size-4" />
+			<a href="#top" class="inline-flex shrink-0 items-center">
+				<Badge variant="lime" class="px-2.5 py-1 text-xs sm:px-3 sm:py-1.5">
+					<Code2 class="size-3.5 sm:size-4" />
 					hszam__
 				</Badge>
 			</a>
@@ -1246,7 +1246,7 @@
 				{/each}
 			</nav>
 
-			<div class="flex items-center gap-2.5">
+			<div class="flex items-center gap-1.5 sm:gap-2.5">
 				<!-- Language Switcher Toggle -->
 				<button
 					type="button"
@@ -1254,7 +1254,7 @@
 					aria-label={$currentLang === 'id'
 						? 'Ganti bahasa ke English'
 						: 'Switch language to Indonesian'}
-					class="inline-flex items-center gap-1.5 border-2 border-border bg-card px-2.5 py-1.5 font-mono text-xs font-black text-foreground uppercase shadow-neo-sm transition-transform hover:-translate-y-0.5 active:translate-y-0"
+					class="inline-flex items-center gap-1 border-2 border-border bg-card px-2 py-1 font-mono text-xs font-black text-foreground uppercase shadow-neo-sm transition-transform hover:-translate-y-0.5 active:translate-y-0 sm:gap-1.5 sm:px-2.5 sm:py-1.5"
 				>
 					<span class={$currentLang === 'id' ? 'text-primary underline' : 'text-muted-foreground'}
 						>ID</span
@@ -1267,7 +1267,8 @@
 
 				<Button
 					variant="outline"
-					size="icon"
+					size="icon-sm"
+					class="sm:hidden"
 					onclick={toggleTheme}
 					aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
 				>
@@ -1277,7 +1278,30 @@
 						<Moon class="size-4" />
 					{/if}
 				</Button>
-				<Button href="#contact" variant="secondary">
+				<Button
+					variant="outline"
+					size="icon"
+					class="hidden sm:inline-flex"
+					onclick={toggleTheme}
+					aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+				>
+					{#if isDark}
+						<Sun class="size-4" />
+					{:else}
+						<Moon class="size-4" />
+					{/if}
+				</Button>
+
+				<Button
+					href="#contact"
+					variant="secondary"
+					size="icon-sm"
+					class="sm:hidden"
+					aria-label={t[$currentLang].nav.contactMe}
+				>
+					<Mail class="size-4" />
+				</Button>
+				<Button href="#contact" variant="secondary" class="hidden sm:inline-flex">
 					{t[$currentLang].nav.contactMe}
 					<ArrowRight class="size-3.5" />
 				</Button>
@@ -1299,7 +1323,7 @@
 			class="neo-grid-bg relative w-full overflow-x-clip border-b-2 border-border"
 		>
 			<div
-				class="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-6 pt-5 pb-10 sm:px-8 sm:pt-7 sm:pb-12 lg:grid-cols-12 lg:gap-10"
+				class="relative mx-auto grid w-full max-w-7xl items-center gap-6 px-4 pt-4 pb-8 sm:gap-8 sm:px-6 sm:pt-6 sm:pb-12 md:px-8 lg:grid-cols-12 lg:gap-10"
 			>
 				<!-- Floating Tech Sticker: Tilted Svelte Square (Top-Center, Desktop) -->
 				<div
@@ -1344,25 +1368,41 @@
 
 						<h1
 							data-hero-stagger
-							class="font-display text-5xl leading-[0.95] font-black tracking-tight uppercase sm:text-6xl lg:text-7xl"
+							class="font-display text-3xl leading-[1.02] font-black tracking-tight break-words uppercase sm:text-5xl lg:text-7xl"
 						>
 							{t[$currentLang].hero.headlinePrefix}<br />{t[$currentLang].hero.headlineSuffix}
 						</h1>
 
 						<p
 							data-hero-stagger
-							class="max-w-xl font-mono text-sm leading-relaxed text-muted-foreground sm:text-base"
+							class="max-w-xl font-mono text-xs leading-relaxed break-words text-muted-foreground sm:text-base"
 						>
 							{t[$currentLang].hero.bio}
 						</p>
 					</div>
 
-					<div data-hero-stagger class="flex flex-wrap items-center gap-3.5">
-						<Button href="#projects" size="lg" variant="default">
+					<div
+						data-hero-stagger
+						class="flex w-full flex-col gap-3 sm:w-fit sm:flex-row sm:items-center"
+					>
+						<Button
+							href="#projects"
+							size="lg"
+							variant="default"
+							class="min-h-11 w-full justify-center sm:w-auto"
+						>
 							{t[$currentLang].hero.viewWork}
 							<ArrowUpRight class="size-4" />
 						</Button>
-						<Button href="#contact" size="lg" variant="outline">
+						<Button
+							href="/Hisyam-Sayyid-Alzam-Resume.pdf"
+							download="Hisyam-Sayyid-Alzam-Resume.pdf"
+							target="_blank"
+							rel="noopener noreferrer"
+							size="lg"
+							variant="outline"
+							class="min-h-11 w-full justify-center sm:w-auto"
+						>
 							{t[$currentLang].hero.downloadResume}
 							<Download class="size-4" />
 						</Button>
@@ -1394,7 +1434,7 @@
 						data-hero-sticker
 						data-parallax-y="-48"
 						data-parallax-rot="-4"
-						class="pointer-events-none absolute -top-4 right-2 z-20 flex items-end gap-1 sm:-top-5 sm:-right-3"
+						class="pointer-events-none absolute -top-3 right-1 z-20 flex items-end gap-1 sm:-top-5 sm:-right-3"
 					>
 						<div data-hero-sticker-inner class="flex items-end gap-1">
 							<svg
@@ -1410,7 +1450,7 @@
 								/>
 							</svg>
 							<div
-								class="rounded-full border-2 border-border bg-secondary px-4 py-1 font-display text-sm font-black tracking-tight text-secondary-foreground shadow-neo sm:text-base"
+								class="rounded-full border-2 border-border bg-secondary px-3 py-0.5 font-display text-xs font-black tracking-tight text-secondary-foreground shadow-neo sm:px-4 sm:py-1 sm:text-base"
 							>
 								hszamm
 							</div>
@@ -1454,9 +1494,9 @@
 
 					<div
 						data-hero-lanyard
-						class="relative h-[400px] w-full min-w-0 overflow-hidden border-2 border-border bg-secondary shadow-neo-lg sm:h-[450px] lg:h-[480px]"
+						class="relative h-[320px] w-full min-w-0 overflow-hidden border-2 border-border bg-secondary shadow-neo-lg sm:h-[420px] lg:h-[480px] print:h-auto print:bg-card print:p-6"
 					>
-						<div class="absolute inset-0 h-full w-full overflow-hidden">
+						<div class="absolute inset-0 h-full w-full overflow-hidden print:hidden">
 							<Lanyard
 								frontImage={lanyardFront}
 								backImage={lanyardBack}
@@ -1475,7 +1515,17 @@
 							/>
 						</div>
 
-						<div class="pointer-events-none absolute right-4 bottom-4 z-10">
+						<div class="hidden flex-col items-center justify-center text-center print:flex">
+							<img
+								src={lanyardFront}
+								alt="Hisyam Sayyid Alzam ID"
+								class="max-h-72 border-2 border-border object-contain shadow-neo"
+							/>
+						</div>
+
+						<div
+							class="pointer-events-none absolute right-3 bottom-3 z-10 sm:right-4 sm:bottom-4 print:hidden"
+						>
 							<Badge variant="lime">{t[$currentLang].hero.lanyardBadge}</Badge>
 						</div>
 					</div>
@@ -1489,17 +1539,19 @@
 			aria-label="Skills"
 			class="w-full border-b-2 border-border bg-neo-surface-subtle"
 		>
-			<div class="mx-auto flex w-full max-w-7xl items-stretch px-6 sm:px-8">
+			<div class="mx-auto flex w-full max-w-7xl items-stretch px-4 sm:px-6 md:px-8">
 				<!-- Left Violet SKILLS -> Label Block -->
 				<div
 					data-skills-label
-					class="flex shrink-0 flex-col justify-center gap-1.5 border-x-2 border-border bg-secondary px-6 py-5 text-secondary-foreground sm:min-w-44 sm:px-8 sm:py-6"
+					class="flex shrink-0 flex-col justify-center gap-1 border-x-2 border-border bg-secondary px-3.5 py-3 text-secondary-foreground sm:min-w-44 sm:gap-1.5 sm:px-8 sm:py-6"
 				>
-					<span class="font-display text-base font-black tracking-wider uppercase sm:text-lg">
+					<span
+						class="font-display text-xs font-black tracking-wider uppercase sm:text-base md:text-lg"
+					>
 						{t[$currentLang].hero.skillsLabel}
 					</span>
 					<span data-skills-arrow class="inline-flex">
-						<ArrowRight class="size-4" aria-hidden="true" />
+						<ArrowRight class="size-3.5 sm:size-4" aria-hidden="true" />
 					</span>
 				</div>
 
@@ -1514,11 +1566,11 @@
 							{#each [...skills, ...skills] as skill, index (`a-${index}-${skill.name}`)}
 								<li
 									aria-hidden={index >= skills.length ? 'true' : undefined}
-									class="flex shrink-0 flex-col items-center justify-center gap-2 px-8 py-4 sm:px-12"
+									class="flex shrink-0 flex-col items-center justify-center gap-1.5 px-6 py-3 sm:gap-2 sm:px-12 sm:py-4"
 								>
 									<svg
 										viewBox="0 0 24 24"
-										class="size-8 fill-current text-foreground"
+										class="size-7 fill-current text-foreground sm:size-8"
 										aria-hidden="true"
 									>
 										<path d={skill.icon.path} />
@@ -1534,11 +1586,11 @@
 						<div class="flex items-center" aria-hidden="true">
 							{#each [...skills, ...skills] as skill, index (`b-${index}-${skill.name}`)}
 								<div
-									class="flex shrink-0 flex-col items-center justify-center gap-2 px-8 py-4 sm:px-12"
+									class="flex shrink-0 flex-col items-center justify-center gap-1.5 px-6 py-3 sm:gap-2 sm:px-12 sm:py-4"
 								>
 									<svg
 										viewBox="0 0 24 24"
-										class="size-8 fill-current text-foreground"
+										class="size-7 fill-current text-foreground sm:size-8"
 										aria-hidden="true"
 									>
 										<path d={skill.icon.path} />
@@ -1562,7 +1614,7 @@
 					aria-label={isMarqueePaused
 						? t[$currentLang].hero.marqueePlay
 						: t[$currentLang].hero.marqueePause}
-					class="flex shrink-0 items-center justify-center border-x-2 border-border bg-card px-3.5 text-foreground transition-colors hover:bg-neo-surface-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+					class="flex shrink-0 items-center justify-center border-x-2 border-border bg-card px-2.5 text-foreground transition-colors hover:bg-neo-surface-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:px-3.5"
 				>
 					{#if isMarqueePaused}
 						<Play class="size-4" aria-hidden="true" />
@@ -1574,16 +1626,23 @@
 		</section>
 
 		<!-- Full-Screen Featured Projects (Carousel) + Certifications Section -->
-		<section id="projects" class="w-full border-b-2 border-border bg-background py-16 sm:py-20">
-			<div class="mx-auto grid w-full max-w-7xl items-stretch gap-8 px-6 sm:px-8 lg:grid-cols-12">
+		<section
+			id="projects"
+			class="w-full border-b-2 border-border bg-background py-10 sm:py-16 md:py-20"
+		>
+			<div
+				class="mx-auto grid w-full max-w-7xl items-stretch gap-6 px-4 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-12"
+			>
 				<!-- Left: Featured Projects (1 item at a time with Prev/Next + All Projects view) -->
 				<div
 					data-projects-panel
-					class="flex flex-col justify-between gap-6 border-2 border-border bg-card p-6 shadow-neo sm:p-8 lg:col-span-8"
+					class="flex min-w-0 flex-col justify-between gap-5 border-2 border-border bg-card p-4 shadow-neo sm:gap-6 sm:p-6 md:p-8 lg:col-span-8"
 				>
 					<div class="flex flex-wrap items-start justify-between gap-4">
 						<div class="space-y-3">
-							<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
+							<h2
+								class="font-display text-xl font-black tracking-tight uppercase sm:text-2xl md:text-3xl"
+							>
 								{t[$currentLang].projects.title}
 							</h2>
 							<Button
@@ -1677,7 +1736,7 @@
 							<Card.Root class="flex-1 justify-between">
 								<div class="border-b-2 border-border p-4 {currentProject.previewBg}">
 									<div
-										class="neo-grid-bg relative flex h-52 items-center justify-center overflow-hidden border-2 border-border sm:h-64"
+										class="neo-grid-bg relative flex h-44 items-center justify-center overflow-hidden border-2 border-border sm:h-56 md:h-64"
 									>
 										{#if currentProject.image}
 											<button
@@ -1727,7 +1786,7 @@
 								</Card.Header>
 
 								<Card.Content class="space-y-4">
-									<div class="flex flex-wrap gap-2">
+									<div class="flex flex-wrap gap-1.5 sm:gap-2">
 										{#each currentProject.tags as tag (tag)}
 											<Badge variant="outline">{tag}</Badge>
 										{/each}
@@ -1774,10 +1833,12 @@
 				<aside
 					id="certifications"
 					data-certs-aside
-					class="neo-grid-accent-bg flex flex-col justify-between gap-5 border-2 border-border p-6 text-primary-foreground shadow-neo sm:p-8 lg:col-span-4"
+					class="neo-grid-accent-bg flex min-w-0 flex-col justify-between gap-4 border-2 border-border p-4 text-primary-foreground shadow-neo sm:gap-5 sm:p-6 md:p-8 lg:col-span-4"
 				>
 					<div class="flex items-center justify-between gap-2">
-						<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
+						<h2
+							class="font-display text-xl font-black tracking-tight uppercase sm:text-2xl md:text-3xl"
+						>
 							{t[$currentLang].certs.title}
 						</h2>
 						<span
@@ -1787,7 +1848,7 @@
 						</span>
 					</div>
 
-					<div class="grid flex-1 grid-cols-2 gap-3">
+					<div class="grid flex-1 grid-cols-2 gap-2.5 sm:gap-3">
 						{#each certifications as cert, i (cert.id)}
 							<button
 								type="button"
@@ -1831,38 +1892,45 @@
 		<CraftStory />
 
 		<!-- Full-Screen Experience (Left Pink + Timeline) & Call To Action (Right Violet Grid) -->
-		<section id="experience" class="w-full border-b-2 border-border bg-background py-16 sm:py-20">
-			<div class="mx-auto grid w-full max-w-7xl items-stretch gap-8 px-6 sm:px-8 lg:grid-cols-12">
+		<section
+			id="experience"
+			class="w-full border-b-2 border-border bg-background py-10 sm:py-16 md:py-20"
+		>
+			<div
+				class="mx-auto grid w-full max-w-7xl items-stretch gap-6 px-4 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-12"
+			>
 				<!-- Left: Experience Panel (Pink label column + White timeline) -->
 				<div
-					class="flex flex-col overflow-hidden border-2 border-border bg-card shadow-neo sm:flex-row lg:col-span-8"
+					class="flex min-w-0 flex-col overflow-hidden border-2 border-border bg-card shadow-neo sm:flex-row lg:col-span-8"
 				>
 					<!-- Tangerine EXPERIENCE Sidebar -->
 					<div
 						data-exp-sidebar
-						class="neo-grid-accent-bg flex shrink-0 flex-col justify-center gap-2 border-b-2 border-border px-6 py-5 text-accent-foreground sm:w-44 sm:border-r-2 sm:border-b-0 sm:px-7 sm:py-8 md:w-48"
+						class="neo-grid-accent-bg flex shrink-0 flex-col justify-center gap-1.5 border-b-2 border-border px-4 py-4 text-accent-foreground sm:w-44 sm:gap-2 sm:border-r-2 sm:border-b-0 sm:px-7 sm:py-8 md:w-48"
 					>
-						<h2 class="font-display text-xl font-black tracking-tight uppercase sm:text-2xl">
+						<h2
+							class="font-display text-lg font-black tracking-tight uppercase sm:text-xl md:text-2xl"
+						>
 							{t[$currentLang].experiences.sidebarLabel}
 						</h2>
-						<ArrowRight class="size-5" aria-hidden="true" />
+						<ArrowRight class="size-4 sm:size-5" aria-hidden="true" />
 					</div>
 
 					<!-- Timeline & View Full Resume CTA -->
-					<div class="flex flex-1 flex-col justify-between p-6 sm:p-8 lg:p-10">
+					<div class="flex flex-1 flex-col justify-between p-4 sm:p-6 md:p-8 lg:p-10">
 						<div class="relative">
 							<div
 								aria-hidden="true"
 								data-exp-line
 								class="absolute top-2 bottom-2 left-[5px] w-0.5 bg-border"
 							></div>
-							<ol class="space-y-8 pl-8">
+							<ol class="space-y-6 pl-5 sm:space-y-8 sm:pl-8">
 								{#each experiences as group (group.category)}
 									<li data-exp-item class="relative space-y-3">
 										<span
 											aria-hidden="true"
 											data-exp-dot
-											class="absolute top-1.5 -left-8 size-3 rounded-full bg-foreground"
+											class="absolute top-1.5 -left-5 size-2.5 rounded-full bg-foreground sm:-left-8 sm:size-3"
 										></span>
 										<h3
 											class="font-display text-sm font-black tracking-wide text-[var(--retro-green-text)] uppercase sm:text-base"
@@ -1902,12 +1970,14 @@
 							</ol>
 						</div>
 
-						<div data-exp-resume class="mt-8 pl-8">
+						<div data-exp-resume class="mt-6 pl-5 sm:mt-8 sm:pl-8">
 							<Button
-								href="#contact"
+								href="/Hisyam-Sayyid-Alzam-Resume.pdf"
+								target="_blank"
+								rel="noopener noreferrer"
 								variant="outline"
 								size="lg"
-								class="border-border bg-card text-[var(--retro-green-text)] shadow-neo hover:bg-neo-surface-subtle"
+								class="min-h-11 w-full justify-center border-border bg-card text-[var(--retro-green-text)] shadow-neo hover:bg-neo-surface-subtle sm:w-auto"
 							>
 								{t[$currentLang].experiences.viewResume}
 								<ArrowRight class="size-4" />
@@ -1920,12 +1990,12 @@
 				<aside
 					id="contact"
 					data-cta-card
-					class="neo-grid-violet-bg relative flex min-h-80 flex-col justify-center overflow-hidden border-2 border-border p-8 text-secondary-foreground shadow-neo sm:p-10 lg:col-span-4"
+					class="neo-grid-violet-bg relative flex min-h-72 min-w-0 flex-col justify-center overflow-hidden border-2 border-border p-5 text-secondary-foreground shadow-neo sm:min-h-80 sm:p-8 md:p-10 lg:col-span-4"
 				>
 					<div class="relative z-10 max-w-xs space-y-6">
 						<h2
 							data-cta-stagger
-							class="font-display text-2xl leading-[1.08] font-black tracking-tight uppercase sm:text-3xl"
+							class="font-display text-xl leading-[1.08] font-black tracking-tight break-words uppercase sm:text-2xl md:text-3xl"
 						>
 							{t[$currentLang].contact.ctaHeadline1}<br />{t[$currentLang].contact.ctaHeadline2}<br
 							/>{t[$currentLang].contact.ctaHeadline3}<br />{t[$currentLang].contact.ctaHeadline4}
@@ -1937,7 +2007,7 @@
 								rel={WHATSAPP_NUMBER ? 'noopener noreferrer' : undefined}
 								variant="outline"
 								size="lg"
-								class="border-neo-black bg-neo-white text-neo-black shadow-neo hover:bg-neo-surface-subtle hover:text-foreground"
+								class="min-h-11 w-full justify-center border-neo-black bg-neo-white text-neo-black shadow-neo hover:bg-neo-surface-subtle hover:text-foreground sm:w-auto"
 							>
 								{t[$currentLang].contact.ctaButton}
 								<ArrowRight class="size-4" />
@@ -1965,12 +2035,14 @@
 		</section>
 
 		<!-- Polaroid Line Carousel Section (Placed After Experience) -->
-		<section id="gallery" class="w-full border-b-2 border-border bg-card py-16 sm:py-20">
-			<div class="mx-auto w-full max-w-7xl space-y-6 px-6 sm:px-8">
+		<section id="gallery" class="w-full border-b-2 border-border bg-card py-10 sm:py-16 md:py-20">
+			<div class="mx-auto w-full max-w-7xl space-y-4 px-4 sm:space-y-6 sm:px-6 md:px-8">
 				<div data-gallery-header class="flex flex-wrap items-end justify-between gap-4">
 					<div class="space-y-2.5">
 						<Badge variant="pink">{t[$currentLang].snapshots.badge}</Badge>
-						<h2 class="font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
+						<h2
+							class="font-display text-xl font-black tracking-tight uppercase sm:text-2xl md:text-3xl"
+						>
 							{t[$currentLang].snapshots.title}
 						</h2>
 					</div>
@@ -1994,19 +2066,19 @@
 	</main>
 
 	<!-- Full-Screen Footer with max-w-7xl centered content -->
-	<footer data-footer class="w-full bg-card py-6">
+	<footer data-footer class="w-full bg-card py-5 sm:py-6">
 		<div
 			data-footer-inner
-			class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 px-6 sm:px-8"
+			class="mx-auto flex w-full max-w-7xl flex-col items-center gap-3.5 px-4 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-left md:px-8"
 		>
 			<Badge variant="lime">
 				<Code2 class="size-3" />
 				hszamm__
 			</Badge>
-			<p class="font-mono text-xs text-muted-foreground">
+			<p class="max-w-md font-mono text-xs text-muted-foreground">
 				{t[$currentLang].footer.bio}
 			</p>
-			<div class="flex items-center gap-2">
+			<div class="flex flex-wrap items-center justify-center gap-2">
 				<Button
 					href="mailto:hisyamsayyidalzam10@gmail.com"
 					variant="outline"
@@ -2086,25 +2158,25 @@
 	closedby="any"
 	aria-labelledby="cert-dialog-title"
 	onclose={handleCertDialogClose}
-	class="m-auto max-h-[90svh] w-[calc(100vw-2rem)] max-w-4xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg"
+	class="m-auto max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-4xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg sm:w-[calc(100vw-2rem)]"
 >
 	<div class="flex flex-col">
 		<div
-			class="flex items-center justify-between gap-4 border-b-2 border-border bg-primary px-5 py-3.5 text-primary-foreground"
+			class="flex items-center justify-between gap-2.5 border-b-2 border-border bg-primary px-3.5 py-2.5 text-primary-foreground sm:gap-4 sm:px-5 sm:py-3.5"
 		>
 			<div class="min-w-0">
 				<h2
 					id="cert-dialog-title"
-					class="truncate font-display text-base font-black uppercase sm:text-lg"
+					class="line-clamp-2 font-display text-xs leading-tight font-black uppercase sm:truncate sm:text-base md:text-lg"
 				>
 					{currentCert.title}
 				</h2>
-				<p class="font-mono text-xs font-semibold opacity-80">
+				<p class="font-mono text-[0.6875rem] font-semibold opacity-80 sm:text-xs">
 					{currentCert.issuer} &bull; {activeCertIndex + 1} / {certifications.length}
 				</p>
 			</div>
 
-			<div class="flex shrink-0 items-center gap-2">
+			<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
 				<Button
 					variant="outline"
 					size="icon-sm"
@@ -2174,26 +2246,26 @@
 		if (e.key === 'ArrowLeft') prevGallerySlide();
 		else if (e.key === 'ArrowRight') nextGallerySlide();
 	}}
-	class="m-auto max-h-[92svh] w-[calc(100vw-2rem)] max-w-6xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg"
+	class="m-auto max-h-[92svh] w-[calc(100vw-1.5rem)] max-w-6xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg sm:w-[calc(100vw-2rem)]"
 >
 	{#if currentGallerySlide}
 		<div class="flex flex-col">
 			<div
-				class="flex items-center justify-between gap-4 border-b-2 border-border bg-primary px-5 py-3.5 text-primary-foreground"
+				class="flex items-center justify-between gap-2.5 border-b-2 border-border bg-primary px-3.5 py-2.5 text-primary-foreground sm:gap-4 sm:px-5 sm:py-3.5"
 			>
 				<div class="min-w-0">
 					<h2
 						id="gallery-dialog-title"
-						class="truncate font-display text-base font-black uppercase sm:text-lg"
+						class="line-clamp-2 font-display text-xs leading-tight font-black uppercase sm:truncate sm:text-base md:text-lg"
 					>
 						{currentGallerySlide.title}
 					</h2>
-					<p class="truncate font-mono text-xs font-semibold opacity-85">
+					<p class="truncate font-mono text-[0.6875rem] font-semibold opacity-85 sm:text-xs">
 						{currentGallerySlide.caption} &bull; {activeGalleryIndex + 1} / {polaroidSlides.length}
 					</p>
 				</div>
 
-				<div class="flex shrink-0 items-center gap-2">
+				<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
 					<Button
 						variant="outline"
 						size="icon-sm"
@@ -2264,27 +2336,27 @@
 		if (e.key === 'ArrowLeft') prevProjectModal();
 		else if (e.key === 'ArrowRight') nextProjectModal();
 	}}
-	class="m-auto max-h-[90svh] w-[calc(100vw-2rem)] max-w-5xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg"
+	class="m-auto max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-5xl overflow-hidden border-2 border-border bg-card p-0 text-card-foreground shadow-neo-lg sm:w-[calc(100vw-2rem)]"
 >
 	{#if currentModalProject}
 		<div class="flex flex-col">
 			<div
-				class="flex items-center justify-between gap-4 border-b-2 border-border bg-primary px-5 py-3.5 text-primary-foreground"
+				class="flex items-center justify-between gap-2.5 border-b-2 border-border bg-primary px-3.5 py-2.5 text-primary-foreground sm:gap-4 sm:px-5 sm:py-3.5"
 			>
 				<div class="min-w-0">
 					<h2
 						id="project-dialog-title"
-						class="truncate font-display text-base font-black uppercase sm:text-lg"
+						class="line-clamp-2 font-display text-xs leading-tight font-black uppercase sm:truncate sm:text-base md:text-lg"
 					>
 						{currentModalProject.title}
 					</h2>
-					<p class="truncate font-mono text-xs font-semibold opacity-80">
+					<p class="truncate font-mono text-[0.6875rem] font-semibold opacity-80 sm:text-xs">
 						{currentModalProject.role} &bull; {activeProjectModalIndex + 1} /
 						{projectsWithImages.length}
 					</p>
 				</div>
 
-				<div class="flex shrink-0 items-center gap-2">
+				<div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
 					<Button
 						variant="outline"
 						size="icon-sm"

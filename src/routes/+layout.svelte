@@ -98,28 +98,51 @@
 	<meta name="robots" content="index, follow" />
 	<link rel="canonical" href="https://hisyamsayyid.my.id/" />
 
-	<!-- Open Graph / Facebook / LinkedIn -->
+	<!-- Open Graph / Facebook / LinkedIn / WhatsApp / Discord -->
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://hisyamsayyid.my.id/" />
-	<meta
-		property="og:title"
-		content="Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio"
-	/>
+	<meta property="og:site_name" content="Hisyam Sayyid Alzam — Portfolio" />
+	<meta property="og:locale" content={$currentLang === 'id' ? 'id_ID' : 'en_US'} />
+
+	<meta property="og:title" content="Hisyam Sayyid Alzam — Full Stack Developer & UI/UX Designer" />
+
 	<meta
 		property="og:description"
-		content="Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, dan Modern Web App."
+		content={$currentLang === 'id'
+			? 'Portofolio resmi Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, dan aplikasi web modern.'
+			: 'Official portfolio of Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer specializing in SvelteKit, Laravel, and modern web applications.'}
+	/>
+
+	<meta property="og:image" content="https://hisyamsayyid.my.id/images/og-image.png" />
+	<meta property="og:image:secure_url" content="https://hisyamsayyid.my.id/images/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/png" />
+	<meta
+		property="og:image:alt"
+		content="Hisyam Sayyid Alzam - Full Stack Web Developer & UI/UX Designer"
 	/>
 
 	<!-- Twitter / X -->
-	<meta property="twitter:card" content="summary" />
-	<meta property="twitter:url" content="https://hisyamsayyid.my.id/" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:url" content="https://hisyamsayyid.my.id/" />
+
 	<meta
-		property="twitter:title"
-		content="Hisyam Sayyid Alzam | Web Developer & UI/UX Designer Portfolio"
+		name="twitter:title"
+		content="Hisyam Sayyid Alzam — Full Stack Developer & UI/UX Designer"
 	/>
+
 	<meta
-		property="twitter:description"
-		content="Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, dan Modern Web App."
+		name="twitter:description"
+		content={$currentLang === 'id'
+			? 'Portofolio resmi Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer spesialisasi SvelteKit, Laravel, dan aplikasi web modern.'
+			: 'Official portfolio of Hisyam Sayyid Alzam. Full Stack Web Developer & UI/UX Designer specializing in SvelteKit, Laravel, and modern web applications.'}
+	/>
+
+	<meta name="twitter:image" content="https://hisyamsayyid.my.id/images/og-image.png" />
+	<meta
+		name="twitter:image:alt"
+		content="Hisyam Sayyid Alzam - Full Stack Web Developer & UI/UX Designer"
 	/>
 
 	<!-- Structured Data (JSON-LD) -->

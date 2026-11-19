@@ -15,6 +15,10 @@
    ========================================================================== */
 
 :root {
+	/* Navigation Dimensions & Scrollytelling Gap */
+	--nav-h: 4.25rem;
+	--nav-gap: 1.5rem;
+
 	/* Tier 1: Literal Palette Tokens */
 	--retro-tangerine: #fe7a25;
 	--retro-tangerine-hover: #e56817;
@@ -151,6 +155,13 @@
 	color-scheme: dark;
 }
 
+@media (max-width: 639px) {
+	:root {
+		--nav-h: 3.75rem;
+		--nav-gap: 0.75rem;
+	}
+}
+
 @theme inline {
 	/* Typography */
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -227,6 +238,19 @@
 }
 
 @layer base {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	html {
+		overflow-x: clip;
+		max-width: 100%;
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+	}
+
 	html,
 	body {
 		cursor:
@@ -235,12 +259,18 @@
 	}
 
 	body {
+		overflow-x: clip;
+		width: 100%;
+		max-width: 100%;
+		min-width: 320px;
 		background-color: var(--background);
 		color: var(--foreground);
 		font-family: var(--font-sans);
-		line-height: 1.5;
+		line-height: 1.6;
 		text-align: start;
 		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		overflow-wrap: break-word;
 	}
 
 	h1,
@@ -249,6 +279,21 @@
 	h4 {
 		font-family: var(--font-display);
 		text-wrap: balance;
+		overflow-wrap: break-word;
+	}
+
+	p,
+	span,
+	a,
+	li {
+		overflow-wrap: break-word;
+	}
+
+	img,
+	video,
+	canvas,
+	svg {
+		max-width: 100%;
 	}
 
 	button:not(:disabled),
@@ -354,5 +399,211 @@
 	.neo-box-lg {
 		border-color: CanvasText;
 		box-shadow: none;
+	}
+}
+
+/* ==========================================================================
+   PRINT STYLES FOR PORTFOLIO & RESUME PDF GENERATION
+   Ensures the printout / PDF export faithfully captures the neubrutalist
+   retro design tokens, removes web-only artifacts, avoids awkward breaks,
+   and presents clean readable content.
+   ========================================================================== */
+@media print {
+	@page {
+		size: A4;
+		margin: 10mm 10mm;
+	}
+
+	*,
+	*::before,
+	*::after {
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+	}
+
+	html,
+	body {
+		background-color: var(--neo-canvas) !important;
+		color: var(--neo-ink) !important;
+		font-size: 11px !important;
+		line-height: 1.4 !important;
+		overflow: visible !important;
+	}
+
+	/* Hide loading screen, pointers, interactive drag badges, dialogs, and web-only tools */
+	[role='status'][aria-live='polite'],
+	.loading-screen,
+	#custom-pointer,
+	[data-hero-sticker],
+	dialog,
+	.fixed.inset-0.z-50,
+	.neo-marquee[data-paused],
+	header nav,
+	header button,
+	header [aria-label*='language'],
+	button[aria-label*='Select'],
+	.pointer-events-none.absolute,
+	[data-craft-hint],
+	[data-skills-track] button {
+		display: none !important;
+	}
+
+	/* Static header */
+	header.sticky {
+		position: static !important;
+		border-bottom: 2px solid var(--border) !important;
+		background-color: var(--card) !important;
+		padding: 6px 0 !important;
+	}
+
+	/* 2-column hero side by side in print */
+	section[data-hero-section] > div.grid {
+		display: grid !important;
+		grid-template-columns: 7fr 5fr !important;
+		gap: 24px !important;
+		align-items: start !important;
+		padding-top: 12px !important;
+		padding-bottom: 20px !important;
+	}
+
+	section[data-hero-section] [data-hero-copy] {
+		grid-column: 1 / 2 !important;
+	}
+
+	section[data-hero-section] .lg\:col-span-5 {
+		grid-column: 2 / 3 !important;
+	}
+
+	section[data-hero-section] [data-hero-lanyard] {
+		height: auto !important;
+		max-height: 400px !important;
+		padding: 16px !important;
+	}
+
+	section[data-hero-section] [data-hero-lanyard] img {
+		max-height: 320px !important;
+	}
+
+	/* Skills: clean horizontal badges wrap */
+	#skills {
+		break-inside: avoid !important;
+		page-break-inside: avoid !important;
+	}
+
+	#skills > div {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: stretch !important;
+	}
+
+	#skills [data-skills-label] {
+		border-left: none !important;
+		border-right: none !important;
+		border-bottom: 2px solid var(--border) !important;
+		padding: 6px 16px !important;
+		display: flex !important;
+		flex-direction: row !important;
+		justify-content: space-between !important;
+		align-items: center !important;
+		width: 100% !important;
+	}
+
+	#skills button[data-skills-toggle] {
+		display: none !important;
+	}
+
+	#skills [data-skills-track] {
+		display: block !important;
+		overflow: visible !important;
+		width: 100% !important;
+	}
+
+	#skills .neo-marquee-track {
+		display: block !important;
+		animation: none !important;
+		transform: none !important;
+		width: 100% !important;
+	}
+
+	#skills ul {
+		display: flex !important;
+		flex-wrap: wrap !important;
+		gap: 6px !important;
+		padding: 10px 16px !important;
+		width: 100% !important;
+	}
+
+	#skills ul li {
+		display: inline-flex !important;
+		padding: 4px 8px !important;
+		flex-direction: row !important;
+		align-items: center !important;
+		gap: 6px !important;
+		border: 1.5px solid var(--border) !important;
+		background: var(--card) !important;
+		box-shadow: 1.5px 1.5px 0px 0px var(--neo-black) !important;
+	}
+
+	#skills ul li svg {
+		width: 14px !important;
+		height: 14px !important;
+	}
+
+	#skills ul li span {
+		font-size: 10px !important;
+	}
+
+	#skills ul li[aria-hidden='true'],
+	#skills .neo-marquee-track > div[aria-hidden='true'] {
+		display: none !important;
+	}
+
+	/* Section breaks */
+	section,
+	article,
+	#projects,
+	#experience,
+	#certifications,
+	#gallery,
+	.craft-section,
+	[data-gallery-stage],
+	footer {
+		break-inside: avoid !important;
+		page-break-inside: avoid !important;
+	}
+
+	/* Disable sticky and massive scroll-trigger heights */
+	.sticky {
+		position: static !important;
+	}
+
+	.craft-section {
+		height: auto !important;
+	}
+
+	.craft-section > div {
+		min-height: auto !important;
+		padding: 12px 0 !important;
+	}
+
+	/* Clean headers */
+	h1,
+	h2,
+	h3,
+	h4 {
+		break-after: avoid !important;
+		page-break-after: avoid !important;
+	}
+
+	/* Ensure crisp borders and shadow in print */
+	.border-2,
+	.border {
+		border-color: var(--neo-black) !important;
+	}
+
+	.shadow-neo,
+	.shadow-neo-sm,
+	.shadow-neo-lg {
+		box-shadow: 2px 2px 0px 0px var(--neo-black) !important;
 	}
 }
