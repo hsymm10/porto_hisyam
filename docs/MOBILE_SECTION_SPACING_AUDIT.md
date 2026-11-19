@@ -105,3 +105,4 @@ Perbaikan layout spacing khusus mobile telah berhasil diterapkan secara presisi:
 - **0 horizontal overflow.**
 - Jarak visual kedua section kini proporsional, lapang, dan mengikuti kaidah desain Neobrutalism.
 - Breakpoint desktop dan tablet terlindungi 100% tanpa perubahan perilaku maupun dimensi.
+
