@@ -1902,7 +1902,7 @@
 		<!-- Full-Screen Experience (Left Pink + Timeline) & Call To Action (Right Violet Grid) -->
 		<section
 			id="experience"
-			class="w-full border-b-2 border-border bg-background py-10 sm:py-16 md:py-20"
+			class="w-full border-b-2 border-border bg-background pt-16 pb-12 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20"
 		>
 			<div
 				class="mx-auto grid w-full max-w-7xl items-stretch gap-6 px-4 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-12"

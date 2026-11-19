@@ -303,11 +303,11 @@
 	});
 </script>
 
-<!-- Section Container with standard vertical spacing matching #projects, #experience, #gallery -->
+<!-- Section Container with generous vertical spacing and clear separation from #experience -->
 <section
 	id="craft"
 	bind:this={sectionEl}
-	class="relative w-full border-b-2 border-border bg-background py-10 sm:py-16 md:py-20"
+	class="relative w-full border-b-2 border-border bg-background pt-10 pb-16 sm:pt-16 sm:pb-24 md:pt-20 md:pb-28"
 >
 	<!-- Scroll Track with CSS-driven height -->
 	<div bind:this={trackEl} class="craft-track relative w-full" style="--n: {PRINCIPLES.length};">
@@ -731,7 +731,7 @@
 	}
 
 	.craft-track {
-		height: calc(100svh + var(--n) * var(--craft-step));
+		height: calc(100svh + var(--n) * var(--craft-step) + 12svh);
 	}
 
 	.craft-frame {
