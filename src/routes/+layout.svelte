@@ -2,7 +2,7 @@
 	import 'lenis/dist/lenis.css';
 	import './layout.css';
 	import Lenis from 'lenis';
-	import favicon from '#lib/assets/favicon.svg';
+	import logoHisyam from '#lib/assets/logo_hisyam.png';
 	import { gsap, registerGsap, ScrollTrigger } from '#lib/gsap.js';
 	import { setLenisInstance } from '#lib/lenis.js';
 	import { currentLang } from '#lib/i18n.js';
@@ -70,7 +70,9 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/png" href={logoHisyam} />
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="apple-touch-icon" href="/favicon.png" />
 
 	<!-- Primary Meta Tags -->
 	<title>
@@ -116,12 +118,9 @@
 	<meta property="og:image" content="https://hisyamsayyid.my.id/images/og-image.png" />
 	<meta property="og:image:secure_url" content="https://hisyamsayyid.my.id/images/og-image.png" />
 	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
+	<meta property="og:image:height" content="901" />
 	<meta property="og:image:type" content="image/png" />
-	<meta
-		property="og:image:alt"
-		content="Hisyam Sayyid Alzam - Full Stack Web Developer & UI/UX Designer"
-	/>
+	<meta property="og:image:alt" content="Hisyam Sayyid Alzam Logo" />
 
 	<!-- Twitter / X -->
 	<meta name="twitter:card" content="summary_large_image" />
@@ -140,10 +139,7 @@
 	/>
 
 	<meta name="twitter:image" content="https://hisyamsayyid.my.id/images/og-image.png" />
-	<meta
-		name="twitter:image:alt"
-		content="Hisyam Sayyid Alzam - Full Stack Web Developer & UI/UX Designer"
-	/>
+	<meta name="twitter:image:alt" content="Hisyam Sayyid Alzam Logo" />
 
 	<!-- Structured Data (JSON-LD) -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
