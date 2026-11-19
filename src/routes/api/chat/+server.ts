@@ -68,6 +68,12 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 			return json({ error: 'Pesan kosong' }, { status: 400 });
 		}
 
+		if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY.trim() === '') {
+			try {
+				process.loadEnvFile?.('.env');
+			} catch {}
+		}
+
 		const apiKey = process.env.GEMINI_API_KEY;
 
 		// Fallback friendly message if API Key has not been added to .env yet
@@ -79,8 +85,10 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 			});
 		}
 
-		const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
-		const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+		const preferredModel = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+		const candidateModels = Array.from(
+			new Set([preferredModel, 'gemini-flash-latest', 'gemini-3.5-flash', 'gemini-flash-lite-latest'])
+		);
 
 		const payload = {
 			system_instruction: {
@@ -91,42 +99,61 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 				temperature: 0.4,
 				topK: 40,
 				topP: 0.95,
-				maxOutputTokens: 500
+				maxOutputTokens: 600
 			}
 		};
 
-		const res = await fetch(endpoint, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(payload)
-		});
+		let lastErrorStatus = 500;
+		let lastErrorText = '';
+		let candidate: { content?: { parts?: Array<{ text?: string }> } } | undefined;
 
-		if (!res.ok) {
-			const errText = await res.text();
-			console.error('Gemini API Error:', res.status, errText);
+		for (const currentModel of candidateModels) {
+			const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey.trim()}`;
+			try {
+				const res = await fetch(endpoint, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					signal: AbortSignal.timeout(8000),
+					body: JSON.stringify(payload)
+				});
 
+				if (res.ok) {
+					const data = await res.json();
+					candidate = data.candidates?.[0];
+					if (candidate?.content?.parts?.[0]?.text) {
+						break;
+					}
+				} else {
+					lastErrorStatus = res.status;
+					lastErrorText = await res.text();
+					console.warn(`Model ${currentModel} failed with status ${res.status}`);
+				}
+			} catch (e) {
+				console.warn(`Fetch to ${currentModel} failed:`, e);
+			}
+		}
+
+		if (!candidate?.content?.parts?.[0]?.text) {
 			let userFacingError = 'Maaf, terjadi kendala saat menghubungi layanan AI. Coba sesaat lagi.';
-			if (res.status === 429) {
+			if (lastErrorStatus === 429) {
 				userFacingError = 'Kuota gratis API sedang padat. Silakan tunggu beberapa detik dan coba lagi.';
-			} else if (res.status === 400 || res.status === 403) {
+			} else if (lastErrorStatus === 400 || lastErrorStatus === 403) {
 				userFacingError = 'API key Gemini tidak valid atau izin belum diaktifkan di Google AI Studio.';
 			}
 
 			return json(
 				{
 					reply: userFacingError,
-					error: `Gemini API returned status ${res.status}`
+					error: `Gemini API returned status ${lastErrorStatus}: ${lastErrorText.slice(0, 200)}`
 				},
 				{ status: 502 }
 			);
 		}
 
-		const data = await res.json();
-		const candidate = data.candidates?.[0];
 		const aiReply =
-			candidate?.content?.parts?.[0]?.text?.trim() ||
+			candidate.content.parts[0].text.trim() ||
 			'Maaf, saya tidak dapat merumuskan respon saat ini.';
 
 		return json({
