@@ -1,6 +1,7 @@
 <script lang="ts">
 	import lanyardBack from '#lib/assets/lanyard-back.svg';
 	import lanyardFront from '#lib/assets/lanyard-front.svg';
+	import logoHisyam from '#lib/assets/logo_hisyam.png';
 	import sertif1 from '#lib/assets/sertifikat/sertif-1.png';
 	import sertif2 from '#lib/assets/sertifikat/sertif-2.png';
 	import sertif3 from '#lib/assets/sertifikat/sertif-3.png.png';
@@ -1223,10 +1224,17 @@
 		<div
 			class="mx-auto flex w-full max-w-7xl items-center justify-between gap-2.5 px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3.5 md:px-8"
 		>
-			<a href="#top" class="inline-flex shrink-0 items-center">
-				<Badge variant="lime" class="px-2.5 py-1 text-xs sm:px-3 sm:py-1.5">
-					<Code2 class="size-3.5 sm:size-4" />
-					hszam__
+			<a
+				href="#top"
+				class="inline-flex shrink-0 items-center transition-transform hover:-translate-y-0.5 active:translate-y-0"
+			>
+				<Badge variant="lime" class="gap-2 px-2 py-1 text-xs sm:px-2.5 sm:py-1.5">
+					<img
+						src={logoHisyam}
+						alt="Logo Hisyam"
+						class="size-5 rounded-none border border-border object-cover sm:size-6"
+					/>
+					<span class="font-mono font-bold tracking-wider">hszam__</span>
 				</Badge>
 			</a>
 
