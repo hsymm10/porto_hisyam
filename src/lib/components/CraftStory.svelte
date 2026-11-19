@@ -192,7 +192,10 @@
 		const currentTrack = trackEl;
 		const currentFrame = frameEl;
 
-		const ctx = gsap.context(() => {
+		const mm = gsap.matchMedia(sectionEl);
+
+		// Desktop & Tablet (>= 768px): enable sticky ScrollTrigger scrollytelling
+		mm.add('(min-width: 768px)', () => {
 			st = ScrollTrigger.create({
 				trigger: currentTrack,
 				start: () => `top top+=${parseFloat(getComputedStyle(currentFrame).top) || 68}`,
@@ -223,9 +226,8 @@
 					Math.max(0, Math.floor(st.progress * PRINCIPLES.length))
 				);
 			}
-		}, sectionEl);
+		});
 
-		const mm = gsap.matchMedia(sectionEl);
 		mm.add(REDUCED_MOTION_QUERY, () => {
 			const tl = gsap.timeline({
 				scrollTrigger: {
@@ -272,7 +274,6 @@
 			window.removeEventListener('resize', handleRefresh);
 			window.removeEventListener('orientationchange', handleRefresh);
 			mm.revert();
-			ctx.revert();
 			st = null;
 		};
 	});
@@ -307,14 +308,14 @@
 <section
 	id="craft"
 	bind:this={sectionEl}
-	class="relative w-full border-b-2 border-border bg-background pt-10 pb-16 sm:pt-16 sm:pb-24 md:pt-20 md:pb-28"
+	class="relative z-10 w-full overflow-clip border-b-2 border-border bg-background py-12 sm:py-16 md:py-20 lg:py-24"
 >
-	<!-- Scroll Track with CSS-driven height -->
+	<!-- Scroll Track with CSS-driven height (desktop/tablet) or natural flow (mobile) -->
 	<div bind:this={trackEl} class="craft-track relative w-full" style="--n: {PRINCIPLES.length};">
-		<!-- Sticky Frame: positioned below sticky navbar with dedicated gap -->
+		<!-- Frame: sticky on desktop/tablet (>=768px), relative on mobile (<768px) -->
 		<div
 			bind:this={frameEl}
-			class="craft-frame sticky z-20 w-full"
+			class="craft-frame z-20 w-full"
 			style="top: calc(var(--nav-h) + var(--nav-gap));"
 		>
 			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8">
@@ -731,11 +732,23 @@
 	}
 
 	.craft-track {
-		height: calc(100svh + var(--n) * var(--craft-step) + 12svh);
+		height: auto;
 	}
 
 	.craft-frame {
-		max-height: calc(100svh - var(--nav-h) - var(--nav-gap) * 2);
+		position: relative;
+		max-height: none;
+	}
+
+	@media (min-width: 768px) {
+		.craft-track {
+			height: calc(100svh + var(--n) * var(--craft-step) + 12svh);
+		}
+
+		.craft-frame {
+			position: sticky;
+			max-height: calc(100svh - var(--nav-h) - var(--nav-gap) * 2);
+		}
 	}
 
 	/* Smooth CSS transitions for slides (interruptible, constant container height) */

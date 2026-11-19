@@ -1902,7 +1902,7 @@
 		<!-- Full-Screen Experience (Left Pink + Timeline) & Call To Action (Right Violet Grid) -->
 		<section
 			id="experience"
-			class="w-full border-b-2 border-border bg-background pt-16 pb-12 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20"
+			class="relative z-20 w-full border-b-2 border-border bg-background py-12 sm:py-16 md:py-20 lg:py-24"
 		>
 			<div
 				class="mx-auto grid w-full max-w-7xl items-stretch gap-6 px-4 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-12"
@@ -1914,7 +1914,7 @@
 					<!-- Tangerine EXPERIENCE Sidebar -->
 					<div
 						data-exp-sidebar
-						class="neo-grid-accent-bg flex shrink-0 flex-row items-center justify-between border-b-2 border-border px-4 py-3.5 text-accent-foreground sm:w-56 sm:flex-col sm:items-start sm:justify-center sm:gap-2.5 sm:border-r-2 sm:border-b-0 sm:px-6 sm:py-8 md:w-60 md:px-7"
+						class="neo-grid-accent-bg flex shrink-0 flex-row items-center justify-between border-b-2 border-border px-5 py-4 text-accent-foreground sm:w-56 sm:flex-col sm:items-start sm:justify-center sm:gap-3 sm:border-r-2 sm:border-b-0 sm:px-6 sm:py-8 md:w-60 md:px-7"
 					>
 						<h2
 							class="font-display text-lg font-black tracking-tight whitespace-nowrap uppercase sm:text-xl md:text-2xl"
@@ -1925,20 +1925,20 @@
 					</div>
 
 					<!-- Timeline & View Full Resume CTA -->
-					<div class="flex flex-1 flex-col justify-between p-4 sm:p-6 md:p-8 lg:p-10">
+					<div class="flex flex-1 flex-col justify-between p-5 sm:p-7 md:p-8 lg:p-10">
 						<div class="relative">
 							<div
 								aria-hidden="true"
 								data-exp-line
-								class="absolute top-2 bottom-2 left-[5px] w-0.5 bg-border"
+								class="absolute top-2.5 bottom-2.5 left-[5px] w-0.5 bg-border"
 							></div>
-							<ol class="space-y-6 pl-5 sm:space-y-8 sm:pl-8">
+							<ol class="space-y-7 pl-6 sm:space-y-9 sm:pl-8">
 								{#each experiences as group (group.category)}
-									<li data-exp-item class="relative space-y-3">
+									<li data-exp-item class="relative space-y-3.5">
 										<span
 											aria-hidden="true"
 											data-exp-dot
-											class="absolute top-1.5 -left-5 size-2.5 rounded-full bg-foreground sm:-left-8 sm:size-3"
+											class="absolute top-1.5 -left-6 size-2.5 rounded-full bg-foreground sm:-left-8 sm:size-3"
 										></span>
 										<h3
 											class="font-display text-sm font-black tracking-wide text-[var(--retro-green-text)] uppercase sm:text-base"
@@ -1946,9 +1946,9 @@
 											{group.category}
 										</h3>
 
-										<ul class="space-y-3">
+										<ul class="space-y-3.5">
 											{#each group.items as item (item.title)}
-												<li class="border-l-2 border-border/30 pl-3.5">
+												<li class="border-l-2 border-border/30 pl-4 py-1">
 													<div
 														class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
 													>
@@ -1978,7 +1978,7 @@
 							</ol>
 						</div>
 
-						<div data-exp-resume class="mt-6 pl-5 sm:mt-8 sm:pl-8">
+						<div data-exp-resume class="mt-8 pl-6 sm:mt-10 sm:pl-8">
 							<Button
 								href="/Hisyam-Sayyid-Alzam-Resume.pdf"
 								target="_blank"
