@@ -70,9 +70,9 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" type="image/png" href={logoHisyam} />
-	<link rel="shortcut icon" href="/favicon.ico" />
-	<link rel="apple-touch-icon" href="/favicon.png" />
+	<link rel="icon" type="image/png" href="{logoHisyam}?v=3" />
+	<link rel="shortcut icon" href="/favicon.ico?v=3" />
+	<link rel="apple-touch-icon" href="/favicon.png?v=3" />
 
 	<!-- Primary Meta Tags -->
 	<title>

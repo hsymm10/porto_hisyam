@@ -1234,7 +1234,7 @@
 						alt="Logo Hisyam"
 						class="size-5 rounded-none border border-border object-cover sm:size-6"
 					/>
-					<span class="font-mono font-bold tracking-wider">hszam__</span>
+					<span class="font-mono font-bold tracking-wider">hszamm__</span>
 				</Badge>
 			</a>
 
@@ -1914,14 +1914,14 @@
 					<!-- Tangerine EXPERIENCE Sidebar -->
 					<div
 						data-exp-sidebar
-						class="neo-grid-accent-bg flex shrink-0 flex-col justify-center gap-1.5 border-b-2 border-border px-4 py-4 text-accent-foreground sm:w-44 sm:gap-2 sm:border-r-2 sm:border-b-0 sm:px-7 sm:py-8 md:w-48"
+						class="neo-grid-accent-bg flex shrink-0 flex-row items-center justify-between border-b-2 border-border px-4 py-3.5 text-accent-foreground sm:w-56 sm:flex-col sm:items-start sm:justify-center sm:gap-2.5 sm:border-r-2 sm:border-b-0 sm:px-6 sm:py-8 md:w-60 md:px-7"
 					>
 						<h2
-							class="font-display text-lg font-black tracking-tight uppercase sm:text-xl md:text-2xl"
+							class="font-display text-lg font-black tracking-tight whitespace-nowrap uppercase sm:text-xl md:text-2xl"
 						>
 							{t[$currentLang].experiences.sidebarLabel}
 						</h2>
-						<ArrowRight class="size-4 sm:size-5" aria-hidden="true" />
+						<ArrowRight class="size-4 shrink-0 sm:size-5" aria-hidden="true" />
 					</div>
 
 					<!-- Timeline & View Full Resume CTA -->
@@ -2079,10 +2079,19 @@
 			data-footer-inner
 			class="mx-auto flex w-full max-w-7xl flex-col items-center gap-3.5 px-4 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-left md:px-8"
 		>
-			<Badge variant="lime">
-				<Code2 class="size-3" />
-				hszamm__
-			</Badge>
+			<a
+				href="#top"
+				class="inline-flex shrink-0 items-center transition-transform hover:-translate-y-0.5 active:translate-y-0"
+			>
+				<Badge variant="lime" class="gap-2 px-2.5 py-1 text-xs sm:px-3 sm:py-1.5">
+					<img
+						src={logoHisyam}
+						alt="Logo Hisyam"
+						class="size-5 rounded-none border border-border object-cover sm:size-5.5"
+					/>
+					<span class="font-mono font-bold tracking-wider">hszamm__</span>
+				</Badge>
+			</a>
 			<p class="max-w-md font-mono text-xs text-muted-foreground">
 				{t[$currentLang].footer.bio}
 			</p>
