@@ -2013,7 +2013,7 @@
 		<!-- Full-Screen Experience (Left Pink + Timeline) & Call To Action (Right Violet Grid) -->
 		<section
 			id="experience"
-			class="relative z-20 w-full border-b-2 border-border bg-background py-12 sm:py-16 md:py-20 lg:py-24"
+			class="relative z-20 w-full border-b-2 border-border bg-background pt-16 pb-12 sm:py-16 md:py-20 lg:py-24"
 		>
 			<div
 				class="mx-auto grid w-full max-w-7xl items-stretch gap-6 px-4 sm:gap-8 sm:px-6 md:px-8 lg:grid-cols-12"

@@ -308,15 +308,14 @@
 <section
 	id="craft"
 	bind:this={sectionEl}
-	class="relative z-10 w-full overflow-clip border-b-2 border-border bg-background py-12 sm:py-16 md:py-20 lg:py-24"
+	class="relative z-10 w-full overflow-clip border-b-2 border-border bg-background pt-12 pb-16 sm:py-16 md:py-20 lg:py-24"
 >
 	<!-- Scroll Track with CSS-driven height (desktop/tablet) or natural flow (mobile) -->
 	<div bind:this={trackEl} class="craft-track relative w-full" style="--n: {PRINCIPLES.length};">
-		<!-- Frame: sticky on desktop/tablet (>=768px), relative on mobile (<768px) -->
+		<!-- Frame: sticky on desktop/tablet (>=768px), relative in-flow on mobile (<768px) -->
 		<div
 			bind:this={frameEl}
 			class="craft-frame z-20 w-full"
-			style="top: calc(var(--nav-h) + var(--nav-gap));"
 		>
 			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8">
 				<!-- Header (Badge + Hint): left-aligned, flex-wrap -->
@@ -737,6 +736,7 @@
 
 	.craft-frame {
 		position: relative;
+		top: 0;
 		max-height: none;
 	}
 
@@ -747,6 +747,7 @@
 
 		.craft-frame {
 			position: sticky;
+			top: calc(var(--nav-h) + var(--nav-gap));
 			max-height: calc(100svh - var(--nav-h) - var(--nav-gap) * 2);
 		}
 	}
