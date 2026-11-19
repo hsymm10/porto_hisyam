@@ -628,12 +628,113 @@
 	let certDialogEl: HTMLDialogElement | undefined = $state();
 	let galleryDialogEl: HTMLDialogElement | undefined = $state();
 	let projectDialogEl: HTMLDialogElement | undefined = $state();
+	let certThumbnailsEl: HTMLElement | undefined = $state();
+	let galleryThumbnailsEl: HTMLElement | undefined = $state();
+	let projectThumbnailsEl: HTMLElement | undefined = $state();
 	let activeSection = $state('');
 	let activeProjectIndex = $state(0);
 	let activeCertIndex = $state(0);
 	let activeGalleryIndex = $state(0);
 	let activeProjectModalIndex = $state(0);
 	let showAllProjects = $state(false);
+
+	// Smoothly auto-scroll the active thumbnail into view when changed
+	$effect(() => {
+		const idx = activeProjectModalIndex;
+		if (projectThumbnailsEl) {
+			const target = projectThumbnailsEl.children[idx] as HTMLElement | undefined;
+			target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+		}
+	});
+
+	$effect(() => {
+		const idx = activeCertIndex;
+		if (certThumbnailsEl) {
+			const target = certThumbnailsEl.children[idx] as HTMLElement | undefined;
+			target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+		}
+	});
+
+	$effect(() => {
+		const idx = activeGalleryIndex;
+		if (galleryThumbnailsEl) {
+			const target = galleryThumbnailsEl.children[idx] as HTMLElement | undefined;
+			target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+		}
+	});
+
+	// Action enabling fluid touch-swipe and mouse-drag scrolling on mobile, tablet & desktop
+	function draggableScroll(node: HTMLElement) {
+		let isDown = false;
+		let startX = 0;
+		let scrollLeft = 0;
+		let hasDragged = false;
+
+		function onPointerDown(e: PointerEvent) {
+			if (e.button !== 0 && e.pointerType === 'mouse') return;
+			isDown = true;
+			hasDragged = false;
+			startX = e.pageX - node.offsetLeft;
+			scrollLeft = node.scrollLeft;
+		}
+
+		function onPointerMove(e: PointerEvent) {
+			if (!isDown) return;
+			const x = e.pageX - node.offsetLeft;
+			const walk = x - startX;
+			if (Math.abs(walk) > 4) {
+				hasDragged = true;
+				try {
+					node.setPointerCapture(e.pointerId);
+				} catch {}
+			}
+			if (hasDragged) {
+				node.scrollLeft = scrollLeft - walk;
+			}
+		}
+
+		function onPointerUp(e: PointerEvent) {
+			if (isDown) {
+				isDown = false;
+				if (hasDragged) {
+					try {
+						node.releasePointerCapture(e.pointerId);
+					} catch {}
+				}
+			}
+		}
+
+		function onPointerCancel(e: PointerEvent) {
+			isDown = false;
+			hasDragged = false;
+			try {
+				node.releasePointerCapture(e.pointerId);
+			} catch {}
+		}
+
+		function onClickCapture(e: MouseEvent) {
+			if (hasDragged) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
+		}
+
+		node.addEventListener('pointerdown', onPointerDown);
+		node.addEventListener('pointermove', onPointerMove);
+		node.addEventListener('pointerup', onPointerUp);
+		node.addEventListener('pointercancel', onPointerCancel);
+		node.addEventListener('click', onClickCapture, true);
+
+		return {
+			destroy() {
+				node.removeEventListener('pointerdown', onPointerDown);
+				node.removeEventListener('pointermove', onPointerMove);
+				node.removeEventListener('pointerup', onPointerUp);
+				node.removeEventListener('pointercancel', onPointerCancel);
+				node.removeEventListener('click', onClickCapture, true);
+			}
+		};
+	}
 	const projectsWithImages = $derived(
 		projects.filter((project): project is DisplayProject & { image: string } =>
 			Boolean(project.image)
@@ -2181,6 +2282,7 @@
 <!-- Native Modal Dialog for Full Certificate Preview -->
 <dialog
 	bind:this={certDialogEl}
+	data-lenis-prevent
 	closedby="any"
 	aria-labelledby="cert-dialog-title"
 	onclose={handleCertDialogClose}
@@ -2242,7 +2344,10 @@
 		</div>
 
 		<div
-			class="flex items-center gap-2.5 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-5 py-3"
+			bind:this={certThumbnailsEl}
+			use:draggableScroll
+			data-lenis-prevent
+			class="flex cursor-grab select-none items-center gap-2 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-3 py-2.5 active:cursor-grabbing sm:gap-2.5 sm:px-5 sm:py-3 [touch-action:pan-x] overscroll-x-contain [-webkit-overflow-scrolling:touch]"
 		>
 			{#each certifications as cert, i (cert.id)}
 				<button
@@ -2255,7 +2360,7 @@
 						? '-translate-y-0.5 border-border ring-2 ring-secondary'
 						: 'border-border/50 opacity-75 hover:opacity-100'}"
 				>
-					<img src={cert.image} alt="" class="h-full w-full object-cover" />
+					<img src={cert.image} alt="" class="pointer-events-none h-full w-full object-cover" />
 				</button>
 			{/each}
 		</div>
@@ -2265,6 +2370,7 @@
 <!-- Native Modal Dialog for Full Field Notes Photo Preview -->
 <dialog
 	bind:this={galleryDialogEl}
+	data-lenis-prevent
 	closedby="any"
 	aria-labelledby="gallery-dialog-title"
 	onclose={handleGalleryDialogClose}
@@ -2331,7 +2437,10 @@
 			</div>
 
 			<div
-				class="flex items-center gap-2.5 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-5 py-3"
+				bind:this={galleryThumbnailsEl}
+				use:draggableScroll
+				data-lenis-prevent
+				class="flex cursor-grab select-none items-center gap-2 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-3 py-2.5 active:cursor-grabbing sm:gap-2.5 sm:px-5 sm:py-3 [touch-action:pan-x] overscroll-x-contain [-webkit-overflow-scrolling:touch]"
 			>
 				{#each polaroidSlides as slide, i (slide.image ?? i)}
 					<button
@@ -2344,7 +2453,7 @@
 							? '-translate-y-0.5 border-border ring-2 ring-secondary'
 							: 'border-border/50 opacity-75 hover:opacity-100'}"
 					>
-						<img src={slide.image} alt="" class="h-full w-full object-cover" />
+						<img src={slide.image} alt="" class="pointer-events-none h-full w-full object-cover" />
 					</button>
 				{/each}
 			</div>
@@ -2355,6 +2464,7 @@
 <!-- Native Modal Dialog for Full Featured Project Preview -->
 <dialog
 	bind:this={projectDialogEl}
+	data-lenis-prevent
 	closedby="any"
 	aria-labelledby="project-dialog-title"
 	onclose={handleProjectDialogClose}
@@ -2422,7 +2532,10 @@
 			</div>
 
 			<div
-				class="flex items-center gap-2.5 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-5 py-3"
+				bind:this={projectThumbnailsEl}
+				use:draggableScroll
+				data-lenis-prevent
+				class="flex cursor-grab select-none items-center gap-2 overflow-x-auto border-t-2 border-border bg-neo-surface-subtle px-3 py-2.5 active:cursor-grabbing sm:gap-2.5 sm:px-5 sm:py-3 [touch-action:pan-x] overscroll-x-contain [-webkit-overflow-scrolling:touch]"
 			>
 				{#each projectsWithImages as proj, i (proj.id)}
 					<button
@@ -2435,7 +2548,7 @@
 							? '-translate-y-0.5 border-border ring-2 ring-secondary'
 							: 'border-border/50 opacity-75 hover:opacity-100'}"
 					>
-						<img src={proj.image} alt="" class="h-full w-full object-cover" />
+						<img src={proj.image} alt="" class="pointer-events-none h-full w-full object-cover" />
 					</button>
 				{/each}
 			</div>
