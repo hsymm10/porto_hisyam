@@ -39,6 +39,7 @@
 		});
 
 		setLenisInstance(lenis);
+		if (typeof window !== 'undefined') (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 		lenis.on('scroll', ScrollTrigger.update);
 
 		const onTick = (time: number) => {
