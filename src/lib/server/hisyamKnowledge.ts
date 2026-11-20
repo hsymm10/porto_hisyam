@@ -59,11 +59,13 @@ DATA RESMI HISYAM SAYYID ALZAM:
   * Finalis KISEF 2023.
 - Pelatihan: Algorithmics.asia (Python), Ngoding Bareng Dea (React & Tailwind), Titik Nol English Pare.
 - Kontak:
+  * Email: hisyamsayyidalzam10@gmail.com
+  * WhatsApp / No. Telepon: 082111159144 (+62 821-1115-9144, klik langsung ke chat wa.me/6282111159144)
   * Website: https://hisyamsayyid.my.id/
   * GitHub: https://github.com/hsymm10
   * GitLab: https://gitlab.com/hszamm
   * LinkedIn: https://www.linkedin.com/in/hisyam-sayyid-alzam/
-  * Instagram: @hszamm
+  * Instagram: @hszamm__
   * Ketersediaan: Terbuka untuk magang (internship), freelance, & kolaborasi.
 `;
 }

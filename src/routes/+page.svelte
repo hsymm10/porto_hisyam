@@ -1532,13 +1532,33 @@
 							{t[$currentLang].hero.connect}
 						</p>
 						<div class="flex items-center gap-2.5">
-							<Button variant="outline" size="icon" aria-label="Terminal">
-								<Terminal class="size-4" />
+							<Button
+								href={whatsappHref}
+								target="_blank"
+								rel="noopener noreferrer"
+								variant="outline"
+								size="icon"
+								aria-label="Chat WhatsApp 082111159144"
+								title="WhatsApp 082111159144"
+							>
+								<Icon icon="mdi:phone-outline" class="size-4" />
 							</Button>
-							<Button variant="outline" size="icon" aria-label="Website">
+							<Button
+								href="https://hisyamsayyid.my.id"
+								variant="outline"
+								size="icon"
+								aria-label="Website https://hisyamsayyid.my.id"
+								title="Website https://hisyamsayyid.my.id"
+							>
 								<Globe class="size-4" />
 							</Button>
-							<Button variant="outline" size="icon" aria-label="Email">
+							<Button
+								href="mailto:hisyamsayyidalzam10@gmail.com"
+								variant="outline"
+								size="icon"
+								aria-label="Email hisyamsayyidalzam10@gmail.com"
+								title="hisyamsayyidalzam10@gmail.com"
+							>
 								<Mail class="size-4" />
 							</Button>
 						</div>
