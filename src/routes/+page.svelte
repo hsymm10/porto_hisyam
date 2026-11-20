@@ -2185,10 +2185,10 @@
 	</main>
 
 	<!-- Full-Screen Footer with max-w-7xl centered content -->
-	<footer data-footer class="w-full bg-card py-5 sm:py-6">
+	<footer data-footer class="w-full bg-card pt-5 pb-24 sm:py-6">
 		<div
 			data-footer-inner
-			class="mx-auto flex w-full max-w-7xl flex-col items-center gap-3.5 px-4 text-center sm:flex-row sm:justify-between sm:px-6 sm:text-left md:px-8"
+			class="mx-auto flex w-full max-w-7xl flex-col items-center gap-3.5 px-4 text-center sm:flex-row sm:flex-wrap sm:justify-between sm:gap-4 sm:pl-6 sm:pr-48 sm:text-left md:pl-8 md:pr-52 lg:flex-nowrap"
 		>
 			<a
 				href="#top"
@@ -2203,10 +2203,10 @@
 					<span class="font-mono font-bold tracking-wider">hszamm__</span>
 				</Badge>
 			</a>
-			<p class="max-w-md font-mono text-xs text-muted-foreground">
+			<p class="max-w-md shrink font-mono text-xs text-muted-foreground">
 				{t[$currentLang].footer.bio}
 			</p>
-			<div class="flex flex-wrap items-center justify-center gap-2">
+			<div class="flex shrink-0 items-center justify-center gap-2">
 				<Button
 					href="mailto:hisyamsayyidalzam10@gmail.com"
 					variant="outline"
