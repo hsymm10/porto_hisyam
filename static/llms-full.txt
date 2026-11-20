@@ -121,3 +121,4 @@ Hisyam's portfolio features an integrated AI assistant powered by Google Gemini 
 - Bilingual: Adapts automatically to Indonesian or English based on the active website language.
 - Persistence: Preserves chat history in localStorage across page reloads.
 - Anti-Spam: Protected by client-side cooldown and server-side IP rate limiting (8 requests/minute).
+
