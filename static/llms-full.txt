@@ -1,0 +1,123 @@
+# Hisyam Sayyid Alzam — Complete Knowledge Base & LLM Context
+
+> Comprehensive profile, technical stack, architecture standards, project case studies, and career documentation for Hisyam Sayyid Alzam (hszamm__).
+
+## 1. Overview & Bio
+
+- Name: Hisyam Sayyid Alzam
+- Handle / Alias: hszamm__, hsymm10
+- Profession: Full-Stack Web Developer, UI/UX Designer, Project Manager
+- Education: Vocational High School (SMK) — Software Engineering (Rekayasa Perangkat Lunak / RPL)
+- Location: Indonesia
+- Availability: Open for Internship, Freelance, Contract, and Full-time Collaborations
+- Primary Website: https://hisyamsayyid.my.id/
+- GitHub: https://github.com/hsymm10
+- GitLab: https://gitlab.com/hszamm
+- LinkedIn: https://www.linkedin.com/in/hisyam-sayyid-alzam/
+- Instagram: https://instagram.com/hszamm
+- Email: hisyamsayyidalzam@gmail.com
+
+---
+
+## 2. Technical Stack & Capabilities
+
+### Frontend
+- Frameworks: SvelteKit 2, Svelte 5 (with native Runes reactivity: $state, $derived, $effect), React 18/19
+- Styling: Tailwind CSS v4, CSS3, CSS Custom Properties, Neobrutalism Design System
+- Languages: TypeScript, Modern JavaScript (ESNext), HTML5
+- Motion & Animation: GSAP (GreenSock) with ScrollTrigger & matchMedia, Three.js (interactive 3D physics lanyard & WebGL), Lenis smooth scrolling
+- State & Routing: SvelteKit declarative file-based routing, server-side load functions, i18n localization store (ID/EN)
+
+### Backend & APIs
+- Environments: Node.js, Python
+- APIs: RESTful API design, SvelteKit Server Endpoints (+server.ts), Google AI Studio / Gemini API integration
+- Databases: PostgreSQL, MySQL with relational database normalization (3NF)
+- Security: Rate limiting, input validation, strict guardrails, environmental secret isolation
+
+### DevOps & Tools
+- Version Control: Git, GitHub, GitLab
+- Deployment & Hosting: Vercel (CI/CD automated Git builds, Edge Functions, Serverless Functions)
+- Development Environment: Linux, Bash, Neovim/VSCode, Vite 8
+
+---
+
+## 3. Architecture & Quality Standards (The Craft)
+
+Hisyam follows 4 core engineering principles when developing digital products:
+
+1. Architecture & Pipeline:
+   - Structured layered code from frontend UI to normalized database models.
+   - Clean Code principles with strict separation of concerns and type-safe contracts.
+2. UI/UX Design & Prototyping:
+   - High-fidelity prototyping in Figma before implementation.
+   - Responsive design tested across mobile (375px–430px), tablet (768px–820px), and desktop (1024px–1440px+).
+   - High accessibility standards (WCAG 2.1 AA, high-contrast borders, focus indicators, keyboard navigation).
+3. Performance & Optimization:
+   - Core Web Vitals optimization (sub-second LCP, 0 CLS, low INP).
+   - Lightweight asset bundling with Vite and dynamic asset lazy loading.
+4. Project Management & Delivery:
+   - Agile sprint workflow with clear milestone ownership and documentation.
+
+---
+
+## 4. Featured Project Case Studies
+
+1. UIC Press Universitas Ibnu Chaldun:
+   - Role: Project Manager & Full-Stack Developer
+   - Scope: Digital publishing platform, book submission pipeline, ISBN tracking system, administrator dashboard.
+   - Stack: SvelteKit, TypeScript, Tailwind CSS, REST APIs.
+
+2. Web-Based Educational Game Platform:
+   - Role: Game & Web Developer
+   - Scope: Interactive browser game portal containing 10+ games (Puzzle 2048, Tic Tac Toe, Math Challenge, Word Search, Bubble Shooter, Flappy).
+   - Features: Responsive touch & keyboard controls, high-score persistence, light and dark themes.
+
+3. Organization Financial Management System:
+   - Role: Full-Stack Developer
+   - Scope: Transparent organizational cashbook with real-time balance tracking, expense categorization, and exportable financial statements.
+
+4. Custom Point-of-Sale (POS) Cashier System:
+   - Role: Software Developer
+   - Scope: Dynamic retail cashier app supporting inventory management, custom pricing tiers, instant receipt generation, and transaction logs.
+
+5. Digital Organization Invitation & Guestbook:
+   - Role: Frontend Developer & UI Designer
+   - Scope: Interactive paperless event invitations with live digital guest attendance recording and RSVP management.
+
+6. Shortlink LinkKu:
+   - Role: Developer
+   - Scope: Fast URL shortener service with analytics, click tracking, and custom branded aliases.
+
+7. Putra Sunda Jaya Company Profile:
+   - Role: Web Developer & UI Designer
+   - Scope: Industrial & catering corporate profile with service catalogs and direct WhatsApp messaging integration.
+
+---
+
+## 5. Experience & Leadership
+
+- UIC Press (Universitas Ibnu Chaldun): Project Manager & Web Developer leading development from requirements analysis to deployment.
+- Robotics Collaboration Program: Event organizer and coordinator for inter-student robotics workshops and web development training.
+- PT Traspac: Intern software developer engaged in real-world technology operations and enterprise tools.
+
+---
+
+## 6. Awards & Certifications
+
+- NASPO 2021: Award winner in National Applied Science Project Olympiad (Plastic Waste Innovation).
+- AISEEF 2023: Silver Medal in ASEAN Innovative Science Environmental and Entrepreneur Fair (Lato-Lato Rocks Detector).
+- KISEF 2023: Finalist in Korea International Science and Engineering Fair.
+- Python Pro (IT HERO Level 8 & 9): Algorithmics.asia certification in algorithms, data structures, and Python development.
+- Titik Nol English Course: Intensive professional English communication training in Kampung Inggris Pare.
+
+---
+
+## 7. AI Assistant on Portfolio: Hisyam'AI
+
+Hisyam's portfolio features an integrated AI assistant powered by Google Gemini API:
+- Endpoint: POST https://hisyamsayyid.my.id/api/chat
+- Capabilities: Answers visitor questions about Hisyam's projects, tech stack, experience, and contact options.
+- Guardrails: Strictly scoped to Hisyam's portfolio (refuses out-of-context queries in 1 sentence to conserve tokens).
+- Bilingual: Adapts automatically to Indonesian or English based on the active website language.
+- Persistence: Preserves chat history in localStorage across page reloads.
+- Anti-Spam: Protected by client-side cooldown and server-side IP rate limiting (8 requests/minute).

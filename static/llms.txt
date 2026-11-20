@@ -1,0 +1,47 @@
+# Hisyam Sayyid Alzam
+
+> Official portfolio and developer profile of Hisyam Sayyid Alzam (hszamm__), Software Developer, UI/UX Designer, and Project Manager specializing in SvelteKit 2, Svelte 5 (Runes), React, TypeScript, Tailwind CSS v4, and Neobrutalism Web Design.
+
+Hisyam Sayyid Alzam is a software developer and vocational software engineering (RPL) student based in Indonesia. He builds fast, accessible, and clean-architectured web applications, systems, and games with distinctive neobrutalism aesthetics and high performance.
+
+- Canonical URL: https://hisyamsayyid.my.id/
+- Full Context for LLMs: https://hisyamsayyid.my.id/llms-full.txt
+- GitHub: https://github.com/hsymm10
+- GitLab: https://gitlab.com/hszamm
+- LinkedIn: https://www.linkedin.com/in/hisyam-sayyid-alzam/
+- Instagram: https://instagram.com/hszamm
+
+## Core Competencies & Skills
+
+- [Frontend Development](https://hisyamsayyid.my.id/#skills): SvelteKit 2, Svelte 5 (Runes), React, TypeScript, JavaScript, Tailwind CSS v4, Three.js, GSAP ScrollTrigger, Lenis Smooth Scroll.
+- [Backend & APIs](https://hisyamsayyid.my.id/#skills): Node.js, Python, RESTful API design, PostgreSQL, MySQL database normalization.
+- [Architecture & Design Standards](https://hisyamsayyid.my.id/#craft): Neobrutalism Design System, Responsive Multi-Screen layouts (mobile, tablet, desktop), Web Accessibility (WCAG 2.1 AA), Clean Code architecture.
+- [DevOps & Tooling](https://hisyamsayyid.my.id/#skills): Git, GitHub, GitLab CI/CD, Vercel deployment, Linux environment management.
+
+## Featured Projects
+
+- [UIC Press Publishing Portal](https://hisyamsayyid.my.id/#projects): Digital publishing portal for Universitas Ibnu Chaldun. Project manager and developer handling book cataloging, ISBN tracking, and administrative workflows.
+- [Web-Based Educational Game Platform](https://hisyamsayyid.my.id/#projects): Multi-game web platform featuring Puzzle 2048, Tic Tac Toe, Math Challenge, Word Search, Bubble Shooter, and Flappy mechanics with dark/light themes.
+- [Organization Financial Management System](https://hisyamsayyid.my.id/#projects): Real-time cashflow dashboard with financial ledger recording, income/expense reports, and transparent fund tracking.
+- [Custom Cashier POS System](https://hisyamsayyid.my.id/#projects): Flexible point-of-sale software with dynamic item pricing, receipt printing, and comprehensive sales history logs.
+- [Digital Organization Invitation & Guestbook](https://hisyamsayyid.my.id/#projects): Interactive digital event invitations with live RSVP check-in, guest greetings, and automated attendance counters.
+- [Shortlink LinkKu](https://hisyamsayyid.my.id/#projects): Fast URL shortener service with click analytics, custom alias generation, and link security checks.
+- [Putra Sunda Jaya Company Profile](https://hisyamsayyid.my.id/#projects): Corporate landing page featuring interactive service catalogs and direct inquiry routing.
+
+## Experience & Leadership
+
+- [UIC Press Project Manager & Web Developer](https://hisyamsayyid.my.id/#experience): Led development team through requirements gathering, system architecture, database design, and release management.
+- [Robotics Collaboration Program Organizer](https://hisyamsayyid.my.id/#experience): Coordinated inter-school collaborative workshops introducing robotics programming and web development fundamentals.
+- [Internship at PT Traspac](https://hisyamsayyid.my.id/#experience): Professional software development internship focusing on enterprise IT workflows and collaborative tools.
+
+## Honors & Awards
+
+- [NASPO 2021 Gold/Bronze Award](https://hisyamsayyid.my.id/#certifications): National Applied Science Project Olympiad — Innovation in plastic recycling technology.
+- [AISEEF 2023 Silver Medal](https://hisyamsayyid.my.id/#certifications): ASEAN Innovative Science Environmental and Entrepreneur Fair — IoT rock detection innovation.
+- [KISEF 2023 Finalist](https://hisyamsayyid.my.id/#certifications): Korea International Science and Engineering Fair finalist.
+
+## Contact & Opportunities
+
+- [Portfolio Website](https://hisyamsayyid.my.id/): Interactive portfolio with bilingual support (ID/EN) and built-in Hisyam'AI assistant.
+- [Email Contact](mailto:hisyamsayyidalzam@gmail.com): Open for internships, freelance projects, and software engineering opportunities.
+- [GitHub Profile](https://github.com/hsymm10): Open-source repositories and development portfolio.

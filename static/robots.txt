@@ -2,3 +2,8 @@ User-agent: *
 Allow: /
 
 Sitemap: https://hisyamsayyid.my.id/sitemap.xml
+# LLM & Agentic Browsing discovery
+# https://llmstxt.org
+# Context: https://hisyamsayyid.my.id/llms.txt
+# Full Context: https://hisyamsayyid.my.id/llms-full.txt
+
